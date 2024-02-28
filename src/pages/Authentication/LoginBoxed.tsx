@@ -6,9 +6,11 @@ import IconMail from '../../components/Icon/IconMail';
 import IconLockDots from '../../components/Icon/IconLockDots';
 import { loginApi } from '../../store/AuthSlice';
 import { useAppDispatch, useAppSelector } from '../../store';
+import { Show_Toast } from '../Components/Toast';
 
 const LoginBoxed = () => {
     const [userDetails, setUserDetails] = useState<any>({});
+    const [errormessage,setErrorMessage]=useState('')
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -23,9 +25,18 @@ const LoginBoxed = () => {
 
             if (token) {
                 // Store the token in local storage
-                localStorage.setItem('token', token);
+                localStorage.setItem('User', token);
+                localStorage.setItem('status', result.payload?.data?.status);
+                Show_Toast({ message: 'Login success', type: true });
                 // Navigate to the dashboard
                 navigate('/');
+            }
+            else{
+                setErrorMessage(result?.payload?.response?.data?.message);
+                console.log(result?.payload?.response?.data?.message);
+                Show_Toast({message:"Invalid Email or Password",type:false})
+            //    <Show_Toast message='User not found' type={false} />;
+                
             }
         } catch (error) {
             console.log(error);
@@ -91,6 +102,7 @@ const LoginBoxed = () => {
                                 <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign in</h1>
                                 <p className="text-base font-bold leading-normal text-white-dark">Enter your email and password to login</p>
                             </div>
+
                             <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
                                 <div>
                                     <label htmlFor="Email">Email</label>
@@ -122,6 +134,8 @@ const LoginBoxed = () => {
                                         </span>
                                     </div>
                                 </div>
+                                {errormessage && <p className="text-center text-red-700">{errormessage}</p>}
+
                                 {/* <div>
                                     <label className="flex cursor-pointer items-center">
                                         <input type="checkbox" className="form-checkbox bg-white dark:bg-black" />

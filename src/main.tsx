@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client'
-
+import {ToastContainer} from 'react-toastify'
 // Perfect Scrollbar
 import 'react-perfect-scrollbar/dist/css/styles.css';
 
@@ -24,6 +24,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Suspense>
             <Provider store={store}>
                 <RouterProvider router={router} />
+                <ToastContainer/>
             </Provider>
         </Suspense>
     </React.StrictMode>

@@ -9,7 +9,7 @@ interface ShowToastProps {
 export const Show_Toast: React.FC<ShowToastProps> = ({ message, type }) => {
   const toastOptions: ToastOptions = {
     position: "top-right",
-    autoClose: 3000,
+    autoClose: 1000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
