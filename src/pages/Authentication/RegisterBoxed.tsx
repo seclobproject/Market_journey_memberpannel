@@ -14,33 +14,75 @@ import { ApiCall } from '../../Services/Api';
 import { Show_Toast } from '../Components/Toast';
 import { districtlistinZonalUrl, memberaddUrl, packagesListUrl, panchayathlistindropdownUrl, statelistPageUrl, zonallistindropdownUrl } from '../../utils/EndPoints';
 
+interface Member {
+    name: string;
+    email: string;
+    password: string;
+    address: string;
+    phone: string;
+    franchise: string;
+    packageAmount: string | number;
+    state: string;
+    district: string;
+    zonal: string;
+    panchayath: string;
+}
+interface Package {
+    franchiseName: string;
+    packageAmount: number;
+}
+interface States {
+    name: String;
+    id: String;
+}
 const RegisterBoxed = () => {
-    const [addMember, setAddMember] = useState({});
-    const [stateList, setStateList] = useState([]);
+    const [addMember, setAddMember] = useState<Member>({
+        name: '',
+        email: '',
+        franchise: '',
+        password: '',
+        address: '',
+        phone: '',
+        packageAmount: '',
+        state: '',
+        district: '',
+        zonal: '',
+        panchayath: '',
+    });
+    const [stateList, setStateList] = useState<any>([]);
     const [districtList, setDistrictList] = useState([]);
     const [zonalList, setZonalList] = useState([]);
     const [panchayathList, setPanchayathList] = useState([]);
-    const [packageList, setPackageList] = useState([]);
+    const [packageList, setPackageList] = useState<Package[]>([]);
     const [packageAmount, setPackageAmount] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [showTransPassword, setShowTransPassword] = useState(false);
-    const [selectedStateId, setSelectedStateId] = useState(null);
+    const [selectedStateId, setSelectedStateId] = useState('');
     const [selectedDistrictId, setSelectedDistrictId] = useState(null);
     const [selectedZonalId, setSelectedZonalId] = useState(null);
     const [selectedState, setSelectedState] = useState(null);
     const dispatch = useDispatch();
+
     useEffect(() => {
         dispatch(setPageTitle('Register Boxed'));
-        getPackagesList()
-    });
+        getPackagesList();
+        getStateList();
+    }, []);
     const navigate = useNavigate();
 
-    console.log(addMember);
-
+    useEffect(() => {
+        if (selectedStateId) {
+            getDistrictList();
+        }
+        if (selectedDistrictId) {
+            getZonallist();
+        }
+    }, [selectedStateId, selectedDistrictId]);
 
     const getStateList = async () => {
         try {
             const response = await ApiCall('get', statelistPageUrl);
+
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
@@ -56,6 +98,7 @@ const RegisterBoxed = () => {
     const getDistrictList = async () => {
         try {
             const response = await ApiCall('get', `${districtlistinZonalUrl}/${selectedStateId}`);
+
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
@@ -71,6 +114,8 @@ const RegisterBoxed = () => {
     const getZonallist = async () => {
         try {
             const response = await ApiCall('get', `${zonallistindropdownUrl}/${selectedDistrictId}`);
+            console.log(response);
+            
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
@@ -102,7 +147,7 @@ const RegisterBoxed = () => {
         try {
             const response = await ApiCall('get', packagesListUrl);
             console.log(response);
-            
+
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
@@ -122,7 +167,19 @@ const RegisterBoxed = () => {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 // setValidated(false);
-                setAddMember('');
+                setAddMember({
+                    name: '',
+                    email: '',
+                    franchise: '',
+                    password: '',
+                    address: '',
+                    phone: '',
+                    packageAmount: '',
+                    state: '',
+                    district: '',
+                    zonal: '',
+                    panchayath: '',
+                });
                 Show_Toast({ message: 'Member added successfully', type: true });
             } else {
                 Show_Toast({ message: 'Member added failed', type: false });
@@ -133,6 +190,25 @@ const RegisterBoxed = () => {
             // Show_Toast({message:error, type:false});
         }
     };
+
+    const packageOptions = packageList.map((pack) => ({
+        value: pack.franchiseName,
+        label: pack.franchiseName,
+        packageAmount: pack.packageAmount,
+    }));
+
+  const stateSelectHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedValue = e.target.value;
+      const selectedState = stateList.find((state: any) => state.name === selectedValue);
+
+      if (selectedState) {
+          setAddMember({
+              ...addMember,
+              state: selectedState.name, 
+          });
+          setSelectedStateId(selectedState.id);
+      }
+  };
 
     return (
         <>
@@ -214,58 +290,15 @@ const RegisterBoxed = () => {
                                 <div>
                                     <label htmlFor="Email">Address</label>
                                     <div className="relative text-white-dark">
-                                        <input
+                                        <span className="absolute start-4 top-1/4 -translate-y-1/2">
+                                            <IconMapPin fill={true} />
+                                        </span>
+                                        <textarea
                                             onChange={(e) => setAddMember({ ...addMember, address: e.target.value })}
                                             id="Address"
-                                            type="text"
                                             placeholder="Enter Your Address"
                                             className="form-input ps-10 placeholder:text-white-dark"
                                         />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconMapPin fill={true} />
-                                        </span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="Email">Franchise</label>
-                                    <div className="relative text-white-dark">
-                                        <select className="form-input ps-10 placeholder:text-white-dark">
-                                            <option>Select a franchise type </option>
-                                            {packageList.map((packageItem) => (
-                                                <option key={packageItem}>{packageItem}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="packageAmount">PackageAmount</label>
-                                    <div className="relative text-white-dark">
-                                        <input
-                                            onChange={(e) => setAddMember({ ...addMember, packageAmount: e.target.value })}
-                                            id="PackageAmount"
-                                            type="text"
-                                            placeholder="packageAmount"
-                                            readOnly
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                        />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconCashBanknotes fill={true} />
-                                        </span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="Password">TransactionPassword</label>
-                                    <div className="relative text-white-dark">
-                                        <input
-                                            onChange={(e) => setAddMember({ ...addMember, transactionPassword: e.target.value })}
-                                            id="TransactionPassword"
-                                            type="password"
-                                            placeholder="Enter TransactionPassword"
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                        />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconLockDots fill={true} />
-                                        </span>
                                     </div>
                                 </div>
                                 <div>
@@ -283,7 +316,142 @@ const RegisterBoxed = () => {
                                         </span>
                                     </div>
                                 </div>
+                                <div>
+                                    <label htmlFor="franchise">Franchise</label>
+                                    <div className="relative text-white-dark">
+                                        <select
+                                            onChange={(e) => {
+                                                const selectedValue = e.target.value;
+                                                const selectedOption = packageOptions.find((option) => option.value === selectedValue);
 
+                                                if (selectedOption) {
+                                                    setAddMember({
+                                                        ...addMember,
+                                                        franchise: selectedOption.value,
+                                                        packageAmount: selectedOption.packageAmount,
+                                                    });
+                                                }
+                                            }}
+                                            value={addMember.franchise}
+                                            className="form-input ps-10 placeholder:text-white-dark"
+                                        >
+                                            <option>Select a franchise type </option>
+                                            {packageOptions.map((option) => (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label htmlFor="packageAmount">PackageAmount</label>
+                                    <div className="relative text-white-dark">
+                                        <input
+                                            id="PackageAmount"
+                                            type="text"
+                                            value={addMember?.packageAmount}
+                                            placeholder="packageAmount"
+                                            readOnly
+                                            className="form-input ps-10 placeholder:text-white-dark"
+                                        />
+                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <IconCashBanknotes fill={true} />
+                                        </span>
+                                    </div>
+                                </div>
+                                {(addMember?.franchise === 'District Franchise' || addMember?.franchise === 'Zonal Franchise' || addMember?.franchise === 'Mobile Franchise') && (
+                                    <>
+                                        <div>
+                                            <label htmlFor="Email">State</label>
+                                            <div className="relative text-white-dark">
+                                                <select className="form-input ps-10 placeholder:text-white-dark" onChange={stateSelectHandler} value={addMember.state}>
+                                                    <option key="default" value="">
+                                                        Select State
+                                                    </option>
+                                                    {stateList.map((singleState: any, idx: any) => (
+                                                        <option key={idx} value={singleState.name}>
+                                                            {singleState.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label htmlFor="Email">District</label>
+                                            <div className="relative text-white-dark">
+                                                <select
+                                                    className="form-input ps-10 placeholder:text-white-dark"
+                                                    onChange={(e) => {
+                                                        const selectedValue = e.target.value;
+                                                        const selectedDistrict = stateList.find((district: any) => district.name === selectedValue);
+
+                                                        if (selectedState) {
+                                                            setAddMember({
+                                                                ...addMember,
+                                                                district: selectedDistrict.name,
+                                                            });
+                                                            setSelectedDistrictId(selectedDistrict.id);
+                                                        }
+                                                    }}
+                                                    value={addMember.district}
+                                                >
+                                                    <option key="default" value="">
+                                                        Select District{' '}
+                                                    </option>
+                                                    {districtList.map((dist: any) => (
+                                                        <option key={dist.id} value={dist.name}>
+                                                            {dist.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                                {(addMember?.franchise === 'Zonal Franchise' || addMember?.franchise === 'Mobile Franchise') && (
+                                    <div>
+                                        <label htmlFor="Email">Zonel</label>
+                                        <div className="relative text-white-dark">
+                                            <select
+                                                className="form-input ps-10 placeholder:text-white-dark"
+                                                onChange={(e) => {
+                                                    const selectedValue = e.target.value;
+                                                    const selectedZonel = stateList.find((zonal: any) => zonal.name === selectedValue);
+
+                                                    if (selectedState) {
+                                                        setAddMember({
+                                                            ...addMember,
+                                                            zonal: selectedZonel.name,
+                                                        });
+                                                        setSelectedZonalId(selectedZonel.id);
+                                                    }
+                                                }}
+                                                value={addMember.zonal}
+                                            >
+                                                <option key="default" value="">
+                                                    Select Zonel{' '}
+                                                </option>
+                                                {zonalList.map((zonal: any) => (
+                                                    <option key={zonal.id}>{zonal.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
+                                {addMember?.franchise === 'Mobile Franchise' && (
+                                    <div>
+                                        <label htmlFor="Email">Panchayath</label>
+                                        <div className="relative text-white-dark">
+                                            <select className="form-input ps-10 placeholder:text-white-dark">
+                                                <option>Select panchayath </option>
+                                                {panchayathList.map((panchayath) => (
+                                                    <option key={panchayath}>{panchayath}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
                                 <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
                                     Sign Up
                                 </button>

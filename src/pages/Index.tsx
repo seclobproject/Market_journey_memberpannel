@@ -6,67 +6,76 @@ import IconPlayCircle from '../components/Icon/IconPlayCircle';
 import IconX from '../components/Icon/IconX';
 import IconPlus from '../components/Icon/IconPlus';
 import IconCreditCard from '../components/Icon/IconCreditCard';
+import { Base_url } from '../Services/Api';
 
 const Index = () => {
     const [modal, setModal] = useState(false);
     const [pendingModal, setPendingModal] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-const [showSelectDocumentMessage, setShowSelectDocumentMessage] = useState(false);
-             
-      const fetchData = async () => {
-          try {
-              const userStatus = await localStorage.getItem('status');
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [showSelectDocumentMessage, setShowSelectDocumentMessage] = useState(false);
+    const [updateStatus, setUpdatedStatus] = useState<string | null>(null);
+    console.log(updateStatus);
 
-              if (userStatus === 'pending') {
-                  setPendingModal(true);
-                  console.log(pendingModal);
-              }
-          } catch (error) {
-              console.error('Error fetching user status:', error);
-          }
-      };
+    const fetchData = async () => {
+        try {
+            const userStatus = await localStorage.getItem('status');
+            setUpdatedStatus(userStatus);
+            if (userStatus === 'pending') {
+                setPendingModal(true);
+                console.log(pendingModal);
+            }
+        } catch (error) {
+            console.error('Error fetching user status:', error);
+        }
+    };
     useEffect(() => {
-
         fetchData();
     }, []);
 
     const closePendingModal = () => {
         setPendingModal(false);
     };
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      setSelectedFile(file || null);
-  };
- console.log(selectedFile);
-// --- 
+    const handleRefresh = () => {
+        window.location.reload();
+    };
+    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        setSelectedFile(file || null);
+    };
+    console.log(selectedFile);
+    // ---
 
-const handleUpload = async () => {
-    if (selectedFile) {
-        try {
-            const token: any = localStorage.getItem('userInfo');
-            const parsedData = JSON.parse(token);
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${parsedData.access_token}`,
-                    'content-type': 'multipart/form-data',
-                },
-            };
-            const aadhaar = new FormData();
-            aadhaar.append('aadhaar', selectedFile, selectedFile?.name);
-            const response = await axios.post(`${URL}/api/user/verify-user`, aadhaar, config);
-            setSelectedFile(null);
-            // setHideUpload({
-            //     status: 'Pending',
-            // });
-            setPendingModal(false);
-            setShowSelectDocumentMessage(false);
-        } catch (error) {
-            console.error('Upload failed:', error);
+    const handleUpload = async () => {
+        if (selectedFile) {
+            try {
+                const token: any = localStorage.getItem('User');
+                // const parsedData = JSON.parse(token);
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'content-type': 'multipart/form-data',
+                    },
+                };
+                const screenshot = new FormData();
+                screenshot.append('screenshot', selectedFile, selectedFile?.name);
+                const response = await axios.post(`${Base_url}/api/user/user-verification`, screenshot, config);
+                console.log(response);
+                setSelectedFile(null);
+                // setHideUpload({
+                //     status: 'Pending',
+                // });
+                localStorage.setItem('status', response?.data?.updatedUser?.userStatus);
+
+                setPendingModal(false);
+                handleRefresh();
+                setShowSelectDocumentMessage(false);
+            } catch (error) {
+                console.error('Upload failed:', error);
+            }
+        } else {
+            setShowSelectDocumentMessage(true);
         }
-    } else {
-        setShowSelectDocumentMessage(true);
-    }
-};
+    };
     const items = [
         {
             src: '/assets/images/knowledge/image-5.jpg',
@@ -88,6 +97,12 @@ const handleUpload = async () => {
     return (
         <>
             <div>
+                {(updateStatus === 'readyToApprove' || updateStatus === 'pending') && (
+                    <div className="bg-yellow-400 p-4 max-w-[150px] text-white font-bold mb-2 rounded-md">
+                        <h4>{updateStatus}</h4>
+                    </div>
+                )}
+
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                     <div className="panel h-full">
                         <div className="flex justify-between dark:text-white-light mb-5">
@@ -245,7 +260,7 @@ const handleUpload = async () => {
                                                     <button
                                                         type="button"
                                                         onClick={() => {
-                                                            handleUpload(); 
+                                                            handleUpload();
                                                         }}
                                                         className="btn btn-primary text-sm ltr:ml-2 rtl:mr-2 p-2"
                                                     >

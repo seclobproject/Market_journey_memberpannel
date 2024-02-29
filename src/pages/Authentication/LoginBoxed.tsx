@@ -28,6 +28,8 @@ const LoginBoxed = () => {
                 localStorage.setItem('User', token);
                 localStorage.setItem('status', result.payload?.data?.status);
                 Show_Toast({ message: 'Login success', type: true });
+                console.log(result?.payload?.data);
+                
                 // Navigate to the dashboard
                 navigate('/');
             }
@@ -135,7 +137,6 @@ const LoginBoxed = () => {
                                     </div>
                                 </div>
                                 {errormessage && <p className="text-center text-red-700">{errormessage}</p>}
-
                                 {/* <div>
                                     <label className="flex cursor-pointer items-center">
                                         <input type="checkbox" className="form-checkbox bg-white dark:bg-black" />
