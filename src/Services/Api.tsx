@@ -27,7 +27,7 @@ export const ApiCall = async (method: string, endPoint: string, data?: any, para
             message: res.data?.message || '',
         };
     } catch (error: any) {
-        console.log(error.response ? error.response.data.message : 'Internal Server Error');
+        console.error(error.response ? error.response.data.message : 'Internal Server Error');
         return error;
     }
 };

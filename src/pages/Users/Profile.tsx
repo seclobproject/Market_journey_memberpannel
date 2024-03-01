@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import Dropdown from '../../components/Dropdown';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import IconPencilPaper from '../../components/Icon/IconPencilPaper';
 import IconCoffee from '../../components/Icon/IconCoffee';
 import IconCalendar from '../../components/Icon/IconCalendar';
@@ -18,12 +18,19 @@ import IconTag from '../../components/Icon/IconTag';
 import IconCreditCard from '../../components/Icon/IconCreditCard';
 import IconClock from '../../components/Icon/IconClock';
 import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
+import ChangePassword from '../Components/ChangePassword';
 
 const Profile = () => {
+    const [modal, setModal] = useState(false);
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Profile'));
     });
+
+    const changeModal = () => {
+        setModal(!modal);
+    };
+
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
     return (
         <div>
@@ -37,6 +44,8 @@ const Profile = () => {
                     <span>Profile</span>
                 </li>
             </ul>
+            <p onClick={changeModal}>ChangePassword</p>
+            <ChangePassword changeModal={changeModal} modal={modal} />
             <div className="pt-5">
                 <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5">
                     <div className="panel">

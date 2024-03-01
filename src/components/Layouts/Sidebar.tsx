@@ -20,10 +20,11 @@ import IconDollarSign from '../Icon/IconDollarSign';
 import IconCashBanknotes from '../Icon/IconCashBanknotes';
 import IconBox from '../Icon/IconBox';
 
-
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
     const [errorSubMenu, setErrorSubMenu] = useState(false);
+    const [viewSidebar, setViewSidebar] = useState(false);
+    
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
     const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
     const location = useLocation();
@@ -59,8 +60,19 @@ const Sidebar = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location]);
 
+    const fetchStatus = async () => {
+        const userStatus = await localStorage.getItem('status');
+        if (userStatus === 'readyToApprove') {
+            setViewSidebar(true);
+            console.log(viewSidebar);
+        }
+    };
+
+    useEffect(() => {
+        fetchStatus();
+    }, []);
     return (
-        <div className={semidark ? 'dark' : ''}>
+        <div className={` ${semidark ? 'dark' : ''}`}>
             <nav
                 className={`sidebar fixed min-h-screen h-full top-0 bottom-0 w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] z-50 transition-all duration-300 ${semidark ? 'text-white-dark' : ''}`}
             >
@@ -91,7 +103,8 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className="nav-item">
+
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/member" className="group">
                                             <div className="flex items-center">
                                                 <IconMenuUsers className="group-hover:!text-primary shrink-0" />
@@ -99,7 +112,7 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className="nav-item">
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/package" className="group">
                                             <div className="flex items-center">
                                                 <IconBox className="group-hover:!text-primary shrink-0" />
@@ -107,7 +120,7 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className="nav-item">
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/report" className="group">
                                             <div className="flex items-center">
                                                 <IconMenuPages className="group-hover:!text-primary shrink-0" />
@@ -115,7 +128,7 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className="nav-item">
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/wallet" className="group">
                                             <div className="flex items-center">
                                                 <IconDollarSignCircle className="group-hover:!text-primary shrink-0" />
@@ -123,7 +136,7 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className="nav-item">
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/withdrawal" className="group">
                                             <div className="flex items-center">
                                                 <IconCashBanknotes className="group-hover:!text-primary shrink-0" />

@@ -4,46 +4,214 @@ import { IRootState } from '../../store';
 import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
 import { useEffect, useState } from 'react';
 import Dropdown from '../../components/Dropdown';
-import i18next from 'i18next';
-import IconCaretDown from '../../components/Icon/IconCaretDown';
 import IconUser from '../../components/Icon/IconUser';
 import IconMail from '../../components/Icon/IconMail';
 import IconLockDots from '../../components/Icon/IconLockDots';
-import IconInstagram from '../../components/Icon/IconInstagram';
-import IconFacebookCircle from '../../components/Icon/IconFacebookCircle';
-import IconTwitter from '../../components/Icon/IconTwitter';
-import IconGoogle from '../../components/Icon/IconGoogle';
 import IconPhone from '../../components/Icon/IconPhone';
 import IconMapPin from '../../components/Icon/IconMapPin';
-import IconLock from '../../components/Icon/IconLock';
+import IconCashBanknotes from '../../components/Icon/IconCashBanknotes';
+import { ApiCall } from '../../Services/Api';
+import { Show_Toast } from '../Components/Toast';
+import { districtlistinZonalUrl, memberaddUrl, packagesListUrl, panchayathlistindropdownUrl, statelistPageUrl, zonallistindropdownUrl } from '../../utils/EndPoints';
 
+interface Member {
+    name: string;
+    email: string;
+    password: string;
+    address: string;
+    phone: string;
+    franchise: string;
+    packageAmount: string | number;
+    state: string;
+    district: string;
+    zonal: string;
+    panchayath: string;
+}
+interface Package {
+    franchiseName: string;
+    packageAmount: number;
+}
+interface States {
+    name: String;
+    id: String;
+}
 const RegisterBoxed = () => {
-    const [userDetails, setUserDetails] = useState({});
-
+    const [addMember, setAddMember] = useState<Member>({
+        name: '',
+        email: '',
+        franchise: '',
+        password: '',
+        address: '',
+        phone: '',
+        packageAmount: '',
+        state: '',
+        district: '',
+        zonal: '',
+        panchayath: '',
+    });
+    const [stateList, setStateList] = useState<any>([]);
+    const [districtList, setDistrictList] = useState([]);
+    const [zonalList, setZonalList] = useState([]);
+    const [panchayathList, setPanchayathList] = useState([]);
+    const [packageList, setPackageList] = useState<Package[]>([]);
+    const [packageAmount, setPackageAmount] = useState({});
+    const [showPassword, setShowPassword] = useState(false);
+    const [showTransPassword, setShowTransPassword] = useState(false);
+    const [selectedStateId, setSelectedStateId] = useState('');
+    const [selectedDistrictId, setSelectedDistrictId] = useState(null);
+    const [selectedZonalId, setSelectedZonalId] = useState(null);
+    const [selectedState, setSelectedState] = useState(null);
     const dispatch = useDispatch();
+
     useEffect(() => {
         dispatch(setPageTitle('Register Boxed'));
-    });
+        getPackagesList();
+        getStateList();
+    }, []);
     const navigate = useNavigate();
-    const isDark = useSelector((state: IRootState) => state.themeConfig.theme === 'dark' || state.themeConfig.isDarkMode);
-    const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
-    const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-    const setLocale = (flag: string) => {
-        setFlag(flag);
-        if (flag.toLowerCase() === 'ae') {
-            dispatch(toggleRTL('rtl'));
-        } else {
-            dispatch(toggleRTL('ltr'));
+
+    useEffect(() => {
+        if (selectedStateId) {
+            getDistrictList();
+        }
+        if (selectedDistrictId) {
+            getZonallist();
+        }
+    }, [selectedStateId, selectedDistrictId]);
+
+    const getStateList = async () => {
+        try {
+            const response = await ApiCall('get', statelistPageUrl);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setStateList(response?.data?.states);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
         }
     };
-    const [flag, setFlag] = useState(themeConfig.locale);
+    //-----------list district in drop down--------
+    const getDistrictList = async () => {
+        try {
+            const response = await ApiCall('get', `${districtlistinZonalUrl}/${selectedStateId}`);
 
-    const submitForm = () => {
-        navigate('/');
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setDistrictList(response?.data?.districts);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    //-----------list Zonal in drop down--------
+    const getZonallist = async () => {
+        try {
+            const response = await ApiCall('get', `${zonallistindropdownUrl}/${selectedDistrictId}`);
+            console.log(response);
+            
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setZonalList(response?.data?.zonals);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    //-----------list Zonal in drop down--------
+    const getPanchayathList = async () => {
+        try {
+            const response = await ApiCall('get', `${panchayathlistindropdownUrl}/${selectedZonalId}`);
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setPanchayathList(response?.data?.panchayaths);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    //-----------list pacakges in drop down--------
+    const getPackagesList = async () => {
+        try {
+            const response = await ApiCall('get', packagesListUrl);
+            console.log(response);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setPackageList(response?.data?.packageData);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    //---------Add--panchayath---------
+    const addMemberFun = async () => {
+        try {
+            const response = await ApiCall('post', memberaddUrl, addMember);
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                // setValidated(false);
+                setAddMember({
+                    name: '',
+                    email: '',
+                    franchise: '',
+                    password: '',
+                    address: '',
+                    phone: '',
+                    packageAmount: '',
+                    state: '',
+                    district: '',
+                    zonal: '',
+                    panchayath: '',
+                });
+                Show_Toast({ message: 'Member added successfully', type: true });
+            } else {
+                Show_Toast({ message: 'Member added failed', type: false });
+            }
+        } catch (error) {
+            console.log(error);
+
+            // Show_Toast({message:error, type:false});
+        }
     };
 
+    const packageOptions = packageList.map((pack) => ({
+        value: pack.franchiseName,
+        label: pack.franchiseName,
+        packageAmount: pack.packageAmount,
+    }));
+
+  const stateSelectHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedValue = e.target.value;
+      const selectedState = stateList.find((state: any) => state.name === selectedValue);
+
+      if (selectedState) {
+          setAddMember({
+              ...addMember,
+              state: selectedState.name, 
+          });
+          setSelectedStateId(selectedState.id);
+      }
+  };
+
     return (
-        <div>
+        <>
             <div className="absolute inset-0">
                 <img src="/assets/images/auth/bg-gradient.png" alt="image" className="h-full w-full object-cover" />
             </div>
@@ -55,57 +223,16 @@ const RegisterBoxed = () => {
                 <img src="/assets/images/auth/polygon-object.svg" alt="image" className="absolute bottom-0 end-[28%]" />
                 <div className="relative w-full max-w-[870px] rounded-md bg-[linear-gradient(45deg,#fff9f9_0%,rgba(255,255,255,0)_25%,rgba(255,255,255,0)_75%,_#fff9f9_100%)] p-2 dark:bg-[linear-gradient(52.22deg,#0E1726_0%,rgba(14,23,38,0)_18.66%,rgba(14,23,38,0)_51.04%,rgba(14,23,38,0)_80.07%,#0E1726_100%)]">
                     <div className="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[758px] py-20">
-                        {/* <div className="absolute top-6 end-6">
-                            <div className="dropdown">
-                                <Dropdown
-                                    offset={[0, 8]}
-                                    placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                    btnClassName="flex items-center gap-2.5 rounded-lg border border-white-dark/30 bg-white px-2 py-1.5 text-white-dark hover:border-primary hover:text-primary dark:bg-black"
-                                    button={
-                                        <>
-                                            <div>
-                                                <img src={`/assets/images/flags/${flag.toUpperCase()}.svg`} alt="image" className="h-5 w-5 rounded-full object-cover" />
-                                            </div>
-                                            <div className="text-base font-bold uppercase">{flag}</div>
-                                            <span className="shrink-0">
-                                                <IconCaretDown />
-                                            </span>
-                                        </>
-                                    }
-                                >
-                                    <ul className="!px-2 text-dark dark:text-white-dark grid grid-cols-2 gap-2 font-semibold dark:text-white-light/90 w-[280px]">
-                                        {themeConfig.languageList.map((item: any) => {
-                                            return (
-                                                <li key={item.code}>
-                                                    <button
-                                                        type="button"
-                                                        className={`flex w-full hover:text-primary rounded-lg ${flag === item.code ? 'bg-primary/10 text-primary' : ''}`}
-                                                        onClick={() => {
-                                                            i18next.changeLanguage(item.code);
-                                                            // setFlag(item.code);
-                                                            setLocale(item.code);
-                                                        }}
-                                                    >
-                                                        <img src={`/assets/images/flags/${item.code.toUpperCase()}.svg`} alt="flag" className="w-5 h-5 object-cover rounded-full" />
-                                                        <span className="ltr:ml-3 rtl:mr-3">{item.name}</span>
-                                                    </button>
-                                                </li>
-                                            );
-                                        })}
-                                    </ul>
-                                </Dropdown>
-                            </div>
-                        </div> */}
                         <div className="mx-auto w-full max-w-[440px]">
                             <div className="mb-10">
                                 <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign Up</h1>
                             </div>
-                            <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
+                            <form className="space-y-5 dark:text-white" onSubmit={addMemberFun}>
                                 <div>
                                     <label htmlFor="Name">Name</label>
                                     <div className="relative text-white-dark">
                                         <input
-                                            onChange={(e) => setUserDetails({ name: e.target.value })}
+                                            onChange={(e) => setAddMember({ ...addMember, name: e.target.value })}
                                             id="Name"
                                             type="text"
                                             placeholder="Enter Name"
@@ -120,9 +247,10 @@ const RegisterBoxed = () => {
                                     <label htmlFor="Email">Email</label>
                                     <div className="relative text-white-dark">
                                         <input
-                                            onChange={(e) => setUserDetails({ email: e.target.value })}
+                                            onChange={(e) => setAddMember({ ...addMember, email: e.target.value })}
                                             id="Email"
                                             type="email"
+                                            required
                                             placeholder="Enter Email"
                                             className="form-input ps-10 placeholder:text-white-dark"
                                         />
@@ -135,8 +263,21 @@ const RegisterBoxed = () => {
                                     <label htmlFor="Email">Phone</label>
                                     <div className="relative text-white-dark">
                                         <input
-                                            onChange={(e) => setUserDetails({ phone: e.target.value })}
+                                            onChange={(e) => {
+                                                const enteredValue = e.target.value;
+                                                // Allow only numeric characters
+                                                const numericValue = enteredValue.replace(/\D/g, '');
+
+                                                // Restrict to a maximum of 10 digits
+                                                const limitedValue = numericValue.slice(0, 15);
+
+                                                setAddMember({
+                                                    ...addMember,
+                                                    phone: limitedValue,
+                                                });
+                                            }}
                                             id="Phone"
+                                            required
                                             type="number"
                                             placeholder="Enter Phone"
                                             className="form-input ps-10 placeholder:text-white-dark"
@@ -149,38 +290,22 @@ const RegisterBoxed = () => {
                                 <div>
                                     <label htmlFor="Email">Address</label>
                                     <div className="relative text-white-dark">
-                                        <input
-                                            onChange={(e) => setUserDetails({ address: e.target.value })}
+                                        <span className="absolute start-4 top-1/4 -translate-y-1/2">
+                                            <IconMapPin fill={true} />
+                                        </span>
+                                        <textarea
+                                            onChange={(e) => setAddMember({ ...addMember, address: e.target.value })}
                                             id="Address"
-                                            type="text"
                                             placeholder="Enter Your Address"
                                             className="form-input ps-10 placeholder:text-white-dark"
                                         />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconMapPin fill={true} />
-                                        </span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="Password">TransactionPassword</label>
-                                    <div className="relative text-white-dark">
-                                        <input
-                                            onChange={(e) => setUserDetails({ transactionPassword: e.target.value })}
-                                            id="TransactionPassword"
-                                            type="password"
-                                            placeholder="Enter TransactionPassword"
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                        />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconLockDots fill={true} />
-                                        </span>
                                     </div>
                                 </div>
                                 <div>
                                     <label htmlFor="Password">Password</label>
                                     <div className="relative text-white-dark">
                                         <input
-                                            onChange={(e) => setUserDetails({ password: e.target.value })}
+                                            onChange={(e) => setAddMember({ ...addMember, password: e.target.value })}
                                             id="Password"
                                             type="password"
                                             placeholder="Enter Password"
@@ -191,71 +316,159 @@ const RegisterBoxed = () => {
                                         </span>
                                     </div>
                                 </div>
-                                {/* <div>
-                                    <label className="flex cursor-pointer items-center">
-                                        <input type="checkbox" className="form-checkbox bg-white dark:bg-black" />
-                                        <span className="text-white-dark">Subscribe to weekly newsletter</span>
-                                    </label>
-                                </div> */}
+                                <div>
+                                    <label htmlFor="franchise">Franchise</label>
+                                    <div className="relative text-white-dark">
+                                        <select
+                                            onChange={(e) => {
+                                                const selectedValue = e.target.value;
+                                                const selectedOption = packageOptions.find((option) => option.value === selectedValue);
+
+                                                if (selectedOption) {
+                                                    setAddMember({
+                                                        ...addMember,
+                                                        franchise: selectedOption.value,
+                                                        packageAmount: selectedOption.packageAmount,
+                                                    });
+                                                }
+                                            }}
+                                            value={addMember.franchise}
+                                            className="form-input ps-10 placeholder:text-white-dark"
+                                        >
+                                            <option>Select a franchise type </option>
+                                            {packageOptions.map((option) => (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label htmlFor="packageAmount">PackageAmount</label>
+                                    <div className="relative text-white-dark">
+                                        <input
+                                            id="PackageAmount"
+                                            type="text"
+                                            value={addMember?.packageAmount}
+                                            placeholder="packageAmount"
+                                            readOnly
+                                            className="form-input ps-10 placeholder:text-white-dark"
+                                        />
+                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <IconCashBanknotes fill={true} />
+                                        </span>
+                                    </div>
+                                </div>
+                                {(addMember?.franchise === 'District Franchise' || addMember?.franchise === 'Zonal Franchise' || addMember?.franchise === 'Mobile Franchise') && (
+                                    <>
+                                        <div>
+                                            <label htmlFor="Email">State</label>
+                                            <div className="relative text-white-dark">
+                                                <select className="form-input ps-10 placeholder:text-white-dark" onChange={stateSelectHandler} value={addMember.state}>
+                                                    <option key="default" value="">
+                                                        Select State
+                                                    </option>
+                                                    {stateList.map((singleState: any, idx: any) => (
+                                                        <option key={idx} value={singleState.name}>
+                                                            {singleState.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label htmlFor="Email">District</label>
+                                            <div className="relative text-white-dark">
+                                                <select
+                                                    className="form-input ps-10 placeholder:text-white-dark"
+                                                    onChange={(e) => {
+                                                        const selectedValue = e.target.value;
+                                                        const selectedDistrict = stateList.find((district: any) => district.name === selectedValue);
+
+                                                        if (selectedState) {
+                                                            setAddMember({
+                                                                ...addMember,
+                                                                district: selectedDistrict.name,
+                                                            });
+                                                            setSelectedDistrictId(selectedDistrict.id);
+                                                        }
+                                                    }}
+                                                    value={addMember.district}
+                                                >
+                                                    <option key="default" value="">
+                                                        Select District{' '}
+                                                    </option>
+                                                    {districtList.map((dist: any) => (
+                                                        <option key={dist.id} value={dist.name}>
+                                                            {dist.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                                {(addMember?.franchise === 'Zonal Franchise' || addMember?.franchise === 'Mobile Franchise') && (
+                                    <div>
+                                        <label htmlFor="Email">Zonel</label>
+                                        <div className="relative text-white-dark">
+                                            <select
+                                                className="form-input ps-10 placeholder:text-white-dark"
+                                                onChange={(e) => {
+                                                    const selectedValue = e.target.value;
+                                                    const selectedZonel = stateList.find((zonal: any) => zonal.name === selectedValue);
+
+                                                    if (selectedState) {
+                                                        setAddMember({
+                                                            ...addMember,
+                                                            zonal: selectedZonel.name,
+                                                        });
+                                                        setSelectedZonalId(selectedZonel.id);
+                                                    }
+                                                }}
+                                                value={addMember.zonal}
+                                            >
+                                                <option key="default" value="">
+                                                    Select Zonel{' '}
+                                                </option>
+                                                {zonalList.map((zonal: any) => (
+                                                    <option key={zonal.id}>{zonal.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
+                                {addMember?.franchise === 'Mobile Franchise' && (
+                                    <div>
+                                        <label htmlFor="Email">Panchayath</label>
+                                        <div className="relative text-white-dark">
+                                            <select className="form-input ps-10 placeholder:text-white-dark">
+                                                <option>Select panchayath </option>
+                                                {panchayathList.map((panchayath) => (
+                                                    <option key={panchayath}>{panchayath}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
                                 <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
                                     Sign Up
                                 </button>
                             </form>
                             <div className="relative my-7 text-center md:mb-9">
-                                {/* <span className="absolute inset-x-0 top-1/2 h-px w-full -translate-y-1/2 bg-white-light dark:bg-white-dark"></span>
-                                <span className="relative bg-white px-2 font-bold uppercase text-white-dark dark:bg-dark dark:text-white-light">or</span> */}
-                            </div>
-                            {/* <div className="mb-10 md:mb-[60px]">
-                                <ul className="flex justify-center gap-3.5 text-white">
-                                    <li>
-                                        <Link
-                                            to="#"
-                                            className="inline-flex h-8 w-8 items-center justify-center rounded-full p-0 transition hover:scale-110"
-                                            style={{ background: 'linear-gradient(135deg, rgba(239, 18, 98, 1) 0%, rgba(67, 97, 238, 1) 100%)' }}
-                                        >
-                                            <IconInstagram />
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            to="#"
-                                            className="inline-flex h-8 w-8 items-center justify-center rounded-full p-0 transition hover:scale-110"
-                                            style={{ background: 'linear-gradient(135deg, rgba(239, 18, 98, 1) 0%, rgba(67, 97, 238, 1) 100%)' }}
-                                        >
-                                            <IconFacebookCircle />
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            to="#"
-                                            className="inline-flex h-8 w-8 items-center justify-center rounded-full p-0 transition hover:scale-110"
-                                            style={{ background: 'linear-gradient(135deg, rgba(239, 18, 98, 1) 0%, rgba(67, 97, 238, 1) 100%)' }}
-                                        >
-                                            <IconTwitter fill={true} />
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link
-                                            to="#"
-                                            className="inline-flex h-8 w-8 items-center justify-center rounded-full p-0 transition hover:scale-110"
-                                            style={{ background: 'linear-gradient(135deg, rgba(239, 18, 98, 1) 0%, rgba(67, 97, 238, 1) 100%)' }}
-                                        >
-                                            <IconGoogle />
-                                        </Link>
-                                    </li>
-                                </ul>
-                            </div> */}
-                            <div className="text-center dark:text-white">
-                                Already have an account ?&nbsp;
-                                <Link to="/auth/boxed-signin" className="uppercase text-primary underline transition hover:text-black dark:hover:text-white">
-                                    SIGN IN
-                                </Link>
+                                <div className="text-center dark:text-white">
+                                    Already have an account ?&nbsp;
+                                    <Link to="/auth/boxed-signin" className="uppercase text-primary underline transition hover:text-black dark:hover:text-white">
+                                        SIGN IN
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
