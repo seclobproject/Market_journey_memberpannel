@@ -18,20 +18,108 @@ import IconTag from '../../components/Icon/IconTag';
 import IconCreditCard from '../../components/Icon/IconCreditCard';
 import IconClock from '../../components/Icon/IconClock';
 import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
-import ChangePassword from '../Components/ChangePassword';
+import { ApiCall } from '../../Services/Api';
+import { editProfileUrl, getProfileUrl } from '../../utils/EndPoints';
+import IconCashBanknotes from '../../components/Icon/IconCashBanknotes';
+import IconBox from '../../components/Icon/IconBox';
+import IconPencil from '../../components/Icon/IconPencil';
+interface ProfileDetails {
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+    franchise: string;
+    franchiseN: string;
+    userStatus: string;
+    walletAmount: string;
+}
 
 const Profile = () => {
-    const [modal, setModal] = useState(false);
+    const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
+        name: '',
+        address: '',
+        phone: '',
+        email: '',
+        franchise: '',
+        franchiseN: '',
+        userStatus: '',
+        walletAmount: '',
+    });
+    const [editProfleData, setEditProfileData] = useState({
+        name: '',
+        address: '',
+        phone: '',
+        email: '',
+        password: '',
+    });
+    const [confirmPassword, setConfirmPasswod] = useState('');
+    const [errorMessage, setErrorMessage] = useState(false);
+
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Profile'));
-    });
+        getProfile();
+    }, []);
+    useEffect(() => {
+        if (confirmPassword === editProfleData.password) {
+            setErrorMessage(false);
+        } else {
+            setErrorMessage(true);
+        }
+    }, [confirmPassword]);
 
-    const changeModal = () => {
-        setModal(!modal);
+    //----------Get user profile -----------
+
+    const getProfile = async () => {
+        try {
+            const response = await ApiCall('get', getProfileUrl);
+            console.log(response);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setProfileDetails(response?.data);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    //--------------------------------
+
+    // ---------- Edit profile --------------
+    const editProfile = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (editProfleData.password === confirmPassword) {
+        } else {
+            setErrorMessage(true);
+        }
+        try {
+            const response = await ApiCall('post', editProfileUrl, editProfleData);
+            console.log(response);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setProfileDetails(response?.data);
+                getProfile();
+                setEditProfileData({
+                    name: '',
+                    address: '',
+                    phone: '',
+                    email: '',
+                    password: '',
+                });
+                setConfirmPasswod('');
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
     };
 
-    const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
     return (
         <div>
             <ul className="flex space-x-2 rtl:space-x-reverse">
@@ -44,68 +132,152 @@ const Profile = () => {
                     <span>Profile</span>
                 </li>
             </ul>
-            <p onClick={changeModal}>ChangePassword</p>
-            <ChangePassword changeModal={changeModal} modal={modal} />
             <div className="pt-5">
-                <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5">
-                    <div className="panel">
+                {/* <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5"> */}
+                <div className="flex flex-wrap justify-evenly">
+                    <div className="panel mb-5 ">
                         <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Profile</h5>
-                            <Link to="/users/user-account-settings" className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
+                            <h5 className="font-semibold text-warning text-lg dark:text-white-light">Profile</h5>
+                            {/* <Link to="/users/user-account-settings" className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
                                 <IconPencilPaper />
-                            </Link>
+                            </Link> */}
                         </div>
                         <div className="mb-5">
                             <div className="flex flex-col justify-center items-center">
-                                <img src="/assets/images/profile-34.jpeg" alt="img" className="w-24 h-24 rounded-full object-cover  mb-5" />
-                                <p className="font-semibold text-primary text-xl">Jimmy Turner</p>
+                                <img src="/assets/images/userProfile.jpg" alt="img" className="w-24 h-24 rounded-full object-cover mb-5" />
+                                <p className="font-semibold text-primary text-xl">{profielDetails.name}</p>
+                                <p className={profielDetails.userStatus === 'approved' ? 'text-green-500' : 'text-warning'}>{profielDetails.userStatus}</p>
                             </div>
-                            <ul className="mt-5 flex flex-col max-w-[160px] m-auto space-y-4 font-semibold text-white-dark">
-                                <li className="flex items-center gap-2">
-                                    <IconCoffee className="shrink-0" />
-                                    Web Developer
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <IconCalendar className="shrink-0" />
-                                    Jan 20, 1989
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <IconMapPin className="shrink-0" />
-                                    New York, USA
-                                </li>
-                                <li>
-                                    <button className="flex items-center gap-2">
-                                        <IconMail className="w-5 h-5 shrink-0" />
-                                        <span className="text-primary truncate">jimmy@gmail.com</span>
-                                    </button>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <IconPhone />
-                                    <span className="whitespace-nowrap" dir="ltr">
-                                        +1 (530) 555-12121
-                                    </span>
-                                </li>
-                            </ul>
-                            <ul className="mt-7 flex items-center justify-center gap-2">
-                                <li>
-                                    <button className="btn btn-info flex items-center justify-center rounded-full w-10 h-10 p-0">
-                                        <IconTwitter className="w-5 h-5" />
-                                    </button>
-                                </li>
-                                <li>
-                                    <button className="btn btn-danger flex items-center justify-center rounded-full w-10 h-10 p-0">
-                                        <IconDribbble />
-                                    </button>
-                                </li>
-                                <li>
-                                    <button className="btn btn-dark flex items-center justify-center rounded-full w-10 h-10 p-0">
-                                        <IconGithub />
-                                    </button>
-                                </li>
-                            </ul>
+                            <div className="mt-5 flex m-auto space-y-4 flex-wrap text-md font-semibold text-white-dark gap-5">
+                                <ul className="mt-5 m-auto space-y-4 max-w-[280px]">
+                                    {/* <li className="flex items-center gap-2">
+                                        <IconCoffee className="shrink-0" />
+                                        Status : {profielDetails.userStatus}
+                                    </li> */}
+                                    <li>
+                                        <button className="flex items-center gap-2">
+                                            <IconMail className="w-5 h-5 shrink-0" />
+                                            <span className="text-primary truncate">Email : {profielDetails.email}</span>
+                                        </button>
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <IconPhone />
+                                        Phone : {profielDetails.phone}
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <IconMapPin className="shrink-0" />
+                                        Address : {profielDetails.address}
+                                    </li>
+
+                                    {/* <li className="flex items-center gap-2">
+                                        <IconPhone />
+                                        <span className="whitespace-nowrap" dir="ltr">
+                                            {profielDetails.phone}
+                                        </span>
+                                    </li> */}
+                                </ul>
+                                <ul className="mt-5 m-auto space-y-4">
+                                    <li className="flex items-center gap-2">
+                                        <IconCashBanknotes className="shrink-0" />
+                                        walletAmount : {profielDetails.walletAmount}
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <IconBox className="shrink-0" />
+                                        Franchise Type : {profielDetails.franchise}
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <IconPencil className="shrink-0" />
+                                        Franchise Name : {profielDetails.franchise}
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                    <div className="panel lg:col-span-2 xl:col-span-3">
+                    <form onSubmit={editProfile} className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black ">
+                        <h6 className="text-lg text-warning font-bold mb-5">Edit Details</h6>
+                        <div className="flex flex-col sm:flex-row">
+                            {/* <div className="ltr:sm:mr-4 rtl:sm:ml-4 w-full sm:w-2/12 mb-5">
+                                    <img src="/assets//images/profile-34.jpeg" alt="img" className="w-20 h-20 md:w-32 md:h-32 rounded-full object-cover mx-auto" />
+                                </div> */}
+                            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div className="mr-2">
+                                    <label htmlFor="name">Full Name</label>
+                                    <input
+                                        onChange={(e) => setEditProfileData({ ...editProfleData, name: e.target.value })}
+                                        id="name"
+                                        type="text"
+                                        value={editProfleData.name}
+                                        placeholder="Enter your name"
+                                        className="form-input"
+                                    />
+                                </div>
+
+                                <div className="mr-2">
+                                    <label htmlFor="address">Address</label>
+                                    <input
+                                        onChange={(e) => setEditProfileData({ ...editProfleData, address: e.target.value })}
+                                        id="address"
+                                        value={editProfleData.address}
+                                        type="text"
+                                        placeholder="Address"
+                                        className="form-input"
+                                    />
+                                </div>
+                                {/* <div className="mr-2">
+                                    <label htmlFor="phone">Phone</label>
+                                    <input
+                                        onChange={(e) => setEditProfileData({ ...editProfleData, phone: e.target.value })}
+                                        id="phone"
+                                        type="text"
+                                        value={editProfleData.phone}
+                                        placeholder="Enter your Phone"
+                                        className="form-input"
+                                    />
+                                </div> */}
+                                <div className="mr-2">
+                                    <label htmlFor="email">Email</label>
+                                    <input
+                                        onChange={(e) => setEditProfileData({ ...editProfleData, email: e.target.value })}
+                                        id="email"
+                                        value={editProfleData.email}
+                                        type="email"
+                                        placeholder="Email"
+                                        className="form-input"
+                                    />
+                                </div>
+                                <div className="mr-2">
+                                    <label htmlFor="newPassword">New Password</label>
+                                    <input
+                                        onChange={(e) => setEditProfileData({ ...editProfleData, password: e.target.value })}
+                                        id="newPassword"
+                                        type="text"
+                                        value={editProfleData.password}
+                                        placeholder="Enter new password"
+                                        className="form-input"
+                                    />
+                                </div>
+                                <div className="mr-2">
+                                    <label htmlFor="confirmPassword">Confirm Password</label>
+                                    <input
+                                        onChange={(e) => setConfirmPasswod(e.target.value)}
+                                        id="confirmPassword"
+                                        type="text"
+                                        value={confirmPassword}
+                                        placeholder="Enter confirm Password"
+                                        className="form-input"
+                                    />
+                                </div>
+                                {errorMessage && <p className="text-red-600">Passwords do not match.</p>}
+                                <div className="sm:col-span-2 mt-3">
+                                    <button type="submit" className="btn btn-primary border-none">
+                                        Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                {/* <div className="panel lg:col-span-2 xl:col-span-3">
                         <div className="mb-5">
                             <h5 className="font-semibold text-lg dark:text-white-light">Task</h5>
                         </div>
@@ -196,209 +368,8 @@ const Profile = () => {
                                 </table>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div className="panel">
-                        <div className="mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Summary</h5>
-                        </div>
-                        <div className="space-y-4">
-                            <div className="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
-                                <div className="flex items-center justify-between p-4 py-2">
-                                    <div className="grid place-content-center w-9 h-9 rounded-md bg-secondary-light dark:bg-secondary text-secondary dark:text-secondary-light">
-                                        <IconShoppingBag />
-                                    </div>
-                                    <div className="ltr:ml-4 rtl:mr-4 flex items-start justify-between flex-auto font-semibold">
-                                        <h6 className="text-white-dark text-[13px] dark:text-white-dark">
-                                            Income
-                                            <span className="block text-base text-[#515365] dark:text-white-light">$92,600</span>
-                                        </h6>
-                                        <p className="ltr:ml-auto rtl:mr-auto text-secondary">90%</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
-                                <div className="flex items-center justify-between p-4 py-2">
-                                    <div className="grid place-content-center w-9 h-9 rounded-md bg-info-light dark:bg-info text-info dark:text-info-light">
-                                        <IconTag />
-                                    </div>
-                                    <div className="ltr:ml-4 rtl:mr-4 flex items-start justify-between flex-auto font-semibold">
-                                        <h6 className="text-white-dark text-[13px] dark:text-white-dark">
-                                            Profit
-                                            <span className="block text-base text-[#515365] dark:text-white-light">$37,515</span>
-                                        </h6>
-                                        <p className="ltr:ml-auto rtl:mr-auto text-info">65%</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
-                                <div className="flex items-center justify-between p-4 py-2">
-                                    <div className="grid place-content-center w-9 h-9 rounded-md bg-warning-light dark:bg-warning text-warning dark:text-warning-light">
-                                        <IconCreditCard />
-                                    </div>
-                                    <div className="ltr:ml-4 rtl:mr-4 flex items-start justify-between flex-auto font-semibold">
-                                        <h6 className="text-white-dark text-[13px] dark:text-white-dark">
-                                            Expenses
-                                            <span className="block text-base text-[#515365] dark:text-white-light">$55,085</span>
-                                        </h6>
-                                        <p className="ltr:ml-auto rtl:mr-auto text-warning">80%</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="panel">
-                        <div className="flex items-center justify-between mb-10">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Pro Plan</h5>
-                            <button className="btn btn-primary">Renew Now</button>
-                        </div>
-                        <div className="group">
-                            <ul className="list-inside list-disc text-white-dark font-semibold mb-7 space-y-2">
-                                <li>10,000 Monthly Visitors</li>
-                                <li>Unlimited Reports</li>
-                                <li>2 Years Data Storage</li>
-                            </ul>
-                            <div className="flex items-center justify-between mb-4 font-semibold">
-                                <p className="flex items-center rounded-full bg-dark px-2 py-1 text-xs text-white-light font-semibold">
-                                    <IconClock className="w-3 h-3 ltr:mr-1 rtl:ml-1" />5 Days Left
-                                </p>
-                                <p className="text-info">$25 / month</p>
-                            </div>
-                            <div className="rounded-full h-2.5 p-0.5 bg-dark-light overflow-hidden mb-5 dark:bg-dark-light/10">
-                                <div className="bg-gradient-to-r from-[#f67062] to-[#fc5296] w-full h-full rounded-full relative" style={{ width: '65%' }}></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="panel">
-                        <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Payment History</h5>
-                        </div>
-                        <div>
-                            <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-                                <div className="flex items-center justify-between py-2">
-                                    <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-                                        March
-                                        <span className="block text-white-dark dark:text-white-light">Pro Membership</span>
-                                    </h6>
-                                    <div className="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-                                        <p className="font-semibold">90%</p>
-                                        <div className="dropdown ltr:ml-4 rtl:mr-4">
-                                            <Dropdown
-                                                offset={[0, 5]}
-                                                placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                                btnClassName="hover:text-primary"
-                                                button={<IconHorizontalDots className="opacity-80 hover:opacity-100" />}
-                                            >
-                                                <ul className="!min-w-[150px]">
-                                                    <li>
-                                                        <button type="button">View Invoice</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Download Invoice</button>
-                                                    </li>
-                                                </ul>
-                                            </Dropdown>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-                                <div className="flex items-center justify-between py-2">
-                                    <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-                                        February
-                                        <span className="block text-white-dark dark:text-white-light">Pro Membership</span>
-                                    </h6>
-                                    <div className="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-                                        <p className="font-semibold">90%</p>
-                                        <div className="dropdown ltr:ml-4 rtl:mr-4">
-                                            <Dropdown offset={[0, 5]} placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`} button={<IconHorizontalDots className="opacity-80 hover:opacity-100" />}>
-                                                <ul className="!min-w-[150px]">
-                                                    <li>
-                                                        <button type="button">View Invoice</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Download Invoice</button>
-                                                    </li>
-                                                </ul>
-                                            </Dropdown>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="flex items-center justify-between py-2">
-                                    <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-                                        January
-                                        <span className="block text-white-dark dark:text-white-light">Pro Membership</span>
-                                    </h6>
-                                    <div className="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-                                        <p className="font-semibold">90%</p>
-                                        <div className="dropdown ltr:ml-4 rtl:mr-4">
-                                            <Dropdown offset={[0, 5]} placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`} button={<IconHorizontalDots className="opacity-80 hover:opacity-100" />}>
-                                                <ul className="!min-w-[150px]">
-                                                    <li>
-                                                        <button type="button">View Invoice</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Download Invoice</button>
-                                                    </li>
-                                                </ul>
-                                            </Dropdown>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="panel">
-                        <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Card Details</h5>
-                        </div>
-                        <div>
-                            <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-                                <div className="flex items-center justify-between py-2">
-                                    <div className="flex-none">
-                                        <img src="/assets/images/card-americanexpress.svg" alt="img" />
-                                    </div>
-                                    <div className="flex items-center justify-between flex-auto ltr:ml-4 rtl:mr-4">
-                                        <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-                                            American Express
-                                            <span className="block text-white-dark dark:text-white-light">Expires on 12/2025</span>
-                                        </h6>
-                                        <span className="badge bg-success ltr:ml-auto rtl:mr-auto">Primary</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-                                <div className="flex items-center justify-between py-2">
-                                    <div className="flex-none">
-                                        <img src="/assets/images/card-mastercard.svg" alt="img" />
-                                    </div>
-                                    <div className="flex items-center justify-between flex-auto ltr:ml-4 rtl:mr-4">
-                                        <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-                                            Mastercard
-                                            <span className="block text-white-dark dark:text-white-light">Expires on 03/2025</span>
-                                        </h6>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="flex items-center justify-between py-2">
-                                    <div className="flex-none">
-                                        <img src="/assets/images/card-visa.svg" alt="img" />
-                                    </div>
-                                    <div className="flex items-center justify-between flex-auto ltr:ml-4 rtl:mr-4">
-                                        <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-                                            Visa
-                                            <span className="block text-white-dark dark:text-white-light">Expires on 10/2025</span>
-                                        </h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    </div> */}
+                {/* </div> */}
             </div>
         </div>
     );

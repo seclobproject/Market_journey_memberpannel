@@ -31,7 +31,7 @@ const LoginBoxed = () => {
                 console.log(result?.payload?.data);
                 
                 // Navigate to the dashboard
-                navigate('/');
+                navigate('/',{ replace: true });
             }
             else{
                 setErrorMessage(result?.payload?.response?.data?.message);

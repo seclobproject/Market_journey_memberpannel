@@ -37,7 +37,7 @@ const AccountSetting = () => {
                 <div className="flex items-center justify-between mb-5">
                     <h5 className="font-semibold text-lg dark:text-white-light">Settings</h5>
                 </div>
-                <div>
+                {/* <div>
                     <ul className="sm:flex font-semibold border-b border-[#ebedf2] dark:border-[#191e3a] mb-5 whitespace-nowrap overflow-y-auto">
                         <li className="inline-block">
                             <button
@@ -76,25 +76,25 @@ const AccountSetting = () => {
                             </button>
                         </li>
                     </ul>
-                </div>
+                </div> */}
                 {tabs === 'home' ? (
                     <div>
                         <form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black">
                             <h6 className="text-lg font-bold mb-5">General Information</h6>
                             <div className="flex flex-col sm:flex-row">
-                                <div className="ltr:sm:mr-4 rtl:sm:ml-4 w-full sm:w-2/12 mb-5">
+                                {/* <div className="ltr:sm:mr-4 rtl:sm:ml-4 w-full sm:w-2/12 mb-5">
                                     <img src="/assets//images/profile-34.jpeg" alt="img" className="w-20 h-20 md:w-32 md:h-32 rounded-full object-cover mx-auto" />
-                                </div>
+                                </div> */}
                                 <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
                                     <div>
                                         <label htmlFor="name">Full Name</label>
-                                        <input id="name" type="text" placeholder="Jimmy Turner" className="form-input" />
+                                        <input id="name" type="text" placeholder="Enter your name" className="form-input" />
                                     </div>
-                                    <div>
+                                    {/* <div>
                                         <label htmlFor="profession">Profession</label>
                                         <input id="profession" type="text" placeholder="Web Developer" className="form-input" />
-                                    </div>
-                                    <div>
+                                    </div> */}
+                                    {/* <div>
                                         <label htmlFor="country">Country</label>
                                         <select defaultValue="United States" id="country" className="form-select text-white-dark">
                                             <option value="All Countries">All Countries</option>
@@ -106,33 +106,41 @@ const AccountSetting = () => {
                                             <option value="Norway">Norway</option>
                                             <option value="Canada">Canada</option>
                                         </select>
-                                    </div>
+                                    </div> */}
                                     <div>
                                         <label htmlFor="address">Address</label>
-                                        <input id="address" type="text" placeholder="New York" className="form-input" />
+                                        <input id="address" type="text" placeholder="Address" className="form-input" />
                                     </div>
-                                    <div>
+                                    {/* <div>
                                         <label htmlFor="location">Location</label>
                                         <input id="location" type="text" placeholder="Location" className="form-input" />
-                                    </div>
+                                    </div> */}
                                     <div>
                                         <label htmlFor="phone">Phone</label>
-                                        <input id="phone" type="text" placeholder="+1 (530) 555-12121" className="form-input" />
+                                        <input id="phone" type="text" placeholder="Enter your Phone" className="form-input" />
                                     </div>
                                     <div>
                                         <label htmlFor="email">Email</label>
-                                        <input id="email" type="email" placeholder="Jimmy@gmail.com" className="form-input" />
+                                        <input id="email" type="email" placeholder="Email" className="form-input" />
                                     </div>
                                     <div>
+                                        <label htmlFor="newPassword">New Password</label>
+                                        <input id="newPassword" type="text" placeholder="Enter new password" className="form-input" />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="confirmPassword">Confirm Password</label>
+                                        <input id="confirmPassword" type="text" placeholder="Enter confirm Password" className="form-input" />
+                                    </div>
+                                    {/* <div>
                                         <label htmlFor="web">Website</label>
                                         <input id="web" type="text" placeholder="Enter URL" className="form-input" />
-                                    </div>
-                                    <div>
+                                    </div> */}
+                                    {/* <div>
                                         <label className="inline-flex cursor-pointer">
                                             <input type="checkbox" className="form-checkbox" />
                                             <span className="text-white-dark relative checked:bg-none">Make this my default address</span>
                                         </label>
-                                    </div>
+                                    </div> */}
                                     <div className="sm:col-span-2 mt-3">
                                         <button type="button" className="btn btn-primary">
                                             Save
@@ -141,7 +149,7 @@ const AccountSetting = () => {
                                 </div>
                             </div>
                         </form>
-                        <form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 bg-white dark:bg-black">
+                        {/* <form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 bg-white dark:bg-black">
                             <h6 className="text-lg font-bold mb-5">Social</h6>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div className="flex">
@@ -169,7 +177,7 @@ const AccountSetting = () => {
                                     <input type="text" placeholder="jimmy_turner" className="form-input" />
                                 </div>
                             </div>
-                        </form>
+                        </form> */}
                     </div>
                 ) : (
                     ''

@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import Dropdown from '../../components/Dropdown';
 import IconUser from '../../components/Icon/IconUser';
 import IconMail from '../../components/Icon/IconMail';
@@ -69,6 +69,7 @@ const RegisterBoxed = () => {
         getStateList();
     }, []);
     const navigate = useNavigate();
+    console.log(addMember);
 
     useEffect(() => {
         if (selectedStateId) {
@@ -77,7 +78,10 @@ const RegisterBoxed = () => {
         if (selectedDistrictId) {
             getZonallist();
         }
-    }, [selectedStateId, selectedDistrictId]);
+        if (selectedZonalId) {
+            getPanchayathList();
+        }
+    }, [selectedStateId, selectedDistrictId, selectedZonalId]);
 
     const getStateList = async () => {
         try {
@@ -94,7 +98,7 @@ const RegisterBoxed = () => {
             console.error('Error fetching state list:', error);
         }
     };
-    //-----------list district in drop down--------
+    //-----------list district --------
     const getDistrictList = async () => {
         try {
             const response = await ApiCall('get', `${districtlistinZonalUrl}/${selectedStateId}`);
@@ -110,12 +114,12 @@ const RegisterBoxed = () => {
             console.error('Error fetching state list:', error);
         }
     };
-    //-----------list Zonal in drop down--------
+    //-----------list Zonal --------
     const getZonallist = async () => {
         try {
             const response = await ApiCall('get', `${zonallistindropdownUrl}/${selectedDistrictId}`);
             console.log(response);
-            
+
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
@@ -127,14 +131,17 @@ const RegisterBoxed = () => {
             console.error('Error fetching state list:', error);
         }
     };
-    //-----------list Zonal in drop down--------
+    //-----------list panchayath --------
     const getPanchayathList = async () => {
         try {
             const response = await ApiCall('get', `${panchayathlistindropdownUrl}/${selectedZonalId}`);
+                console.log(response, 'dhsjk');
+
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 setPanchayathList(response?.data?.panchayaths);
+                
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
             }
@@ -142,7 +149,7 @@ const RegisterBoxed = () => {
             console.error('Error fetching state list:', error);
         }
     };
-    //-----------list pacakges in drop down--------
+    //-----------list pacakges --------
     const getPackagesList = async () => {
         try {
             const response = await ApiCall('get', packagesListUrl);
@@ -159,8 +166,9 @@ const RegisterBoxed = () => {
             console.error('Error fetching state list:', error);
         }
     };
-    //---------Add--panchayath---------
-    const addMemberFun = async () => {
+    //---------Add--member---------
+    const addMemberFun = async (e:FormEvent) => {
+        e.preventDefault()
         try {
             const response = await ApiCall('post', memberaddUrl, addMember);
             if (response instanceof Error) {
@@ -180,6 +188,7 @@ const RegisterBoxed = () => {
                     zonal: '',
                     panchayath: '',
                 });
+                navigate("/auth/bdeox-signin");
                 Show_Toast({ message: 'Member added successfully', type: true });
             } else {
                 Show_Toast({ message: 'Member added failed', type: false });
@@ -197,18 +206,20 @@ const RegisterBoxed = () => {
         packageAmount: pack.packageAmount,
     }));
 
-  const stateSelectHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const selectedValue = e.target.value;
-      const selectedState = stateList.find((state: any) => state.name === selectedValue);
+    // ----------select state and get state id ---------------
+    const stateSelectHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = e.target.value;
+        const selectedState = stateList.find((state: any) => state.name === selectedValue);
 
-      if (selectedState) {
-          setAddMember({
-              ...addMember,
-              state: selectedState.name, 
-          });
-          setSelectedStateId(selectedState.id);
-      }
-  };
+        if (selectedState) {
+            setAddMember({
+                ...addMember,
+                state: selectedState.name,
+            });
+            setSelectedStateId(selectedState.id);
+        }
+    };
+    //--------------------------------
 
     return (
         <>
@@ -378,27 +389,27 @@ const RegisterBoxed = () => {
                                             </div>
                                         </div>
                                         <div>
-                                            <label htmlFor="Email">District</label>
+                                            <label htmlFor="district">{addMember?.franchise === 'District Franchise' ? 'District Franchise Name' : 'District'}</label>
                                             <div className="relative text-white-dark">
                                                 <select
                                                     className="form-input ps-10 placeholder:text-white-dark"
                                                     onChange={(e) => {
                                                         const selectedValue = e.target.value;
-                                                        const selectedDistrict = stateList.find((district: any) => district.name === selectedValue);
+                                                        const selectedDistrict = districtList.find((dist: any) => dist.name === selectedValue) as any;
+                                                        console.log(selectedValue);
+                                                        console.log(selectedDistrict);
 
-                                                        if (selectedState) {
+                                                        if (selectedDistrict) {
                                                             setAddMember({
                                                                 ...addMember,
-                                                                district: selectedDistrict.name,
+                                                                district: selectedDistrict?.name,
                                                             });
-                                                            setSelectedDistrictId(selectedDistrict.id);
+                                                            setSelectedDistrictId(selectedDistrict?.id);
                                                         }
                                                     }}
                                                     value={addMember.district}
                                                 >
-                                                    <option key="default" value="">
-                                                        Select District{' '}
-                                                    </option>
+                                                    <option>Select District </option>
                                                     {districtList.map((dist: any) => (
                                                         <option key={dist.id} value={dist.name}>
                                                             {dist.name}
@@ -411,20 +422,20 @@ const RegisterBoxed = () => {
                                 )}
                                 {(addMember?.franchise === 'Zonal Franchise' || addMember?.franchise === 'Mobile Franchise') && (
                                     <div>
-                                        <label htmlFor="Email">Zonel</label>
+                                        <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'Zonel Franchise Name' : 'Zonel'}</label>
                                         <div className="relative text-white-dark">
                                             <select
                                                 className="form-input ps-10 placeholder:text-white-dark"
                                                 onChange={(e) => {
                                                     const selectedValue = e.target.value;
-                                                    const selectedZonel = stateList.find((zonal: any) => zonal.name === selectedValue);
+                                                    const selectedZonel = zonalList.find((zonal:any) => zonal.name === selectedValue) as any;
 
-                                                    if (selectedState) {
+                                                    if (selectedZonel) {
                                                         setAddMember({
                                                             ...addMember,
-                                                            zonal: selectedZonel.name,
+                                                            zonal: selectedZonel?.name,
                                                         });
-                                                        setSelectedZonalId(selectedZonel.id);
+                                                        setSelectedZonalId(selectedZonel?.id);
                                                     }
                                                 }}
                                                 value={addMember.zonal}
@@ -443,10 +454,12 @@ const RegisterBoxed = () => {
                                     <div>
                                         <label htmlFor="Email">Panchayath</label>
                                         <div className="relative text-white-dark">
-                                            <select className="form-input ps-10 placeholder:text-white-dark">
+                                            <select onChange={(e)=>{
+                                                setAddMember({...addMember,panchayath:e.target.value})
+                                            }} className="form-input ps-10 placeholder:text-white-dark">
                                                 <option>Select panchayath </option>
-                                                {panchayathList.map((panchayath) => (
-                                                    <option key={panchayath}>{panchayath}</option>
+                                                {panchayathList.map((panchayath:any) => (
+                                                    <option key={panchayath.id}>{panchayath.name}</option>
                                                 ))}
                                             </select>
                                         </div>
