@@ -62,7 +62,7 @@ const Report = () => {
             </div>
             <div className="panel">
                 <div className="flex items-center justify-between mb-5">
-                    <h5 className="font-semibold text-lg dark:text-white-light">Report</h5>
+                    <h5 className="font-semibold text-warning text-lg dark:text-white-light">Report</h5>
                 </div>
                 <div className="table-responsive mb-5">
                     <table>

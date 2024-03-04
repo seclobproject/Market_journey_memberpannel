@@ -32,10 +32,19 @@ import IconMenuDatatables from '../Icon/Menu/IconMenuDatatables';
 import IconMenuForms from '../Icon/Menu/IconMenuForms';
 import IconMenuPages from '../Icon/Menu/IconMenuPages';
 import IconMenuMore from '../Icon/Menu/IconMenuMore';
+import { ApiCall } from '../../Services/Api';
+import { getProfileUrl } from '../../utils/EndPoints';
+
+interface ProfileDetails {
+    name: string;
+    email: string;
+    userStatus: string;
+    walletAmount: string;
+}
 
 const Header = () => {
     const location = useLocation();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     useEffect(() => {
         const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');
         if (selector) {
@@ -57,7 +66,6 @@ const Header = () => {
         }
     }, [location]);
 
-
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
@@ -66,7 +74,12 @@ const Header = () => {
     function createMarkup(messages: any) {
         return { __html: messages };
     }
-    
+    const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
+        name: '',
+        email: '',
+        userStatus: '',
+        walletAmount: '',
+    });
 
     const [notifications, setNotifications] = useState([
         {
@@ -107,6 +120,25 @@ const Header = () => {
 
     const { t } = useTranslation();
 
+    const getProfile = async () => {
+        try {
+            const response = await ApiCall('get', getProfileUrl);
+            console.log(response);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setProfileDetails(response?.data);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    useEffect(() => {
+        getProfile();
+    }, []);
     return (
         <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
             <div className="shadow-sm">
@@ -285,11 +317,11 @@ const Header = () => {
                                             <img className="rounded-md w-10 h-10 object-cover" src="/assets/images/userProfile.jpg" alt="userProfile" />
                                             <div className="ltr:pl-4 rtl:pr-4 truncate">
                                                 <h4 className="text-base">
-                                                    John Doe
+                                                    {profielDetails.name}
                                                     <span className="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pro</span>
                                                 </h4>
                                                 <button type="button" className="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white">
-                                                    johndoe@gmail.com
+                                                    {profielDetails.email}
                                                 </button>
                                             </div>
                                         </div>

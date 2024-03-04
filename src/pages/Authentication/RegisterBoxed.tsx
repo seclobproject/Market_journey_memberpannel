@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
@@ -26,6 +26,7 @@ interface Member {
     district: string;
     zonal: string;
     panchayath: string;
+    userId: string | undefined;
 }
 interface Package {
     franchiseName: string;
@@ -36,6 +37,7 @@ interface States {
     id: String;
 }
 const RegisterBoxed = () => {
+    const params = useParams();
     const [addMember, setAddMember] = useState<Member>({
         name: '',
         email: '',
@@ -48,19 +50,18 @@ const RegisterBoxed = () => {
         district: '',
         zonal: '',
         panchayath: '',
+        userId: params.id,
     });
     const [stateList, setStateList] = useState<any>([]);
     const [districtList, setDistrictList] = useState([]);
     const [zonalList, setZonalList] = useState([]);
     const [panchayathList, setPanchayathList] = useState([]);
     const [packageList, setPackageList] = useState<Package[]>([]);
-    const [packageAmount, setPackageAmount] = useState({});
-    const [showPassword, setShowPassword] = useState(false);
-    const [showTransPassword, setShowTransPassword] = useState(false);
     const [selectedStateId, setSelectedStateId] = useState('');
     const [selectedDistrictId, setSelectedDistrictId] = useState(null);
     const [selectedZonalId, setSelectedZonalId] = useState(null);
-    const [selectedState, setSelectedState] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -83,6 +84,12 @@ const RegisterBoxed = () => {
         }
     }, [selectedStateId, selectedDistrictId, selectedZonalId]);
 
+    //------ show password-----
+
+    const handleTogglePassword = () => {
+        setShowPassword((prevShowPassword) => !prevShowPassword);
+    };
+    //---------------------
     const getStateList = async () => {
         try {
             const response = await ApiCall('get', statelistPageUrl);
@@ -135,13 +142,12 @@ const RegisterBoxed = () => {
     const getPanchayathList = async () => {
         try {
             const response = await ApiCall('get', `${panchayathlistindropdownUrl}/${selectedZonalId}`);
-                console.log(response, 'dhsjk');
+            console.log(response, 'dhsjk');
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 setPanchayathList(response?.data?.panchayaths);
-                
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
             }
@@ -167,8 +173,8 @@ const RegisterBoxed = () => {
         }
     };
     //---------Add--member---------
-    const addMemberFun = async (e:FormEvent) => {
-        e.preventDefault()
+    const addMemberFun = async (e: FormEvent) => {
+        e.preventDefault();
         try {
             const response = await ApiCall('post', memberaddUrl, addMember);
             if (response instanceof Error) {
@@ -187,8 +193,9 @@ const RegisterBoxed = () => {
                     district: '',
                     zonal: '',
                     panchayath: '',
+                    userId: '',
                 });
-                navigate("/auth/bdeox-signin");
+                navigate('/auth/bdeox-signin');
                 Show_Toast({ message: 'Member added successfully', type: true });
             } else {
                 Show_Toast({ message: 'Member added failed', type: false });
@@ -233,238 +240,257 @@ const RegisterBoxed = () => {
                 <img src="/assets/images/auth/coming-soon-object3.png" alt="image" className="absolute right-0 top-0 h-[300px]" />
                 <img src="/assets/images/auth/polygon-object.svg" alt="image" className="absolute bottom-0 end-[28%]" />
                 <div className="relative w-full max-w-[870px] rounded-md bg-[linear-gradient(45deg,#fff9f9_0%,rgba(255,255,255,0)_25%,rgba(255,255,255,0)_75%,_#fff9f9_100%)] p-2 dark:bg-[linear-gradient(52.22deg,#0E1726_0%,rgba(14,23,38,0)_18.66%,rgba(14,23,38,0)_51.04%,rgba(14,23,38,0)_80.07%,#0E1726_100%)]">
-                    <div className="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[758px] py-20">
-                        <div className="mx-auto w-full max-w-[440px]">
+                    <div className="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[758px] py-20 pt-10">
+                        <div className="mx-auto w-full">
                             <div className="mb-10">
-                                <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign Up</h1>
+                                <h1 className="text-3xl font-extrabold uppercase text-center !leading-snug text-primary md:text-4xl">Sign Up</h1>
                             </div>
                             <form className="space-y-5 dark:text-white" onSubmit={addMemberFun}>
-                                <div>
-                                    <label htmlFor="Name">Name</label>
-                                    <div className="relative text-white-dark">
-                                        <input
-                                            onChange={(e) => setAddMember({ ...addMember, name: e.target.value })}
-                                            id="Name"
-                                            type="text"
-                                            placeholder="Enter Name"
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                        />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconUser fill={true} />
-                                        </span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="Email">Email</label>
-                                    <div className="relative text-white-dark">
-                                        <input
-                                            onChange={(e) => setAddMember({ ...addMember, email: e.target.value })}
-                                            id="Email"
-                                            type="email"
-                                            required
-                                            placeholder="Enter Email"
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                        />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconMail fill={true} />
-                                        </span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="Email">Phone</label>
-                                    <div className="relative text-white-dark">
-                                        <input
-                                            onChange={(e) => {
-                                                const enteredValue = e.target.value;
-                                                // Allow only numeric characters
-                                                const numericValue = enteredValue.replace(/\D/g, '');
-
-                                                // Restrict to a maximum of 10 digits
-                                                const limitedValue = numericValue.slice(0, 15);
-
-                                                setAddMember({
-                                                    ...addMember,
-                                                    phone: limitedValue,
-                                                });
-                                            }}
-                                            id="Phone"
-                                            required
-                                            type="number"
-                                            placeholder="Enter Phone"
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                        />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconPhone fill={true} />
-                                        </span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="Email">Address</label>
-                                    <div className="relative text-white-dark">
-                                        <span className="absolute start-4 top-1/4 -translate-y-1/2">
-                                            <IconMapPin fill={true} />
-                                        </span>
-                                        <textarea
-                                            onChange={(e) => setAddMember({ ...addMember, address: e.target.value })}
-                                            id="Address"
-                                            placeholder="Enter Your Address"
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="Password">Password</label>
-                                    <div className="relative text-white-dark">
-                                        <input
-                                            onChange={(e) => setAddMember({ ...addMember, password: e.target.value })}
-                                            id="Password"
-                                            type="password"
-                                            placeholder="Enter Password"
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                        />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconLockDots fill={true} />
-                                        </span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="franchise">Franchise</label>
-                                    <div className="relative text-white-dark">
-                                        <select
-                                            onChange={(e) => {
-                                                const selectedValue = e.target.value;
-                                                const selectedOption = packageOptions.find((option) => option.value === selectedValue);
-
-                                                if (selectedOption) {
-                                                    setAddMember({
-                                                        ...addMember,
-                                                        franchise: selectedOption.value,
-                                                        packageAmount: selectedOption.packageAmount,
-                                                    });
-                                                }
-                                            }}
-                                            value={addMember.franchise}
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                        >
-                                            <option>Select a franchise type </option>
-                                            {packageOptions.map((option) => (
-                                                <option key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="packageAmount">PackageAmount</label>
-                                    <div className="relative text-white-dark">
-                                        <input
-                                            id="PackageAmount"
-                                            type="text"
-                                            value={addMember?.packageAmount}
-                                            placeholder="packageAmount"
-                                            readOnly
-                                            className="form-input ps-10 placeholder:text-white-dark"
-                                        />
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                            <IconCashBanknotes fill={true} />
-                                        </span>
-                                    </div>
-                                </div>
-                                {(addMember?.franchise === 'District Franchise' || addMember?.franchise === 'Zonal Franchise' || addMember?.franchise === 'Mobile Franchise') && (
-                                    <>
+                                <div className="flex flex-col lg:flex-row gap-5 lg:flex-wrap">
+                                    <div className="space-y-5 lg:w-[375px]">
                                         <div>
-                                            <label htmlFor="Email">State</label>
+                                            <label htmlFor="Name">Name</label>
                                             <div className="relative text-white-dark">
-                                                <select className="form-input ps-10 placeholder:text-white-dark" onChange={stateSelectHandler} value={addMember.state}>
-                                                    <option key="default" value="">
-                                                        Select State
-                                                    </option>
-                                                    {stateList.map((singleState: any, idx: any) => (
-                                                        <option key={idx} value={singleState.name}>
-                                                            {singleState.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label htmlFor="district">{addMember?.franchise === 'District Franchise' ? 'District Franchise Name' : 'District'}</label>
-                                            <div className="relative text-white-dark">
-                                                <select
+                                                <input
+                                                    onChange={(e) => setAddMember({ ...addMember, name: e.target.value })}
+                                                    id="Name"
+                                                    type="text"
+                                                    required
+                                                    placeholder="Enter Name"
                                                     className="form-input ps-10 placeholder:text-white-dark"
-                                                    onChange={(e) => {
-                                                        const selectedValue = e.target.value;
-                                                        const selectedDistrict = districtList.find((dist: any) => dist.name === selectedValue) as any;
-                                                        console.log(selectedValue);
-                                                        console.log(selectedDistrict);
-
-                                                        if (selectedDistrict) {
-                                                            setAddMember({
-                                                                ...addMember,
-                                                                district: selectedDistrict?.name,
-                                                            });
-                                                            setSelectedDistrictId(selectedDistrict?.id);
-                                                        }
-                                                    }}
-                                                    value={addMember.district}
-                                                >
-                                                    <option>Select District </option>
-                                                    {districtList.map((dist: any) => (
-                                                        <option key={dist.id} value={dist.name}>
-                                                            {dist.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                />
+                                                <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                    <IconUser fill={true} />
+                                                </span>
                                             </div>
                                         </div>
-                                    </>
-                                )}
-                                {(addMember?.franchise === 'Zonal Franchise' || addMember?.franchise === 'Mobile Franchise') && (
-                                    <div>
-                                        <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'Zonel Franchise Name' : 'Zonel'}</label>
-                                        <div className="relative text-white-dark">
-                                            <select
-                                                className="form-input ps-10 placeholder:text-white-dark"
-                                                onChange={(e) => {
-                                                    const selectedValue = e.target.value;
-                                                    const selectedZonel = zonalList.find((zonal:any) => zonal.name === selectedValue) as any;
+                                        <div>
+                                            <label htmlFor="Email">Email</label>
+                                            <div className="relative text-white-dark">
+                                                <input
+                                                    onChange={(e) => setAddMember({ ...addMember, email: e.target.value })}
+                                                    id="Email"
+                                                    type="email"
+                                                    required
+                                                    placeholder="Enter Email"
+                                                    className="form-input ps-10 placeholder:text-white-dark"
+                                                />
+                                                <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                    <IconMail fill={true} />
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label htmlFor="Email">Phone</label>
+                                            <div className="relative text-white-dark">
+                                                <input
+                                                    onChange={(e) => {
+                                                        const enteredValue = e.target.value;
+                                                        // Allow only numeric characters
+                                                        const numericValue = enteredValue.replace(/\D/g, '');
 
-                                                    if (selectedZonel) {
+                                                        // Restrict to a maximum of 10 digits
+                                                        const limitedValue = numericValue.slice(0, 15);
+
                                                         setAddMember({
                                                             ...addMember,
-                                                            zonal: selectedZonel?.name,
+                                                            phone: limitedValue,
                                                         });
-                                                        setSelectedZonalId(selectedZonel?.id);
-                                                    }
-                                                }}
-                                                value={addMember.zonal}
-                                            >
-                                                <option key="default" value="">
-                                                    Select Zonel{' '}
-                                                </option>
-                                                {zonalList.map((zonal: any) => (
-                                                    <option key={zonal.id}>{zonal.name}</option>
-                                                ))}
-                                            </select>
+                                                    }}
+                                                    id="Phone"
+                                                    required
+                                                    type="number"
+                                                    placeholder="Enter Phone"
+                                                    className="form-input ps-10 placeholder:text-white-dark"
+                                                />
+                                                <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                    <IconPhone fill={true} />
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label htmlFor="Email">Address</label>
+                                            <div className="relative text-white-dark">
+                                                <span className="absolute start-4 top-1/4 -translate-y-1/2">
+                                                    <IconMapPin fill={true} />
+                                                </span>
+                                                <textarea
+                                                    onChange={(e) => setAddMember({ ...addMember, address: e.target.value })}
+                                                    id="Address"
+                                                    required
+                                                    placeholder="Enter Your Address"
+                                                    className="form-input ps-10 placeholder:text-white-dark"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label htmlFor="Password">Password</label>
+                                            <div className="relative text-white-dark">
+                                                <input
+                                                    onChange={(e) => setAddMember({ ...addMember, password: e.target.value })}
+                                                    id="Password"
+                                                    type={showPassword ? 'text' : 'password'}
+                                                    required
+                                                    placeholder="Enter Password"
+                                                    className="form-input ps-10 placeholder:text-white-dark"
+                                                />
+                                                <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                    <IconLockDots fill={true} />
+                                                </span>
+                                                <button type="button" onClick={handleTogglePassword} className="absolute end-4 top-1/2 -translate-y-1/2 cursor-pointer">
+                                                    {showPassword ? <i className="fa-solid fa-eye-slash"></i> : <i className="fa-solid fa-eye"></i>}
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                )}
-                                {addMember?.franchise === 'Mobile Franchise' && (
-                                    <div>
-                                        <label htmlFor="Email">Panchayath</label>
-                                        <div className="relative text-white-dark">
-                                            <select onChange={(e)=>{
-                                                setAddMember({...addMember,panchayath:e.target.value})
-                                            }} className="form-input ps-10 placeholder:text-white-dark">
-                                                <option>Select panchayath </option>
-                                                {panchayathList.map((panchayath:any) => (
-                                                    <option key={panchayath.id}>{panchayath.name}</option>
-                                                ))}
-                                            </select>
+                                    <div className="flex flex-col space-y-5 max-w-[375px] w-full">
+                                        <div>
+                                            <label htmlFor="franchise">Franchise</label>
+                                            <div className="relative text-white-dark">
+                                                <select
+                                                    onChange={(e) => {
+                                                        const selectedValue = e.target.value;
+                                                        const selectedOption = packageOptions.find((option) => option.value === selectedValue);
+
+                                                        if (selectedOption) {
+                                                            setAddMember({
+                                                                ...addMember,
+                                                                franchise: selectedOption.value,
+                                                                packageAmount: selectedOption.packageAmount,
+                                                            });
+                                                        }
+                                                    }}
+                                                    value={addMember.franchise}
+                                                    className="form-input ps-10 placeholder:text-white-dark"
+                                                    required
+                                                >
+                                                    <option>Select a franchise type </option>
+                                                    {packageOptions.map((option) => (
+                                                        <option key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
                                         </div>
+                                        <div>
+                                            <label htmlFor="packageAmount">PackageAmount</label>
+                                            <div className="relative text-white-dark">
+                                                <input
+                                                    id="PackageAmount"
+                                                    type="text"
+                                                    value={addMember?.packageAmount}
+                                                    placeholder="packageAmount"
+                                                    readOnly
+                                                    className="form-input ps-10 placeholder:text-white-dark"
+                                                />
+                                                <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                    <IconCashBanknotes fill={true} />
+                                                </span>
+                                            </div>
+                                        </div>
+                                        {(addMember?.franchise === 'District Franchise' || addMember?.franchise === 'Zonal Franchise' || addMember?.franchise === 'Mobile Franchise') && (
+                                            <>
+                                                <div>
+                                                    <label htmlFor="Email">State</label>
+                                                    <div className="relative text-white-dark">
+                                                        <select className="form-input ps-10 placeholder:text-white-dark" required onChange={stateSelectHandler} value={addMember.state}>
+                                                            <option key="default" value="">
+                                                                Select State
+                                                            </option>
+                                                            {stateList.map((singleState: any, idx: any) => (
+                                                                <option key={idx} value={singleState.name}>
+                                                                    {singleState.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label htmlFor="district">{addMember?.franchise === 'District Franchise' ? 'District Franchise Name' : 'District'}</label>
+                                                    <div className="relative text-white-dark">
+                                                        <select
+                                                            className="form-input ps-10 placeholder:text-white-dark"
+                                                            required
+                                                            onChange={(e) => {
+                                                                const selectedValue = e.target.value;
+                                                                const selectedDistrict = districtList.find((dist: any) => dist.name === selectedValue) as any;
+                                                                console.log(selectedValue);
+                                                                console.log(selectedDistrict);
+
+                                                                if (selectedDistrict) {
+                                                                    setAddMember({
+                                                                        ...addMember,
+                                                                        district: selectedDistrict?.name,
+                                                                    });
+                                                                    setSelectedDistrictId(selectedDistrict?.id);
+                                                                }
+                                                            }}
+                                                            value={addMember.district}
+                                                        >
+                                                            <option>Select District </option>
+                                                            {districtList.map((dist: any) => (
+                                                                <option key={dist.id} value={dist.name}>
+                                                                    {dist.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                        {(addMember?.franchise === 'Zonal Franchise' || addMember?.franchise === 'Mobile Franchise') && (
+                                            <div>
+                                                <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'Zonel Franchise Name' : 'Zonel'}</label>
+                                                <div className="relative text-white-dark">
+                                                    <select
+                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                        required
+                                                        onChange={(e) => {
+                                                            const selectedValue = e.target.value;
+                                                            const selectedZonel = zonalList.find((zonal: any) => zonal.name === selectedValue) as any;
+
+                                                            if (selectedZonel) {
+                                                                setAddMember({
+                                                                    ...addMember,
+                                                                    zonal: selectedZonel?.name,
+                                                                });
+                                                                setSelectedZonalId(selectedZonel?.id);
+                                                            }
+                                                        }}
+                                                        value={addMember.zonal}
+                                                    >
+                                                        <option key="default" value="">
+                                                            Select Zonel{' '}
+                                                        </option>
+                                                        {zonalList.map((zonal: any) => (
+                                                            <option key={zonal.id}>{zonal.name}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {addMember?.franchise === 'Mobile Franchise' && (
+                                            <div>
+                                                <label htmlFor="Email">Panchayath</label>
+                                                <div className="relative text-white-dark">
+                                                    <select
+                                                        onChange={(e) => {
+                                                            setAddMember({ ...addMember, panchayath: e.target.value });
+                                                        }}
+                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                        required
+                                                    >
+                                                        <option>Select panchayath </option>
+                                                        {panchayathList.map((panchayath: any) => (
+                                                            <option key={panchayath.id}>{panchayath.name}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
+                                </div>
                                 <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
                                     Sign Up
                                 </button>

@@ -43,6 +43,9 @@
 /* Select2*/
 @import './assets/css/select2.css';
 
+/* font awsome */
+@import '@fortawesome/fontawesome-free/css/all.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -514,10 +517,11 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     }
     table thead tr,
     table tfoot tr {
-        @apply border-b-0 !bg-[#f6f8fa]  dark:!bg-[#1a2941];
+        @apply border-b-0 !bg-[#dae2ed]  dark:!bg-[#1a2941];
     }
     table thead tr th,
     table tfoot tr th,
+    
     table tbody tr td {
         @apply py-3 px-4 ltr:text-left rtl:text-right;
     }

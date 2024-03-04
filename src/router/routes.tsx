@@ -464,7 +464,7 @@ const routes = [
         layout: 'blank',
     },
     {
-        path: '/auth/boxed-signup',
+        path: '/auth/boxed-signup/:id',
         element: <RegisterBoxed />,
         layout: 'blank',
     },
@@ -478,7 +478,7 @@ const routes = [
         element: <RecoverIdBoxed />,
         layout: 'blank',
     },
-  
+
     //forms page
     {
         path: '/forms/basic',

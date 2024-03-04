@@ -85,9 +85,10 @@ interface States {
     name: String;
     id: String;
 }
- 
+
 const Member = () => {
     const [addModal, setAddModal] = useState(false);
+    const [allMembers, setAllMembers] = useState([]);
     const [addMember, setAddMember] = useState<Member>({
         name: '',
         email: '',
@@ -109,6 +110,8 @@ const Member = () => {
     const [selectedStateId, setSelectedStateId] = useState('');
     const [selectedDistrictId, setSelectedDistrictId] = useState(null);
     const [selectedZonalId, setSelectedZonalId] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
+
     useEffect(() => {
         getPackagesList();
         getStateList();
@@ -124,6 +127,30 @@ const Member = () => {
             getPanchayathList();
         }
     }, [selectedStateId, selectedDistrictId, selectedZonalId]);
+
+    //------ show password-----
+
+    const handleTogglePassword = () => {
+        setShowPassword((prevShowPassword) => !prevShowPassword);
+    };
+    //---------------------
+
+    //----Get All members-----
+    // const getAllMembers = async()=>{
+    //     try {
+    //         const response=await ApiCall('get',allMembersUrl)
+    //          if (response instanceof Error) {
+    //              console.error('Error fetching allMembers list:', response.message);
+    //          } else if (response.status === 200) {
+    //              setAllMembers(response?.data?);
+    //          } else {
+    //              console.error('Error fetching allMembers list. Unexpected status:', response.status);
+    //          }
+    //     } catch (error) {
+    //         console.error('Error fetching allMembers list:', error);
+
+    //     }
+    // }
 
     const getStateList = async () => {
         try {
@@ -146,14 +173,14 @@ const Member = () => {
             const response = await ApiCall('get', `${districtlistinZonalUrl}/${selectedStateId}`);
 
             if (response instanceof Error) {
-                console.error('Error fetching state list:', response.message);
+                console.error('Error fetching district list:', response.message);
             } else if (response.status === 200) {
                 setDistrictList(response?.data?.districts);
             } else {
-                console.error('Error fetching state list. Unexpected status:', response.status);
+                console.error('Error fetching district list. Unexpected status:', response.status);
             }
         } catch (error) {
-            console.error('Error fetching state list:', error);
+            console.error('Error fetching district list:', error);
         }
     };
     //-----------list Zonal --------
@@ -163,11 +190,11 @@ const Member = () => {
             console.log(response);
 
             if (response instanceof Error) {
-                console.error('Error fetching state list:', response.message);
+                console.error('Error fetching zonal list:', response.message);
             } else if (response.status === 200) {
                 setZonalList(response?.data?.zonals);
             } else {
-                console.error('Error fetching state list. Unexpected status:', response.status);
+                console.error('Error fetching zonal list. Unexpected status:', response.status);
             }
         } catch (error) {
             console.error('Error fetching state list:', error);
@@ -265,7 +292,7 @@ const Member = () => {
     return (
         <div className="panel">
             <div className="flex items-center justify-between mb-5">
-                <h5 className="font-semibold text-lg dark:text-white-light">Member</h5>
+                <h5 className="font-semibold text-warning text-lg dark:text-white-light">Member</h5>
                 <button
                     onClick={() => setAddModal(true)}
                     className="panel flex items-center overflow-x-auto whitespace-nowrap p-2 text-base bg-primary text-white justify-center max-w-[100px] w-full "
@@ -295,13 +322,13 @@ const Member = () => {
                                     <td>{data.date}</td>
                                     <td>{data.sale}</td>
 
-                                    <td className="text-center">
+                                    {/* <td className="text-center">
                                         <Tippy content="Delete">
                                             <button type="button">
                                                 <IconTrashLines className="m-auto" />
                                             </button>
                                         </Tippy>
-                                    </td>
+                                    </td> */}
                                 </tr>
                             );
                         })}
@@ -429,13 +456,16 @@ const Member = () => {
                                                                 <input
                                                                     onChange={(e) => setAddMember({ ...addMember, password: e.target.value })}
                                                                     id="Password"
-                                                                    type="password"
+                                                                    type={showPassword ? 'text' : 'password'}
                                                                     placeholder="Enter Password"
                                                                     className="form-input ps-10 placeholder:text-white-dark"
                                                                 />
                                                                 <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                                                     <IconLockDots fill={true} />
                                                                 </span>
+                                                                <button type="button" onClick={handleTogglePassword} className="absolute end-4 top-1/2 -translate-y-1/2 cursor-pointer">
+                                                                    {showPassword ? <i className="fa-solid fa-eye-slash"></i> : <i className="fa-solid fa-eye"></i>}
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>

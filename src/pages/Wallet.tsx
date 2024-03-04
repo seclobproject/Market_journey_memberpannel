@@ -57,12 +57,11 @@ const Wallet = () => {
             <div className="flex gap-5 w-full mb-4">
                 <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[200px] w-full ">Level 1</div>
                 <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[200px] w-full">Level 2</div>
-                <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[200px] w-full">Level 3
-                </div>
+                <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[200px] w-full">Level 3</div>
             </div>
             <div className="panel">
                 <div className="flex items-center justify-between mb-5">
-                    <h5 className="font-semibold text-lg dark:text-white-light">Wallet</h5>
+                    <h5 className="font-semibold text-warning text-lg dark:text-white-light">Wallet</h5>
                 </div>
                 <div className="table-responsive mb-5">
                     <table>

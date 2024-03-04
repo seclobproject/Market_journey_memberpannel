@@ -27,7 +27,7 @@ const Member = () => {
     return (
         <div className="panel">
             <div className="flex items-center justify-between mb-5">
-                <h5 className="font-semibold text-lg dark:text-white-light">Package</h5>
+                <h5 className="font-semibold text-warning text-lg dark:text-white-light">Package</h5>
             </div>
             <div className="table-responsive mb-5">
                 <table>
@@ -36,7 +36,6 @@ const Member = () => {
                             <th>Package Name </th>
                             <th>Franchise </th>
                             <th> Amount </th>
-                      
                         </tr>
                     </thead>
                     <tbody>
