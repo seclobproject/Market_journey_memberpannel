@@ -19,12 +19,13 @@ import IconDollarSignCircle from '../Icon/IconDollarSignCircle';
 import IconDollarSign from '../Icon/IconDollarSign';
 import IconCashBanknotes from '../Icon/IconCashBanknotes';
 import IconBox from '../Icon/IconBox';
+import IconShoppingBag from '../Icon/IconShoppingBag';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
     const [errorSubMenu, setErrorSubMenu] = useState(false);
     const [viewSidebar, setViewSidebar] = useState(false);
-    
+
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
     const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
     const location = useLocation();
@@ -127,19 +128,20 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
-                                        <NavLink to="/pages/wallet" className="group">
-                                            <div className="flex items-center">
-                                                <IconDollarSignCircle className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Wallet')}</span>
-                                            </div>
-                                        </NavLink>
-                                    </li>
+
                                     <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/withdrawal" className="group">
                                             <div className="flex items-center">
                                                 <IconCashBanknotes className="group-hover:!text-primary shrink-0" />
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Withdrawel')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/pages/recenttransaction" className="group">
+                                            <div className="flex items-center">
+                                                <IconShoppingBag className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Recent Transaction')}</span>
                                             </div>
                                         </NavLink>
                                     </li>

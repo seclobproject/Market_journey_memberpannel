@@ -7,63 +7,23 @@ import { CrossIcon } from 'react-select/dist/declarations/src/components/indicat
 import { useDispatch } from 'react-redux';
 import { Show_Toast } from './Components/Toast';
 import { ApiCall } from '../Services/Api';
-import { districtlistinZonalUrl, memberaddUrl, packagesListUrl, panchayathlistindropdownUrl, statelistPageUrl, zonallistindropdownUrl } from '../utils/EndPoints';
+import {
+    districtlistindropdownUrl,
+    getLevelOneUsers,
+    getLevelTwoUsers,
+    memberaddUrl,
+    packagesListUrl,
+    panchayathlistindropdownUrl,
+    statelistPageUrl,
+    zonallistindropdownUrl,
+} from '../utils/EndPoints';
 import IconUser from '../components/Icon/IconUser';
 import IconMail from '../components/Icon/IconMail';
 import IconMapPin from '../components/Icon/IconMapPin';
 import IconPhone from '../components/Icon/IconPhone';
 import IconLockDots from '../components/Icon/IconLockDots';
 import IconCashBanknotes from '../components/Icon/IconCashBanknotes';
-const tableData = [
-    {
-        id: 1,
-        name: 'John Doe',
-        email: 'johndoe@yahoo.com',
-        date: '10/08/2020',
-        sale: 120,
-        status: 'Complete',
-        register: '5 min ago',
-        progress: '40%',
-        position: 'Developer',
-        office: 'London',
-    },
-    {
-        id: 2,
-        name: 'Shaun Park',
-        email: 'shaunpark@gmail.com',
-        date: '11/08/2020',
-        sale: 400,
-        status: 'Pending',
-        register: '11 min ago',
-        progress: '23%',
-        position: 'Designer',
-        office: 'New York',
-    },
-    {
-        id: 3,
-        name: 'Alma Clarke',
-        email: 'alma@gmail.com',
-        date: '12/02/2020',
-        sale: 310,
-        status: 'In Progress',
-        register: '1 hour ago',
-        progress: '80%',
-        position: 'Accountant',
-        office: 'Amazon',
-    },
-    {
-        id: 4,
-        name: 'Vincent Carpenter',
-        email: 'vincent@gmail.com',
-        date: '13/08/2020',
-        sale: 100,
-        status: 'Canceled',
-        register: '1 day ago',
-        progress: '60%',
-        position: 'Data Scientist',
-        office: 'Canada',
-    },
-];
+
 interface Member {
     name: string;
     email: string;
@@ -78,6 +38,7 @@ interface Member {
     panchayath: string;
 }
 interface Package {
+    packageName: string;
     franchiseName: string;
     packageAmount: number;
 }
@@ -88,7 +49,7 @@ interface States {
 
 const Member = () => {
     const [addModal, setAddModal] = useState(false);
-    const [allMembers, setAllMembers] = useState([]);
+    const [allMembers, setAllMembers] = useState<any>([]);
     const [addMember, setAddMember] = useState<Member>({
         name: '',
         email: '',
@@ -113,21 +74,29 @@ const Member = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
+        getLevelOneMembers();
         getPackagesList();
         getStateList();
     }, []);
     useEffect(() => {
         if (selectedStateId) {
-            getDistrictList();
+            if (addMember?.franchise === 'District Franchise') {
+                getNotSelectedDistrictList();
+            } else {
+                getDistrictList();
+            }
         }
         if (selectedDistrictId) {
-            getZonallist();
+            if (addMember?.franchise === 'Zonal Franchise') {
+                getZonalNotSelectedlist();
+            } else {
+                getZonallist();
+            }
         }
         if (selectedZonalId) {
             getPanchayathList();
         }
     }, [selectedStateId, selectedDistrictId, selectedZonalId]);
-
     //------ show password-----
 
     const handleTogglePassword = () => {
@@ -135,22 +104,38 @@ const Member = () => {
     };
     //---------------------
 
-    //----Get All members-----
-    // const getAllMembers = async()=>{
-    //     try {
-    //         const response=await ApiCall('get',allMembersUrl)
-    //          if (response instanceof Error) {
-    //              console.error('Error fetching allMembers list:', response.message);
-    //          } else if (response.status === 200) {
-    //              setAllMembers(response?.data?);
-    //          } else {
-    //              console.error('Error fetching allMembers list. Unexpected status:', response.status);
-    //          }
-    //     } catch (error) {
-    //         console.error('Error fetching allMembers list:', error);
+    //----Get Level 1 members-----
+    const getLevelOneMembers = async () => {
+        try {
+            const response = await ApiCall('get', getLevelOneUsers);
+            console.log(response);
 
-    //     }
-    // }
+            if (response instanceof Error) {
+                console.error('Error fetching allMembers list:', response.message);
+            } else if (response.status === 200) {
+                setAllMembers(response?.data?.child1);
+            } else {
+                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching allMembers list:', error);
+        }
+    };
+    //----Get Level 2 members-----
+    const getLevelTwoMembers = async () => {
+        // try {
+        //     const response=await ApiCall('get',getLevelTwoUsers)
+        //      if (response instanceof Error) {
+        //          console.error('Error fetching allMembers list:', response.message);
+        //      } else if (response.status === 200) {
+        //          setAllMembers(response?.data?);
+        //      } else {
+        //          console.error('Error fetching allMembers list. Unexpected status:', response.status);
+        //      }
+        // } catch (error) {
+        //     console.error('Error fetching allMembers list:', error);
+        // }
+    };
 
     const getStateList = async () => {
         try {
@@ -170,17 +155,33 @@ const Member = () => {
     //-----------list district --------
     const getDistrictList = async () => {
         try {
-            const response = await ApiCall('get', `${districtlistinZonalUrl}/${selectedStateId}`);
+            const response = await ApiCall('get', `${districtlistindropdownUrl}/${selectedStateId}`);
 
             if (response instanceof Error) {
-                console.error('Error fetching district list:', response.message);
+                console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 setDistrictList(response?.data?.districts);
             } else {
-                console.error('Error fetching district list. Unexpected status:', response.status);
+                console.error('Error fetching state list. Unexpected status:', response.status);
             }
         } catch (error) {
-            console.error('Error fetching district list:', error);
+            console.error('Error fetching state list:', error);
+        }
+    };
+    //-----------list Not selected district --------
+    const getNotSelectedDistrictList = async () => {
+        try {
+            const response = await ApiCall('get', `${districtlistindropdownUrl}/${selectedStateId}`);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setDistrictList(response?.data?.districts);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
         }
     };
     //-----------list Zonal --------
@@ -190,16 +191,34 @@ const Member = () => {
             console.log(response);
 
             if (response instanceof Error) {
-                console.error('Error fetching zonal list:', response.message);
+                console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 setZonalList(response?.data?.zonals);
             } else {
-                console.error('Error fetching zonal list. Unexpected status:', response.status);
+                console.error('Error fetching state list. Unexpected status:', response.status);
             }
         } catch (error) {
             console.error('Error fetching state list:', error);
         }
     };
+    //-----------list Not Selected Zonal --------
+    const getZonalNotSelectedlist = async () => {
+        try {
+            const response = await ApiCall('get', `${zonallistindropdownUrl}/${selectedDistrictId}`);
+            console.log(response);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setZonalList(response?.data?.zonals);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+
     //-----------list panchayath --------
     const getPanchayathList = async () => {
         try {
@@ -269,8 +288,8 @@ const Member = () => {
     };
 
     const packageOptions = packageList.map((pack) => ({
-        value: pack.franchiseName,
-        label: pack.franchiseName,
+        value: pack?.packageName,
+        label: pack?.packageName || pack?.franchiseName,
         packageAmount: pack.packageAmount,
     }));
 
@@ -290,344 +309,383 @@ const Member = () => {
     //--------------------------------
 
     return (
-        <div className="panel">
-            <div className="flex items-center justify-between mb-5">
-                <h5 className="font-semibold text-warning text-lg dark:text-white-light">Member</h5>
-                <button
-                    onClick={() => setAddModal(true)}
-                    className="panel flex items-center overflow-x-auto whitespace-nowrap p-2 text-base bg-primary text-white justify-center max-w-[100px] w-full "
+        <>
+            <div className="flex flex-wrap gap-5 w-full mb-4">
+                <div
+                    onClick={getLevelOneMembers}
+                    className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[180px] w-full "
                 >
-                    Add
-                </button>
+                    Level 1
+                </div>
+                <div
+                    onClick={getLevelTwoMembers}
+                    className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[180px] w-full"
+                >
+                    Level 2
+                </div>
             </div>
-            <div className="table-responsive mb-5">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>sponser name</th>
-                            <th>Name</th>
-                            <th> franchise</th>
-                            <th> phone</th>
-                            <th> Package Amount</th>
-                            <th className="text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tableData.map((data) => {
-                            return (
-                                <tr key={data.id}>
-                                    <td>
-                                        <div className="whitespace-nowrap">{data.name}</div>
-                                    </td>
-                                    <td>{data.date}</td>
-                                    <td>{data.sale}</td>
+            <div className="panel">
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+                    <h5 className="font-semibold text-warning text-lg dark:text-white-light">Member</h5>
 
-                                    {/* <td className="text-center">
-                                        <Tippy content="Delete">
-                                            <button type="button">
-                                                <IconTrashLines className="m-auto" />
-                                            </button>
-                                        </Tippy>
-                                    </td> */}
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
-            <div>
-                <Transition appear show={addModal} as={Fragment}>
-                    <Dialog
-                        as="div"
-                        open={addModal}
-                        onClose={() => {
-                            setAddModal(false);
-                        }}
+                    <button
+                        onClick={() => setAddModal(true)}
+                        className="panel flex items-center overflow-x-auto whitespace-nowrap p-2 text-base bg-warning text-white justify-center max-w-[100px] w-full "
                     >
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
+                        Add
+                    </button>
+                </div>
+                <div className="table-responsive mb-5">
+                    <table>
+                        <thead>
+                            <tr>
+                                {/* <th>sponser name</th> */}
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th> franchise Type</th>
+                                <th> franchise Name</th>
+                                <th> Package Amount</th>
+                                <th> Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {allMembers.map((data:any) => {
+                                return (
+                                    <tr key={data._id}>
+                                        <td>{data.name}</td>
+                                        <td>{data.email}</td>
+                                        <td className="whitespace-nowrap">{data.phone}</td>
+
+                                        <td>{data.franchise}</td>
+                                        <td>{data.franchiseName}</td>
+                                        <td>{data.packageAmount}</td>
+                                        <td
+                                            className={`whitespace-nowrap ${
+                                                data.userStatus === 'approved'
+                                                    ? 'text-success'
+                                                    : data.userStatus === 'Pending'
+                                                    ? 'text-warning'
+                                                    : data.status === 'Canceled'
+                                                    ? 'text-danger'
+                                                    : 'text-success'
+                                            }`}
+                                        >
+                                            {data.userStatus}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <Transition appear show={addModal} as={Fragment}>
+                        <Dialog
+                            as="div"
+                            open={addModal}
+                            onClose={() => {
+                                setAddModal(false);
+                            }}
                         >
-                            <div className="fixed inset-0" />
-                        </Transition.Child>
-                        <div id="register_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
-                            <div className="flex items-start justify-center min-h-screen px-4">
-                                <Transition.Child
-                                    as={Fragment}
-                                    enter="ease-out duration-300"
-                                    enterFrom="opacity-0 scale-95"
-                                    enterTo="opacity-100 scale-100"
-                                    leave="ease-in duration-200"
-                                    leaveFrom="opacity-100 scale-100"
-                                    leaveTo="opacity-0 scale-95"
-                                >
-                                    <Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-[800px] my-8 text-black dark:text-white-dark">
-                                        <div className="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
-                                            <h5>Add Member</h5>
-                                            <button type="button" onClick={() => setAddModal(false)} className="text-white-dark hover:text-dark text-[28px] p-2">
-                                                ×
-                                            </button>
-                                        </div>
-                                        <div className="p-5">
-                                            <form className="space-y-5 dark:text-white " onSubmit={addMemberFun}>
-                                                <div className="flex flex-col lg:flex-row gap-5 lg:flex-wrap">
-                                                    <div className="space-y-5 lg:w-[350px]">
-                                                        <div>
-                                                            <label htmlFor="Name">Name</label>
-                                                            <div className="relative text-white-dark">
-                                                                <input
-                                                                    onChange={(e) => setAddMember({ ...addMember, name: e.target.value })}
-                                                                    id="Name"
-                                                                    type="text"
-                                                                    placeholder="Enter Name"
-                                                                    className="form-input ps-10 placeholder:text-white-dark"
-                                                                />
-                                                                <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                                                    <IconUser fill={true} />
-                                                                </span>
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0"
+                                enterTo="opacity-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                            >
+                                <div className="fixed inset-0" />
+                            </Transition.Child>
+                            <div id="register_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
+                                <div className="flex items-start justify-center min-h-screen px-4">
+                                    <Transition.Child
+                                        as={Fragment}
+                                        enter="ease-out duration-300"
+                                        enterFrom="opacity-0 scale-95"
+                                        enterTo="opacity-100 scale-100"
+                                        leave="ease-in duration-200"
+                                        leaveFrom="opacity-100 scale-100"
+                                        leaveTo="opacity-0 scale-95"
+                                    >
+                                        <Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-[800px] my-8 text-black dark:text-white-dark">
+                                            <div className="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
+                                                <h5>Add Member</h5>
+                                                <button type="button" onClick={() => setAddModal(false)} className="text-white-dark hover:text-dark text-[28px] p-2">
+                                                    ×
+                                                </button>
+                                            </div>
+                                            <div className="p-5">
+                                                <form className="space-y-5 dark:text-white " onSubmit={addMemberFun}>
+                                                    <div className="flex flex-col lg:flex-row gap-5 lg:flex-wrap">
+                                                        <div className="space-y-5 lg:w-[350px]">
+                                                            <div>
+                                                                <label htmlFor="Name">Name</label>
+                                                                <div className="relative text-white-dark">
+                                                                    <input
+                                                                        onChange={(e) => setAddMember({ ...addMember, name: e.target.value })}
+                                                                        id="Name"
+                                                                        type="text"
+                                                                        placeholder="Enter Name"
+                                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                                    />
+                                                                    <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                        <IconUser fill={true} />
+                                                                    </span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div>
-                                                            <label htmlFor="Email">Email</label>
-                                                            <div className="relative text-white-dark">
-                                                                <input
-                                                                    onChange={(e) => setAddMember({ ...addMember, email: e.target.value })}
-                                                                    id="Email"
-                                                                    type="email"
-                                                                    required
-                                                                    placeholder="Enter Email"
-                                                                    className="form-input ps-10 placeholder:text-white-dark"
-                                                                />
-                                                                <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                                                    <IconMail fill={true} />
-                                                                </span>
+                                                            <div>
+                                                                <label htmlFor="Email">Email</label>
+                                                                <div className="relative text-white-dark">
+                                                                    <input
+                                                                        onChange={(e) => setAddMember({ ...addMember, email: e.target.value })}
+                                                                        id="Email"
+                                                                        type="email"
+                                                                        required
+                                                                        placeholder="Enter Email"
+                                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                                    />
+                                                                    <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                        <IconMail fill={true} />
+                                                                    </span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div>
-                                                            <label htmlFor="Email">Phone</label>
-                                                            <div className="relative text-white-dark">
-                                                                <input
-                                                                    onChange={(e) => {
-                                                                        const enteredValue = e.target.value;
-                                                                        // Allow only numeric characters
-                                                                        const numericValue = enteredValue.replace(/\D/g, '');
+                                                            <div>
+                                                                <label htmlFor="Email">Phone</label>
+                                                                <div className="relative text-white-dark">
+                                                                    <input
+                                                                        onChange={(e) => {
+                                                                            const enteredValue = e.target.value;
+                                                                            // Allow only numeric characters
+                                                                            const numericValue = enteredValue.replace(/\D/g, '');
 
-                                                                        // Restrict to a maximum of 10 digits
-                                                                        const limitedValue = numericValue.slice(0, 15);
+                                                                            // Restrict to a maximum of 10 digits
+                                                                            const limitedValue = numericValue.slice(0, 15);
 
-                                                                        setAddMember({
-                                                                            ...addMember,
-                                                                            phone: limitedValue,
-                                                                        });
-                                                                    }}
-                                                                    id="Phone"
-                                                                    required
-                                                                    type="number"
-                                                                    placeholder="Enter Phone"
-                                                                    className="form-input ps-10 placeholder:text-white-dark"
-                                                                />
-                                                                <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                                                    <IconPhone fill={true} />
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <label htmlFor="Email">Address</label>
-                                                            <div className="relative text-white-dark">
-                                                                <span className="absolute start-4 top-1/4 -translate-y-1/2">
-                                                                    <IconMapPin fill={true} />
-                                                                </span>
-                                                                <textarea
-                                                                    onChange={(e) => setAddMember({ ...addMember, address: e.target.value })}
-                                                                    id="Address"
-                                                                    placeholder="Enter Your Address"
-                                                                    className="form-input ps-10 placeholder:text-white-dark"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <label htmlFor="Password">Password</label>
-                                                            <div className="relative text-white-dark">
-                                                                <input
-                                                                    onChange={(e) => setAddMember({ ...addMember, password: e.target.value })}
-                                                                    id="Password"
-                                                                    type={showPassword ? 'text' : 'password'}
-                                                                    placeholder="Enter Password"
-                                                                    className="form-input ps-10 placeholder:text-white-dark"
-                                                                />
-                                                                <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                                                    <IconLockDots fill={true} />
-                                                                </span>
-                                                                <button type="button" onClick={handleTogglePassword} className="absolute end-4 top-1/2 -translate-y-1/2 cursor-pointer">
-                                                                    {showPassword ? <i className="fa-solid fa-eye-slash"></i> : <i className="fa-solid fa-eye"></i>}
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex flex-col space-y-5 max-w-[350px] w-full">
-                                                        <div>
-                                                            <label htmlFor="franchise">Franchise</label>
-                                                            <div className="relative text-white-dark">
-                                                                <select
-                                                                    onChange={(e) => {
-                                                                        const selectedValue = e.target.value;
-                                                                        const selectedOption = packageOptions.find((option) => option.value === selectedValue);
-
-                                                                        if (selectedOption) {
                                                                             setAddMember({
                                                                                 ...addMember,
-                                                                                franchise: selectedOption.value,
-                                                                                packageAmount: selectedOption.packageAmount,
+                                                                                phone: limitedValue,
                                                                             });
-                                                                        }
-                                                                    }}
-                                                                    value={addMember.franchise}
-                                                                    className="form-input ps-10 placeholder:text-white-dark"
-                                                                >
-                                                                    <option>Select a franchise type </option>
-                                                                    {packageOptions.map((option) => (
-                                                                        <option key={option.value} value={option.value}>
-                                                                            {option.label}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <label htmlFor="packageAmount">PackageAmount</label>
-                                                            <div className="relative text-white-dark">
-                                                                <input
-                                                                    id="PackageAmount"
-                                                                    type="text"
-                                                                    value={addMember?.packageAmount}
-                                                                    placeholder="packageAmount"
-                                                                    readOnly
-                                                                    className="form-input ps-10 placeholder:text-white-dark"
-                                                                />
-                                                                <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                                                    <IconCashBanknotes fill={true} />
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        {(addMember?.franchise === 'District Franchise' ||
-                                                            addMember?.franchise === 'Zonal Franchise' ||
-                                                            addMember?.franchise === 'Mobile Franchise') && (
-                                                            <>
-                                                                <div>
-                                                                    <label htmlFor="Email">State</label>
-                                                                    <div className="relative text-white-dark">
-                                                                        <select className="form-input ps-10 placeholder:text-white-dark" onChange={stateSelectHandler} value={addMember.state}>
-                                                                            <option key="default" value="">
-                                                                                Select State
-                                                                            </option>
-                                                                            {stateList.map((singleState: any, idx: any) => (
-                                                                                <option key={idx} value={singleState.name}>
-                                                                                    {singleState.name}
-                                                                                </option>
-                                                                            ))}
-                                                                        </select>
-                                                                    </div>
+                                                                        }}
+                                                                        id="Phone"
+                                                                        required
+                                                                        type="number"
+                                                                        placeholder="Enter Phone"
+                                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                                    />
+                                                                    <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                        <IconPhone fill={true} />
+                                                                    </span>
                                                                 </div>
+                                                            </div>
+                                                            <div>
+                                                                <label htmlFor="Email">Address</label>
+                                                                <div className="relative text-white-dark">
+                                                                    <span className="absolute start-4 top-1/4 -translate-y-1/2">
+                                                                        <IconMapPin fill={true} />
+                                                                    </span>
+                                                                    <textarea
+                                                                        onChange={(e) => setAddMember({ ...addMember, address: e.target.value })}
+                                                                        id="Address"
+                                                                        placeholder="Enter Your Address"
+                                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <label htmlFor="Password">Password</label>
+                                                                <div className="relative text-white-dark">
+                                                                    <input
+                                                                        onChange={(e) => setAddMember({ ...addMember, password: e.target.value })}
+                                                                        id="Password"
+                                                                        type={showPassword ? 'text' : 'password'}
+                                                                        placeholder="Enter Password"
+                                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                                    />
+                                                                    <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                        <IconLockDots fill={true} />
+                                                                    </span>
+                                                                    <button type="button" onClick={handleTogglePassword} className="absolute end-4 top-1/2 -translate-y-1/2 cursor-pointer">
+                                                                        {showPassword ? <i className="fa-solid fa-eye-slash"></i> : <i className="fa-solid fa-eye"></i>}
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex flex-col space-y-5 max-w-[350px] w-full">
+                                                            <div>
+                                                                <label htmlFor="franchise">Franchise</label>
+                                                                <div className="relative text-white-dark">
+                                                                    <select
+                                                                        onChange={(e) => {
+                                                                            const selectedValue = e.target.value;
+                                                                            const selectedOption = packageOptions.find((option) => option.value === selectedValue);
+
+                                                                            if (selectedOption) {
+                                                                                setAddMember({
+                                                                                    ...addMember,
+                                                                                    franchise: selectedOption.value,
+                                                                                    packageAmount: selectedOption.packageAmount,
+                                                                                });
+                                                                            }
+                                                                        }}
+                                                                        value={addMember.franchise}
+                                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                                    >
+                                                                        <option>Select a franchise type </option>
+                                                                        {packageOptions.map((option) => (
+                                                                            <option key={option.value} value={option.value}>
+                                                                                {option.label}
+                                                                            </option>
+                                                                        ))}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <label htmlFor="packageAmount">PackageAmount</label>
+                                                                <div className="relative text-white-dark">
+                                                                    <input
+                                                                        id="PackageAmount"
+                                                                        type="text"
+                                                                        value={addMember?.packageAmount}
+                                                                        placeholder="packageAmount"
+                                                                        readOnly
+                                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                                    />
+                                                                    <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                        <IconCashBanknotes fill={true} />
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            {(addMember?.franchise === 'District Franchise' ||
+                                                                addMember?.franchise === 'Zonal Franchise' ||
+                                                                addMember?.franchise === 'Mobile Franchise' ||
+                                                                addMember?.franchise === 'Premium calls' ||
+                                                                addMember?.franchise === 'Diamond course' ||
+                                                                addMember?.franchise === 'Platinum course' ||
+                                                                addMember?.franchise === 'Algo course') && (
+                                                                <>
+                                                                    <div>
+                                                                        <label htmlFor="Email">State</label>
+                                                                        <div className="relative text-white-dark">
+                                                                            <select className="form-input ps-10 placeholder:text-white-dark" onChange={stateSelectHandler} value={addMember.state}>
+                                                                                <option key="default" value="">
+                                                                                    Select State
+                                                                                </option>
+                                                                                {stateList.map((singleState: any, idx: any) => (
+                                                                                    <option key={idx} value={singleState.name}>
+                                                                                        {singleState.name}
+                                                                                    </option>
+                                                                                ))}
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div>
+                                                                        <label htmlFor="district">{addMember?.franchise === 'District Franchise' ? 'District Franchise Name' : 'District'}</label>
+                                                                        <div className="relative text-white-dark">
+                                                                            <select
+                                                                                className="form-input ps-10 placeholder:text-white-dark"
+                                                                                onChange={(e) => {
+                                                                                    const selectedValue = e.target.value;
+                                                                                    const selectedDistrict = districtList.find((dist: any) => dist.name === selectedValue) as any;
+                                                                                    console.log(selectedValue);
+                                                                                    console.log(selectedDistrict);
+
+                                                                                    if (selectedDistrict) {
+                                                                                        setAddMember({
+                                                                                            ...addMember,
+                                                                                            [addMember?.franchise === 'District Franchise' ? 'franchiseName' : 'district']: selectedDistrict?.name,
+                                                                                        });
+                                                                                        setSelectedDistrictId(selectedDistrict?.id);
+                                                                                    }
+                                                                                }}
+                                                                                value={addMember.district}
+                                                                            >
+                                                                                <option>Select District </option>
+                                                                                {districtList.map((dist: any) => (
+                                                                                    <option key={dist.id} value={dist.name}>
+                                                                                        {dist.name}
+                                                                                    </option>
+                                                                                ))}
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </>
+                                                            )}
+                                                            {(addMember?.franchise === 'Zonal Franchise' ||
+                                                                addMember?.franchise === 'Mobile Franchise' ||
+                                                                addMember?.franchise === 'Premium calls' ||
+                                                                addMember?.franchise === 'Diamond course' ||
+                                                                addMember?.franchise === 'Platinum course' ||
+                                                                addMember?.franchise === 'Algo course') && (
                                                                 <div>
-                                                                    <label htmlFor="district">{addMember?.franchise === 'District Franchise' ? 'District Franchise Name' : 'District'}</label>
+                                                                    <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'Zonel Franchise Name' : 'Zonel'}</label>
                                                                     <div className="relative text-white-dark">
                                                                         <select
                                                                             className="form-input ps-10 placeholder:text-white-dark"
                                                                             onChange={(e) => {
                                                                                 const selectedValue = e.target.value;
-                                                                                const selectedDistrict = districtList.find((dist: any) => dist.name === selectedValue) as any;
-                                                                                console.log(selectedValue);
-                                                                                console.log(selectedDistrict);
+                                                                                const selectedZonel = zonalList.find((zonal: any) => zonal.name === selectedValue) as any;
 
-                                                                                if (selectedDistrict) {
+                                                                                if (selectedZonel) {
                                                                                     setAddMember({
                                                                                         ...addMember,
-                                                                                        district: selectedDistrict?.name,
+                                                                                        [addMember?.franchise === 'Zonal Franchise' ? 'franchiseName' : 'zonel']: selectedZonel?.name,
                                                                                     });
-                                                                                    setSelectedDistrictId(selectedDistrict?.id);
+                                                                                    setSelectedZonalId(selectedZonel?.id);
                                                                                 }
                                                                             }}
-                                                                            value={addMember.district}
+                                                                            value={addMember.zonal}
                                                                         >
-                                                                            <option>Select District </option>
-                                                                            {districtList.map((dist: any) => (
-                                                                                <option key={dist.id} value={dist.name}>
-                                                                                    {dist.name}
-                                                                                </option>
+                                                                            <option key="default" value="">
+                                                                                Select Zonel{' '}
+                                                                            </option>
+                                                                            {zonalList.map((zonal: any) => (
+                                                                                <option key={zonal.id}>{zonal.name}</option>
                                                                             ))}
                                                                         </select>
                                                                     </div>
                                                                 </div>
-                                                            </>
-                                                        )}
-                                                        {(addMember?.franchise === 'Zonal Franchise' || addMember?.franchise === 'Mobile Franchise') && (
-                                                            <div>
-                                                                <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'Zonel Franchise Name' : 'Zonel'}</label>
-                                                                <div className="relative text-white-dark">
-                                                                    <select
-                                                                        className="form-input ps-10 placeholder:text-white-dark"
-                                                                        onChange={(e) => {
-                                                                            const selectedValue = e.target.value;
-                                                                            const selectedZonel = zonalList.find((zonal: any) => zonal.name === selectedValue) as any;
-
-                                                                            if (selectedZonel) {
-                                                                                setAddMember({
-                                                                                    ...addMember,
-                                                                                    zonal: selectedZonel?.name,
-                                                                                });
-                                                                                setSelectedZonalId(selectedZonel?.id);
-                                                                            }
-                                                                        }}
-                                                                        value={addMember.zonal}
-                                                                    >
-                                                                        <option key="default" value="">
-                                                                            Select Zonel{' '}
-                                                                        </option>
-                                                                        {zonalList.map((zonal: any) => (
-                                                                            <option key={zonal.id}>{zonal.name}</option>
-                                                                        ))}
-                                                                    </select>
+                                                            )}
+                                                            {(addMember?.franchise === 'Mobile Franchise' ||
+                                                                addMember?.franchise === 'Premium calls' ||
+                                                                addMember?.franchise === 'Diamond course' ||
+                                                                addMember?.franchise === 'Platinum course' ||
+                                                                addMember?.franchise === 'Algo course') && (
+                                                                <div>
+                                                                    <label htmlFor="Email">Panchayath</label>
+                                                                    <div className="relative text-white-dark">
+                                                                        <select
+                                                                            onChange={(e) => {
+                                                                                setAddMember({ ...addMember, panchayath: e.target.value });
+                                                                            }}
+                                                                            className="form-input ps-10 placeholder:text-white-dark"
+                                                                        >
+                                                                            <option>Select panchayath </option>
+                                                                            {panchayathList.map((panchayath: any) => (
+                                                                                <option key={panchayath.id}>{panchayath.name}</option>
+                                                                            ))}
+                                                                        </select>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        )}
-                                                        {addMember?.franchise === 'Mobile Franchise' && (
-                                                            <div>
-                                                                <label htmlFor="Email">Panchayath</label>
-                                                                <div className="relative text-white-dark">
-                                                                    <select
-                                                                        onChange={(e) => {
-                                                                            setAddMember({ ...addMember, panchayath: e.target.value });
-                                                                        }}
-                                                                        className="form-input ps-10 placeholder:text-white-dark"
-                                                                    >
-                                                                        <option>Select panchayath </option>
-                                                                        {panchayathList.map((panchayath: any) => (
-                                                                            <option key={panchayath.id}>{panchayath.name}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        )}
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                                    Sign Up
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </Dialog.Panel>
-                                </Transition.Child>
+                                                    <button type="submit" className="btn bg-primary text-white !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                                        Sign Up
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </Dialog.Panel>
+                                    </Transition.Child>
+                                </div>
                             </div>
-                        </div>
-                    </Dialog>
-                </Transition>
+                        </Dialog>
+                    </Transition>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

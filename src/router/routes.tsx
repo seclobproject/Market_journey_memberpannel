@@ -1,9 +1,9 @@
 import { lazy } from 'react';
+import RecentTransaction from '../pages/RecentTransaction';
 // const Home = lazy(()=>import('../pages/Home'))
 const Member =lazy(()=>import('../pages/Member'))
 const Package = lazy(()=>import('../pages/package'))
 const Report = lazy(()=>import('../pages/Report'))
-const Wallet = lazy(()=>import('../pages/Wallet'))
 const Withdrawal = lazy(()=>import('../pages/Withdrawal'))
 const Index = lazy(() => import('../pages/Index'));
 const Analytics = lazy(() => import('../pages/Analytics'));
@@ -400,13 +400,14 @@ const routes = [
         path: '/pages/package',
         element: <Package />,
     },
-    {
-        path: '/pages/wallet',
-        element: <Wallet />,
-    },
+ 
     {
         path: '/pages/withdrawal',
         element: <Withdrawal />,
+    },
+    {
+        path: '/pages/recenttransaction',
+        element: <RecentTransaction />,
     },
 
     {

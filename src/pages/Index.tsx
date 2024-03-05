@@ -207,57 +207,7 @@ const Index = () => {
 
                 <div className="mt-10 lg:mt-16 text-[#00335B] font-bold text-lg">
                     <h2 className="mb-6 font-bold">FLASH FEED</h2>
-                    <div className="swiper" id="slider1">
-                        <div className="swiper-wrapper">
-                            <Swiper
-                                modules={[Navigation, Pagination, Autoplay]}
-                                navigation={{
-                                    nextEl: '.swiper-button-next-ex1',
-                                    prevEl: '.swiper-button-prev-ex1',
-                                }}
-                                // pagination={{
-                                //     clickable: true,
-                                // }}
-                                autoplay={{ delay: 3000 }}
-                                loop={true}
-                                breakpoints={{
-                                    1024: {
-                                        slidesPerView: 3,
-                                        spaceBetween: 30,
-                                    },
-                                    768: {
-                                        slidesPerView: 2,
-                                        spaceBetween: 40,
-                                    },
-                                    320: {
-                                        slidesPerView: 1,
-                                        spaceBetween: 20,
-                                    },
-                                }}
-                            >
-                                {items.map((item, i) => {
-                                    return (
-                                        <SwiperSlide key={i}>
-                                            <img src={`/public/assets/images/carousel1.jpeg`} className="w-full rounded-lg" alt="itemImg" />
-                                        </SwiperSlide>
-                                    );
-                                })}
-                                {items.map((item, i) => {
-                                    return (
-                                        <SwiperSlide key={i}>
-                                            <img src={`/public/assets/images/carousel2.jpeg`} className="w-full rounded-lg" alt="itemImg" />
-                                        </SwiperSlide>
-                                    );
-                                })}
-                            </Swiper>
-                        </div>
-                        <button className="swiper-button-prev-ex1 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
-                            <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
-                        </button>
-                        <button className="swiper-button-next-ex1 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
-                            <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
-                        </button>
-                    </div>
+
                     <div className="swiper mt-10" id="slider2">
                         <div className="swiper-wrapper">
                             <Swiper
@@ -318,10 +268,61 @@ const Index = () => {
                                 })}
                             </Swiper>
                         </div>
-                        <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                        <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-8 top-[44%] -translate-y-1/2">
                             <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
                         </button>
-                        <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                        <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-8 top-[44%] -translate-y-1/2">
+                            <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
+                        </button>
+                    </div>
+                    <div className="swiper mt-10" id="slider1">
+                        <div className="swiper-wrapper">
+                            <Swiper
+                                modules={[Navigation, Pagination, Autoplay]}
+                                navigation={{
+                                    nextEl: '.swiper-button-next-ex1',
+                                    prevEl: '.swiper-button-prev-ex1',
+                                }}
+                                // pagination={{
+                                //     clickable: true,
+                                // }}
+                                autoplay={{ delay: 3000 }}
+                                loop={true}
+                                breakpoints={{
+                                    1024: {
+                                        slidesPerView: 3,
+                                        spaceBetween: 30,
+                                    },
+                                    768: {
+                                        slidesPerView: 2,
+                                        spaceBetween: 40,
+                                    },
+                                    320: {
+                                        slidesPerView: 1,
+                                        spaceBetween: 20,
+                                    },
+                                }}
+                            >
+                                {items.map((item, i) => {
+                                    return (
+                                        <SwiperSlide key={i}>
+                                            <img src={`/public/assets/images/carousel1.jpeg`} className="w-full rounded-lg" alt="itemImg" />
+                                        </SwiperSlide>
+                                    );
+                                })}
+                                {items.map((item, i) => {
+                                    return (
+                                        <SwiperSlide key={i}>
+                                            <img src={`/public/assets/images/carousel2.jpeg`} className="w-full rounded-lg" alt="itemImg" />
+                                        </SwiperSlide>
+                                    );
+                                })}
+                            </Swiper>
+                        </div>
+                        <button className="swiper-button-prev-ex1 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                            <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
+                        </button>
+                        <button className="swiper-button-next-ex1 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
                             <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
                         </button>
                     </div>

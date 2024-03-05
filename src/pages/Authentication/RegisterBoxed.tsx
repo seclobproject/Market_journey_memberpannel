@@ -12,7 +12,7 @@ import IconMapPin from '../../components/Icon/IconMapPin';
 import IconCashBanknotes from '../../components/Icon/IconCashBanknotes';
 import { ApiCall } from '../../Services/Api';
 import { Show_Toast } from '../Components/Toast';
-import { districtlistinZonalUrl, memberaddUrl, packagesListUrl, panchayathlistindropdownUrl, statelistPageUrl, zonallistindropdownUrl } from '../../utils/EndPoints';
+import { addReferaUrl, districtlistindropdownUrl, packagesListUrl, panchayathlistindropdownUrl, statelistPageUrl, zonallistindropdownUrl } from '../../utils/EndPoints';
 
 interface Member {
     name: string;
@@ -74,10 +74,18 @@ const RegisterBoxed = () => {
 
     useEffect(() => {
         if (selectedStateId) {
-            getDistrictList();
+            if (addMember?.franchise === 'District Franchise') {
+                getNotSelectedDistrictList();
+            } else {
+                getDistrictList();
+            }
         }
         if (selectedDistrictId) {
-            getZonallist();
+            if (addMember?.franchise === 'Zonal Franchise') {
+                getZonalNotSelectedlist();
+            } else {
+                getZonallist();
+            }
         }
         if (selectedZonalId) {
             getPanchayathList();
@@ -108,7 +116,23 @@ const RegisterBoxed = () => {
     //-----------list district --------
     const getDistrictList = async () => {
         try {
-            const response = await ApiCall('get', `${districtlistinZonalUrl}/${selectedStateId}`);
+            const response = await ApiCall('get', `${districtlistindropdownUrl}/${selectedStateId}`);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setDistrictList(response?.data?.districts);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    //-----------list Not selected district --------
+    const getNotSelectedDistrictList = async () => {
+        try {
+            const response = await ApiCall('get', `${districtlistindropdownUrl}/${selectedStateId}`);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -123,6 +147,23 @@ const RegisterBoxed = () => {
     };
     //-----------list Zonal --------
     const getZonallist = async () => {
+        try {
+            const response = await ApiCall('get', `${zonallistindropdownUrl}/${selectedDistrictId}`);
+            console.log(response);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setZonalList(response?.data?.zonals);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    //-----------list Not Selected Zonal --------
+    const getZonalNotSelectedlist = async () => {
         try {
             const response = await ApiCall('get', `${zonallistindropdownUrl}/${selectedDistrictId}`);
             console.log(response);
@@ -176,7 +217,7 @@ const RegisterBoxed = () => {
     const addMemberFun = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            const response = await ApiCall('post', memberaddUrl, addMember);
+            const response = await ApiCall('post', addReferaUrl, addMember);
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
@@ -195,7 +236,7 @@ const RegisterBoxed = () => {
                     panchayath: '',
                     userId: '',
                 });
-                navigate('/auth/bdeox-signin');
+                navigate('/auth/boxed-signin');
                 Show_Toast({ message: 'Member added successfully', type: true });
             } else {
                 Show_Toast({ message: 'Member added failed', type: false });
@@ -398,8 +439,8 @@ const RegisterBoxed = () => {
                                                             <option key="default" value="">
                                                                 Select State
                                                             </option>
-                                                            {stateList.map((singleState: any, idx: any) => (
-                                                                <option key={idx} value={singleState.name}>
+                                                            {stateList.map((singleState: any) => (
+                                                                <option key={singleState.id} value={singleState.name}>
                                                                     {singleState.name}
                                                                 </option>
                                                             ))}
@@ -421,7 +462,7 @@ const RegisterBoxed = () => {
                                                                 if (selectedDistrict) {
                                                                     setAddMember({
                                                                         ...addMember,
-                                                                        district: selectedDistrict?.name,
+                                                                        [addMember?.franchise === 'District Franchise' ? 'franchiseName' : 'district']: selectedDistrict?.name,
                                                                     });
                                                                     setSelectedDistrictId(selectedDistrict?.id);
                                                                 }
@@ -453,7 +494,7 @@ const RegisterBoxed = () => {
                                                             if (selectedZonel) {
                                                                 setAddMember({
                                                                     ...addMember,
-                                                                    zonal: selectedZonel?.name,
+                                                                    [addMember?.franchise === 'Zonal Franchise' ? 'franchiseName' : 'zonel']: selectedZonel?.name,
                                                                 });
                                                                 setSelectedZonalId(selectedZonel?.id);
                                                             }
@@ -481,7 +522,7 @@ const RegisterBoxed = () => {
                                                         className="form-input ps-10 placeholder:text-white-dark"
                                                         required
                                                     >
-                                                        <option>Select panchayath </option>
+                                                        <option key="default">Select panchayath </option>
                                                         {panchayathList.map((panchayath: any) => (
                                                             <option key={panchayath.id}>{panchayath.name}</option>
                                                         ))}
@@ -491,7 +532,7 @@ const RegisterBoxed = () => {
                                         )}
                                     </div>
                                 </div>
-                                <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                <button type="submit" className=" btn bg-primary text-white !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
                                     Sign Up
                                 </button>
                             </form>
