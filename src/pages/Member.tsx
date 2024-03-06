@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { Show_Toast } from './Components/Toast';
 import { ApiCall } from '../Services/Api';
 import {
+    districtlistinNotdropdownUrl,
     districtlistindropdownUrl,
     getLevelOneUsers,
     getLevelTwoUsers,
@@ -171,7 +172,7 @@ const Member = () => {
     //-----------list Not selected district --------
     const getNotSelectedDistrictList = async () => {
         try {
-            const response = await ApiCall('get', `${districtlistindropdownUrl}/${selectedStateId}`);
+            const response = await ApiCall('get', `${districtlistinNotdropdownUrl}/${selectedStateId}`);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -188,7 +189,6 @@ const Member = () => {
     const getZonallist = async () => {
         try {
             const response = await ApiCall('get', `${zonallistindropdownUrl}/${selectedDistrictId}`);
-            console.log(response);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -205,7 +205,6 @@ const Member = () => {
     const getZonalNotSelectedlist = async () => {
         try {
             const response = await ApiCall('get', `${zonallistindropdownUrl}/${selectedDistrictId}`);
-            console.log(response);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -223,7 +222,6 @@ const Member = () => {
     const getPanchayathList = async () => {
         try {
             const response = await ApiCall('get', `${panchayathlistindropdownUrl}/${selectedZonalId}`);
-            console.log(response, 'dhsjk');
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -240,7 +238,6 @@ const Member = () => {
     const getPackagesList = async () => {
         try {
             const response = await ApiCall('get', packagesListUrl);
-            console.log(response);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -310,16 +307,16 @@ const Member = () => {
 
     return (
         <>
-            <div className="flex flex-wrap gap-5 w-full mb-4">
+            <div className="flex gap-5 w-full mb-4">
                 <div
                     onClick={getLevelOneMembers}
-                    className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[180px] w-full "
+                    className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[150px] w-full"
                 >
                     Level 1
                 </div>
                 <div
                     onClick={getLevelTwoMembers}
-                    className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[180px] w-full"
+                    className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[150px] w-full"
                 >
                     Level 2
                 </div>
@@ -350,32 +347,33 @@ const Member = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {allMembers.map((data:any) => {
-                                return (
-                                    <tr key={data._id}>
-                                        <td>{data.name}</td>
-                                        <td>{data.email}</td>
-                                        <td className="whitespace-nowrap">{data.phone}</td>
-
-                                        <td>{data.franchise}</td>
-                                        <td>{data.franchiseName}</td>
-                                        <td>{data.packageAmount}</td>
-                                        <td
-                                            className={`whitespace-nowrap ${
-                                                data.userStatus === 'approved'
-                                                    ? 'text-success'
-                                                    : data.userStatus === 'Pending'
-                                                    ? 'text-warning'
-                                                    : data.status === 'Canceled'
-                                                    ? 'text-danger'
-                                                    : 'text-success'
-                                            }`}
-                                        >
-                                            {data.userStatus}
+                            {allMembers?.length ? (
+                                allMembers.map((data: any) => (
+                                    <tr key={data?._id}>
+                                        <td>{data?.name}</td>
+                                        <td>{data?.email}</td>
+                                        <td className="whitespace-nowrap">{data?.phone}</td>
+                                        <td>{data?.franchise}</td>
+                                        <td>{data?.franchiseName}</td>
+                                        <td>{data?.packageAmount}</td>
+                                        <td>
+                                            <button
+                                                className={`whitespace-nowrap text-white p-1.5 rounded-lg ${
+                                                    data?.userStatus === 'approved' ? 'bg-green-400' : data?.userStatus === 'Pending' ? 'bg-warning' : 'bg-green-500'
+                                                }`}
+                                            >
+                                                {data?.userStatus}
+                                            </button>
                                         </td>
                                     </tr>
-                                );
-                            })}
+                                ))
+                            ) : (
+                                <tr> 
+                                    <td colSpan={7} style={{textAlign:"center"}}>
+                                        <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

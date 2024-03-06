@@ -283,11 +283,14 @@ const RegisterBoxed = () => {
                 <div className="relative w-full max-w-[870px] rounded-md bg-[linear-gradient(45deg,#fff9f9_0%,rgba(255,255,255,0)_25%,rgba(255,255,255,0)_75%,_#fff9f9_100%)] p-2 dark:bg-[linear-gradient(52.22deg,#0E1726_0%,rgba(14,23,38,0)_18.66%,rgba(14,23,38,0)_51.04%,rgba(14,23,38,0)_80.07%,#0E1726_100%)]">
                     <div className="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[758px] py-20 pt-10">
                         <div className="mx-auto w-full">
+                            <div className="w-full flex justify-center mb-10">
+                                <img className="w-[150px] text-center" src="/public/marketlogo.png" alt="logo" />
+                            </div>
                             <div className="mb-10">
                                 <h1 className="text-3xl font-extrabold uppercase text-center !leading-snug text-primary md:text-4xl">Sign Up</h1>
                             </div>
                             <form className="space-y-5 dark:text-white" onSubmit={addMemberFun}>
-                                <div className="flex flex-col lg:flex-row gap-5 lg:flex-wrap">
+                                <div className="flex flex-col lg:flex-row gap-5 lg:ml-4 lg:flex-wrap">
                                     <div className="space-y-5 lg:w-[375px]">
                                         <div>
                                             <label htmlFor="Name">Name</label>
@@ -532,9 +535,11 @@ const RegisterBoxed = () => {
                                         )}
                                     </div>
                                 </div>
-                                <button type="submit" className=" btn bg-primary text-white !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                    Sign Up
-                                </button>
+                                <div className="w-full flex justify-center">
+                                    <button type="submit" className="btn btn-gradient !mt-6 w-1/2 border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                        Sign Up
+                                    </button>
+                                </div>
                             </form>
                             <div className="relative my-7 text-center md:mb-9">
                                 <div className="text-center dark:text-white">

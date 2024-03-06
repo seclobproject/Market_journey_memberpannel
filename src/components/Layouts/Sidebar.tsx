@@ -20,6 +20,9 @@ import IconDollarSign from '../Icon/IconDollarSign';
 import IconCashBanknotes from '../Icon/IconCashBanknotes';
 import IconBox from '../Icon/IconBox';
 import IconShoppingBag from '../Icon/IconShoppingBag';
+import IconChatNotification from '../Icon/IconChatNotification';
+import IconBell from '../Icon/IconBell';
+import IconUser from '../Icon/IconUser';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -115,7 +118,7 @@ const Sidebar = () => {
                                     <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/package" className="group">
                                             <div className="flex items-center">
-                                                <IconBox className="group-hover:!text-primary shrink-0" />
+                                                <IconBox fill className="group-hover:!text-primary shrink-0" />
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Package')}</span>
                                             </div>
                                         </NavLink>
@@ -142,6 +145,22 @@ const Sidebar = () => {
                                             <div className="flex items-center">
                                                 <IconShoppingBag className="group-hover:!text-primary shrink-0" />
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Recent Transaction')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/pages/notifications" className="group">
+                                            <div className="flex items-center">
+                                                <IconBell className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Notification')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/users/profile" className="group">
+                                            <div className="flex items-center">
+                                                <IconUser fill className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Profile')}</span>
                                             </div>
                                         </NavLink>
                                     </li>

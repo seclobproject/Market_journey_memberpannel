@@ -1,7 +1,7 @@
 import { lazy } from 'react';
-import RecentTransaction from '../pages/RecentTransaction';
 // const Home = lazy(()=>import('../pages/Home'))
 const Member =lazy(()=>import('../pages/Member'))
+const Notifications = lazy(() => import('../pages/Notifications'));
 const Package = lazy(()=>import('../pages/package'))
 const Report = lazy(()=>import('../pages/Report'))
 const Withdrawal = lazy(()=>import('../pages/Withdrawal'))
@@ -374,6 +374,7 @@ const routes = [
         path: '/datatables/column-chooser',
         element: <ColumnChooser />,
     },
+
     // Users page
     {
         path: '/users/profile',
@@ -400,14 +401,18 @@ const routes = [
         path: '/pages/package',
         element: <Package />,
     },
- 
+
     {
         path: '/pages/withdrawal',
         element: <Withdrawal />,
     },
     {
         path: '/pages/recenttransaction',
-        element: <RecentTransaction />,
+        element: <Withdrawal />,
+    },
+    {
+        path: '/pages/notifications',
+        element: <Notifications />,
     },
 
     {

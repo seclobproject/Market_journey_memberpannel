@@ -55,10 +55,10 @@ const Report = () => {
     return (
         <>
             <div className="flex flex-wrap gap-5 w-full mb-4">
-                <div className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[200px] w-full ">State</div>
-                <div className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[200px] w-full">Destrict</div>
-                <div className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[200px] w-full">constituency</div>
-                <div className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[200px] w-full">panjayathe</div>
+                <div className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[150px] w-full ">State</div>
+                <div className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[150px] w-full">Destrict</div>
+                <div className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[150px] w-full">constituency</div>
+                <div className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[150px] w-full">panjayathe</div>
             </div>
             <div className="panel">
                 <div className="flex items-center justify-between mb-5">

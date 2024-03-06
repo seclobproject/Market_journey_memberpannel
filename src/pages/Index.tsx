@@ -15,6 +15,9 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Autoplay, Navigation, Pagination } from 'swiper';
 import IconCaretDown from '../components/Icon/IconCaretDown';
+import { Link } from 'react-router-dom';
+import IconMenuUsers from '../components/Icon/Menu/IconMenuUsers';
+import IconCashBanknotes from '../components/Icon/IconCashBanknotes';
 
 interface ProfileDetails {
     name: string;
@@ -147,7 +150,7 @@ const Index = () => {
                     </div>
                 )}
 
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
                     {/* <div className="panel ">
                         <div className="flex justify-between dark:text-white-light mb-5">
                             <h5 className="font-semibold text-primary text-lg ">Wallet Amount</h5>
@@ -157,27 +160,66 @@ const Index = () => {
                         </div>
                     </div> */}
 
+                    <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                        <div className="flex h-full justify-between items-center  dark:text-white-light">
+                            <IconMenuUsers className="w-10 h-10 text-warning" />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <h1 className="text-[25px] font-semibold">40</h1>
+                            <h5 className="font-semibold text-md text-warning">Total members</h5>
+                        </div>
+                    </div>
+                    <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                        <div className="flex h-full justify-between items-center  dark:text-white-light">
+                            <IconCreditCard className="w-10 h-10 text-warning" />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <h1 className="text-[25px] font-semibold">₹400006</h1>
+                            <h5 className="font-semibold text-md text-warning">WalletAmount</h5>
+                        </div>
+                    </div>
+                    <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                        <div className="flex h-full justify-between items-center  dark:text-white-light">
+                            <IconCashBanknotes className="w-10 h-10 text-warning" />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <h1 className="text-[25px] font-semibold">₹5240</h1>
+                            <h5 className="font-semibold text-md text-warning">DirectIncome</h5>
+                        </div>
+                    </div>
+                    <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                        <div className="flex h-full justify-between items-center  dark:text-white-light">
+                            <IconCashBanknotes className="w-10 h-10 text-warning" />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <h1 className="text-[25px] font-semibold">₹740</h1>
+                            <h5 className="font-semibold text-md text-warning">InDirectIncome</h5>
+                        </div>
+                    </div>
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                     <div
-                        className="panel overflow-hidden before:bg-primary before:absolute before:-right-44 before:top-0 before:bottom-0 before:m-auto before:rounded-full before:w-96 before:h-96 grid grid-cols-1 content-between"
+                        className="panel overflow-hidden before:bg-primary before:absolute before:-right-44 before:top-0 before:bottom-0 before:m-auto before:rounded-full before:w-96 before:h-96 grid grid-cols-1 content-between "
                         style={{ background: 'linear-gradient(0deg, #00c6fb -227%, #132239)' }}
                     >
                         <div className="flex items-start justify-between text-white-light mb-16 z-[7]">
                             <h5 className="font-semibold text-lg">Total Balance</h5>
-
-                            <div className="relative text-xl whitespace-nowrap">₹ {profielDetails.walletAmount}</div>
+                            <img src="/public/assets/images/rupee.png" alt="rupee" />
                         </div>
                         <div className="flex items-center justify-between z-10">
                             <div className="flex items-center justify-between">
-                                <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] place-content-center ltr:mr-2 rtl:ml-2">
+                                <div className="relative text-2xl text-white whitespace-nowrap">₹ {profielDetails.walletAmount}</div>
+
+                                {/* <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] place-content-center ltr:mr-2 rtl:ml-2">
                                     <IconPlus />
                                 </button>
                                 <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] grid place-content-center">
                                     <IconCreditCard />
-                                </button>
+                                </button> */}
                             </div>
-                            <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] z-10">
+                            {/* <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] z-10">
                                 Upgrade
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                     <div className="panel sm:h-auto flex flex-col justify-between bg-[#00335B] text-white">
@@ -199,7 +241,7 @@ const Index = () => {
                             <h5 className="font-semibold text-lg ">10 day left</h5>
                         </div>
                         <p className="text-center sm:text-left">Your monthly subscription plan has 10 days to renew Subscription is 0 Please upload the screenshot</p>
-                        <button type="button" className=" text-white hover:bg-warning z-10 font-bold rounded p-2 ml-auto border hover:border-none">
+                        <button type="button" className="text-warning hover:text-white hover:bg-warning z-10 font-bold rounded border-warning p-2 ml-auto border ">
                             Subscribe
                         </button>
                     </div>
@@ -240,13 +282,15 @@ const Index = () => {
                                     return (
                                         <SwiperSlide key={i}>
                                             <img src={`/public/assets/images/carousel1.jpeg`} className="w-full rounded-lg" alt="itemImg" />
-                                            <button
-                                                type="button"
-                                                className="absolute left-1/2 top-1/2 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/2 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
-                                                onClick={() => setModal(true)}
-                                            >
-                                                <IconPlayCircle className="h-[62px] w-[62px]" fill={true} />
-                                            </button>
+                                            <Link to="https://youtu.be/V2YYhGn3MGo?si=b0IENXtBsUJJUjEa" target="_blank">
+                                                <button
+                                                    type="button"
+                                                    className="absolute left-1/2 top-1/2 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/2 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
+                                                    // onClick={() => setModal(true)}
+                                                >
+                                                    <IconPlayCircle className="h-[62px] w-[62px]" fill={true} />
+                                                </button>
+                                            </Link>
                                             <p>Journey of inspiration and discovery how Market journey </p>
                                         </SwiperSlide>
                                     );
@@ -268,10 +312,10 @@ const Index = () => {
                                 })}
                             </Swiper>
                         </div>
-                        <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-8 top-[44%] -translate-y-1/2">
+                        <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
                             <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
                         </button>
-                        <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-8 top-[44%] -translate-y-1/2">
+                        <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
                             <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
                         </button>
                     </div>
@@ -326,29 +370,7 @@ const Index = () => {
                             <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
                         </button>
                     </div>
-                    {/* <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-                        {items.map((item: any, i) => {
-                            return (
-                                <div
-                                    key={i}
-                                    className="space-y-5 rounded-md border border-white-light bg-white shadow-[0px_0px_2px_0px_rgba(145,158,171,0.20),0px_12px_24px_-4px_rgba(145,158,171,0.12)] dark:border-[#1B2E4B] dark:bg-black"
-                                >
-                                    <div className="relative h-[340px] overflow-hidden rounded-md group">
-                                        <img src={item.src} alt=" tutorial" className="h-full w-full object-cover cursor-pointer" onClick={() => setModal(true)} />
-                                        <button
-                                            type="button"
-                                            className="absolute left-1/2 top-1/2 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/2 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
-                                            onClick={() => setModal(true)}
-                                        >
-                                            <IconPlayCircle className="h-[62px] w-[62px]" fill={true} />
-                                        </button>
-                                        <div className="absolute bottom-0 left-0 w-full bg-white/30 px-5 py-[22px] text-center text-xl text-white backdrop-blur-[5px]">Excessive sugar is harmful</div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                        ;
-                    </div> */}
+
                     <Transition appear show={modal} as={Fragment}>
                         <Dialog as="div" open={modal} onClose={() => setModal(false)}>
                             <Transition.Child
@@ -440,7 +462,7 @@ const Index = () => {
                                                         {selectedFile && (
                                                             <div className="flex items-center mt-2">
                                                                 <p className="text-sm text-danger mt-2 mr-2">File selected: {selectedFile?.name}</p>
-                                                                <button type="button" onClick={() => setSelectedFile(null)} className="text-danger hover:danger-gray-300">
+                                                                <button type="button" onClick={() => setSelectedFile(null)} className="text-primary hover:danger-gray-300">
                                                                     &#10005;
                                                                 </button>
                                                             </div>

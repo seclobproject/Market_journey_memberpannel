@@ -362,12 +362,8 @@ const Header = () => {
                 </div>
             </header>
             {logoutModal && (
-                <div className="absolute top-0 left-0 w-full h-screen bg-opacity-30 bg-black grid place-items-center">
-                    <div
-                        className="relative z-[999]
-                    
-                    lg:w-2/6 h-2/5 flex sm:w-3/4 flex-col gap-10 border-2 p-2 rounded-lg items-center justify-center bg-white shadow-lg"
-                    >
+                <div className="absolute z-[999] top-0 left-0 w-full h-screen bg-opacity-30 bg-black grid place-items-center ">
+                    <div className="relative z-[999] lg:w-2/6 h-2/5 flex sm:w-3/4 flex-col gap-10 border-2 p-2 rounded-lg items-center justify-center bg-white shadow-lg">
                         <div onClick={() => setLogoutModal(false)} className="p-1.5 absolute border-2 top-5 right-5 rounded-full text-red-500 cursor-pointer">
                             X
                         </div>
@@ -390,6 +386,7 @@ const Header = () => {
                             </button>
                         </div>
                     </div>
+                    <div className="absolute top-0 left-0 w-full h-screen bg-opacity-30 bg-black backdrop-blur-lg"></div>
                 </div>
             )}
         </>
