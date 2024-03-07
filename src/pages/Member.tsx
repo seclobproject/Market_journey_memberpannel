@@ -16,6 +16,7 @@ import {
     packagesListUrl,
     panchayathlistindropdownUrl,
     statelistPageUrl,
+    zonallistinNotdropdownUrl,
     zonallistindropdownUrl,
 } from '../utils/EndPoints';
 import IconUser from '../components/Icon/IconUser';
@@ -24,6 +25,7 @@ import IconMapPin from '../components/Icon/IconMapPin';
 import IconPhone from '../components/Icon/IconPhone';
 import IconLockDots from '../components/Icon/IconLockDots';
 import IconCashBanknotes from '../components/Icon/IconCashBanknotes';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 interface Member {
     name: string;
@@ -37,6 +39,7 @@ interface Member {
     district: string;
     zonal: string;
     panchayath: string;
+    franchiseName:string;
 }
 interface Package {
     packageName: string;
@@ -63,6 +66,7 @@ const Member = () => {
         district: '',
         zonal: '',
         panchayath: '',
+        franchiseName:'',
     });
     const [stateList, setStateList] = useState<any>([]);
     const [districtList, setDistrictList] = useState([]);
@@ -73,6 +77,8 @@ const Member = () => {
     const [selectedDistrictId, setSelectedDistrictId] = useState(null);
     const [selectedZonalId, setSelectedZonalId] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
+    const [pageNumber,setPageNumber]=useState(0)
+    const [totalMembers,setTotalMembers]=useState(0)
 
     useEffect(() => {
         getLevelOneMembers();
@@ -108,8 +114,8 @@ const Member = () => {
     //----Get Level 1 members-----
     const getLevelOneMembers = async () => {
         try {
-            const response = await ApiCall('get', getLevelOneUsers);
-            console.log(response);
+            const response = await ApiCall('get', getLevelOneUsers );
+            // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
 
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
@@ -122,6 +128,28 @@ const Member = () => {
             console.error('Error fetching allMembers list:', error);
         }
     };
+    // pagination in Level 1 data
+    const fetchData=()=>{
+        setPageNumber(pageNumber + 1)
+        const getLevelOneMembers = async () => {
+            try {
+                const response = await ApiCall('get', getLevelOneUsers,);
+                // const response = await ApiCall('get', getLevelOneUsers, '', { page: pageNumber, pageSize: 10 });
+                console.log(response);
+
+                if (response instanceof Error) {
+                    console.error('Error fetching allMembers list:', response.message);
+                } else if (response.status === 200) {
+                    setAllMembers(allMembers.concat(response?.data?.child1));
+                } else {
+                    console.error('Error fetching allMembers list. Unexpected status:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching allMembers list:', error);
+            }
+        };
+        getLevelOneMembers()
+    }
     //----Get Level 2 members-----
     const getLevelTwoMembers = async () => {
         // try {
@@ -204,7 +232,7 @@ const Member = () => {
     //-----------list Not Selected Zonal --------
     const getZonalNotSelectedlist = async () => {
         try {
-            const response = await ApiCall('get', `${zonallistindropdownUrl}/${selectedDistrictId}`);
+            const response = await ApiCall('get', `${zonallistinNotdropdownUrl}/${selectedDistrictId}`);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -271,6 +299,7 @@ const Member = () => {
                     district: '',
                     zonal: '',
                     panchayath: '',
+                    franchiseName:'',
                 });
                 setAddModal(false);
                 Show_Toast({ message: 'Member added successfully', type: true });
@@ -343,7 +372,7 @@ const Member = () => {
                                 <th> franchise Type</th>
                                 <th> franchise Name</th>
                                 <th> Package Amount</th>
-                                <th> Status</th>
+                                {/* <th> Status</th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -356,7 +385,7 @@ const Member = () => {
                                         <td>{data?.franchise}</td>
                                         <td>{data?.franchiseName}</td>
                                         <td>{data?.packageAmount}</td>
-                                        <td>
+                                        {/* <td>
                                             <button
                                                 className={`whitespace-nowrap text-white p-1.5 rounded-lg ${
                                                     data?.userStatus === 'approved' ? 'bg-green-400' : data?.userStatus === 'Pending' ? 'bg-warning' : 'bg-green-500'
@@ -364,18 +393,41 @@ const Member = () => {
                                             >
                                                 {data?.userStatus}
                                             </button>
-                                        </td>
+                                        </td> */}
                                     </tr>
                                 ))
                             ) : (
-                                <tr> 
-                                    <td colSpan={7} style={{textAlign:"center"}}>
-                                        <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                                <tr>
+                                    <td colSpan={7} style={{ textAlign: 'center' }}>
+                                        {allMembers.length === 0 ? (
+                                            <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                                        ) : (
+                                            <span className="align-middle m-auto mb-10">No Member</span>
+                                        )}
                                     </td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
+                    <InfiniteScroll
+                        dataLength={allMembers.length} //This is important field to render the next data
+                        next={fetchData}
+                        hasMore={true}
+                        loader={<h4></h4>}
+                        children={undefined} // endMessage={
+                        //     <p style={{ textAlign: 'center' }}>
+                        //         <b>Yay! You have seen it all</b>
+                        //     </p>
+                        // }
+                        // below props only if you need pull down functionality
+                        // refreshFunction={this.refresh}
+                        // pullDownToRefresh
+                        // pullDownToRefreshThreshold={50}
+                        // pullDownToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8595; Pull down to refresh</h3>}
+                        // releaseToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>}
+                    >
+                        {/* {items} */}
+                    </InfiniteScroll>
                 </div>
                 <div>
                     <Transition appear show={addModal} as={Fragment}>
@@ -591,14 +643,14 @@ const Member = () => {
                                                                                     console.log(selectedDistrict);
 
                                                                                     if (selectedDistrict) {
-                                                                                        setAddMember({
-                                                                                            ...addMember,
-                                                                                            [addMember?.franchise === 'District Franchise' ? 'franchiseName' : 'district']: selectedDistrict?.name,
-                                                                                        });
+                                                                                        setAddMember((prevAddMember) => ({
+                                                                                            ...prevAddMember,
+                                                                                            [prevAddMember.franchise === 'District Franchise' ? 'franchiseName' : 'district']: selectedDistrict?.name,
+                                                                                        }));
                                                                                         setSelectedDistrictId(selectedDistrict?.id);
                                                                                     }
                                                                                 }}
-                                                                                value={addMember.district}
+                                                                                value={addMember?.franchise === 'District Franchise' ? addMember.franchiseName : addMember.district}
                                                                             >
                                                                                 <option>Select District </option>
                                                                                 {districtList.map((dist: any) => (
@@ -627,14 +679,14 @@ const Member = () => {
                                                                                 const selectedZonel = zonalList.find((zonal: any) => zonal.name === selectedValue) as any;
 
                                                                                 if (selectedZonel) {
-                                                                                    setAddMember({
-                                                                                        ...addMember,
-                                                                                        [addMember?.franchise === 'Zonal Franchise' ? 'franchiseName' : 'zonel']: selectedZonel?.name,
-                                                                                    });
+                                                                                    setAddMember((prevAddMember) => ({
+                                                                                        ...prevAddMember,
+                                                                                        [addMember?.franchise === 'Zonal Franchise' ? 'franchiseName' : 'zonal']: selectedZonel?.name,
+                                                                                    }));
                                                                                     setSelectedZonalId(selectedZonel?.id);
                                                                                 }
                                                                             }}
-                                                                            value={addMember.zonal}
+                                                                            value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
                                                                         >
                                                                             <option key="default" value="">
                                                                                 Select Zonel{' '}

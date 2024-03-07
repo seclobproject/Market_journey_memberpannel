@@ -7,7 +7,7 @@ import IconX from '../components/Icon/IconX';
 import IconPlus from '../components/Icon/IconPlus';
 import IconCreditCard from '../components/Icon/IconCreditCard';
 import { ApiCall, Base_url } from '../Services/Api';
-import { getProfileUrl } from '../utils/EndPoints';
+import { getImagesUrl, getProfileUrl, getVideoUrl } from '../utils/EndPoints';
 import Carousel from './Components/Carousel';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -33,6 +33,8 @@ const Index = () => {
     const [transactionNumber, setTransacrionNumber] = useState('');
     const [showSelectDocumentMessage, setShowSelectDocumentMessage] = useState(false);
     const [updateStatus, setUpdatedStatus] = useState<string | null>(null);
+    const [slideImages, setslideImage] = useState<any>([]);
+    const [slideVideos, setSlideVideos] = useState<any>([]);
     const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
         name: '',
         email: '',
@@ -61,26 +63,49 @@ const Index = () => {
             console.error('Error fetching state list:', error);
         }
     };
+    //--------- get sliding images-------
+    const getImages = async () => {
+        try {
+            const response = await ApiCall('get', getImagesUrl);
+            console.log(response);
 
-    // const fetchData = async () => {
-    //     try {
-    //         const userStatus = await localStorage.getItem('status');
-    //         setUpdatedStatus(userStatus);
-    //         if (userStatus === 'pending') {
-    //             setPendingModal(true);
-    //             console.log(pendingModal);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching user status:', error);
-    //     }
-    // };
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setslideImage(response?.data?.homeImageData);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    // --------------------------
+    const getVideos = async () => {
+        try {
+            const response = await ApiCall('get', getVideoUrl);
+            console.log(response);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                console.log(response?.data?.homeVideoData, 'video');
+
+                setSlideVideos(response?.data?.homeVideoData);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+
     useEffect(() => {
         getProfile();
+        getImages();
+        getVideos();
     }, []);
 
-    // const closePendingModal = () => {
-    //     setPendingModal(false);
-    // };
     const handleRefresh = () => {
         window.location.reload();
     };
@@ -278,24 +303,25 @@ const Index = () => {
                                     },
                                 }}
                             >
-                                {items.map((item, i) => {
+                                {slideVideos.length>0 ? (slideVideos.map((item: any) => {
+                                    console.log(`http://192.168.29.152:8000/uploads/${item.videoThambnail}`);
+
                                     return (
-                                        <SwiperSlide key={i}>
-                                            <img src={`/public/assets/images/carousel1.jpeg`} className="w-full rounded-lg" alt="itemImg" />
-                                            <Link to="https://youtu.be/V2YYhGn3MGo?si=b0IENXtBsUJJUjEa" target="_blank">
+                                        <SwiperSlide key={item._id}>
+                                            <img src={`http://192.168.29.152:8000/uploads/${item.videoThambnail}`} className="w-full h-[250px] rounded-lg" alt="itemImg" />
+                                            <Link to={`${item.videoLink}`} target="_blank">
                                                 <button
                                                     type="button"
-                                                    className="absolute left-1/2 top-1/2 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/2 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
-                                                    // onClick={() => setModal(true)}
+                                                    className="absolute left-1/2 top-1/3 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/3 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
                                                 >
-                                                    <IconPlayCircle className="h-[62px] w-[62px]" fill={true} />
+                                                    <IconPlayCircle className="h-[62px] w-[62px] text-warning" fill={true} />
                                                 </button>
                                             </Link>
-                                            <p>Journey of inspiration and discovery how Market journey </p>
+                                            <p>{item.videoTitle}</p>
                                         </SwiperSlide>
                                     );
-                                })}
-                                {items.map((item, i) => {
+                                })):(<p>No videos</p>)}
+                                {/* {items.map((item:any) => {
                                     return (
                                         <SwiperSlide key={i}>
                                             <img src={`/public/assets/images/carousel2.jpeg`} className="w-full rounded-lg" alt="itemImg" />
@@ -304,12 +330,12 @@ const Index = () => {
                                                 className="absolute left-1/2 top-1/2 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/2 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
                                                 onClick={() => setModal(true)}
                                             >
-                                                <IconPlayCircle className="h-[62px] w-[62px]" fill={true} />
+                                                <IconPlayCircle className="h-[62px] w-[62px] text-warning" fill={true} />
                                             </button>
                                             <p>Journey of inspiration and discovery how Market journey </p>
                                         </SwiperSlide>
                                     );
-                                })}
+                                })} */}
                             </Swiper>
                         </div>
                         <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
@@ -347,17 +373,10 @@ const Index = () => {
                                     },
                                 }}
                             >
-                                {items.map((item, i) => {
+                                {slideImages.map((item: any) => {
                                     return (
-                                        <SwiperSlide key={i}>
-                                            <img src={`/public/assets/images/carousel1.jpeg`} className="w-full rounded-lg" alt="itemImg" />
-                                        </SwiperSlide>
-                                    );
-                                })}
-                                {items.map((item, i) => {
-                                    return (
-                                        <SwiperSlide key={i}>
-                                            <img src={`/public/assets/images/carousel2.jpeg`} className="w-full rounded-lg" alt="itemImg" />
+                                        <SwiperSlide key={item._id}>
+                                            <img src={`http://192.168.29.152:8000/uploads/${item?.homeImage}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
                                         </SwiperSlide>
                                     );
                                 })}

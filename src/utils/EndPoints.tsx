@@ -18,3 +18,8 @@ export const getLevelTwoUsers=''
 // user
 export const getProfileUrl = '/api/user/view-user-profile';
 export const editProfileUrl = '/api/user/edit-profile';
+
+// Home
+
+export const getImagesUrl = '/api/admin/view-home-images';
+export const getVideoUrl = '/api/admin/view-home-videos';
