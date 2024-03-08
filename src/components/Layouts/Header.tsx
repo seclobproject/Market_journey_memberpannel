@@ -291,7 +291,9 @@ const Header = () => {
                                                 })}
                                                 <li>
                                                     <div className="p-4">
-                                                        <button className="btn btn-primary block w-full btn-small">Read All Notifications</button>
+                                                        <button onClick={() => navigate('/pages/notifications')} className="btn btn-primary block w-full btn-small">
+                                                            Read All Notifications
+                                                        </button>
                                                     </div>
                                                 </li>
                                             </>

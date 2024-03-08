@@ -5,6 +5,7 @@ const Notifications = lazy(() => import('../pages/Notifications'));
 const Package = lazy(()=>import('../pages/package'))
 const Report = lazy(()=>import('../pages/Report'))
 const Withdrawal = lazy(()=>import('../pages/Withdrawal'))
+const RecentTransaction = lazy(() => import('../pages/RecentTransaction'));
 const Index = lazy(() => import('../pages/Index'));
 const Analytics = lazy(() => import('../pages/Analytics'));
 const Finance = lazy(() => import('../pages/Finance'));
@@ -408,7 +409,7 @@ const routes = [
     },
     {
         path: '/pages/recenttransaction',
-        element: <Withdrawal />,
+        element: <RecentTransaction />,
     },
     {
         path: '/pages/notifications',

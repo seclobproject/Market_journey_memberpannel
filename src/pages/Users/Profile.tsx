@@ -23,6 +23,7 @@ import { editProfileUrl, getProfileUrl } from '../../utils/EndPoints';
 import IconCashBanknotes from '../../components/Icon/IconCashBanknotes';
 import IconBox from '../../components/Icon/IconBox';
 import IconPencil from '../../components/Icon/IconPencil';
+import IconPhoneCall from '../../components/Icon/IconPhoneCall';
 interface ProfileDetails {
     name: string;
     address: string;
@@ -156,16 +157,16 @@ const Profile = () => {
                                     </li> */}
                                     <li>
                                         <button className="flex items-center gap-2">
-                                            <IconMail className="w-5 h-5 shrink-0" />
+                                            <IconMail className="w-5 h-5 shrink-0" fill/>
                                             <span className="text-primary truncate">Email : {profielDetails.email}</span>
                                         </button>
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <IconPhone />
+                                        <IconPhoneCall fill/>
                                         Phone : {profielDetails.phone}
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <IconMapPin className="shrink-0" />
+                                        <IconMapPin className="shrink-0" fill/>
                                         Address : {profielDetails.address}
                                     </li>
 
@@ -178,15 +179,15 @@ const Profile = () => {
                                 </ul>
                                 <ul className="mt-5 m-auto space-y-4">
                                     <li className="flex items-center gap-2">
-                                        <IconCashBanknotes className="shrink-0" />
+                                        <IconCashBanknotes className="shrink-0" fill/>
                                         walletAmount : {profielDetails.walletAmount}
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <IconBox className="shrink-0" />
+                                        <IconBox className="shrink-0"/>
                                         Franchise Type : {profielDetails.franchise}
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <IconPencil className="shrink-0" />
+                                        <IconPencil className="shrink-0" fill/>
                                         Franchise Name : {profielDetails.franchise}
                                     </li>
                                 </ul>

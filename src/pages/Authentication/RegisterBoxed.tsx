@@ -12,7 +12,7 @@ import IconMapPin from '../../components/Icon/IconMapPin';
 import IconCashBanknotes from '../../components/Icon/IconCashBanknotes';
 import { ApiCall } from '../../Services/Api';
 import { Show_Toast } from '../Components/Toast';
-import { addReferaUrl, districtlistindropdownUrl, packagesListUrl, panchayathlistindropdownUrl, statelistPageUrl, zonallistindropdownUrl } from '../../utils/EndPoints';
+import { addReferaUrl, districtlistinNotdropdownUrl, districtlistindropdownUrl, packagesListUrl, panchayathlistindropdownUrl, statelistPageUrl, zonallistinNotdropdownUrl, zonallistindropdownUrl } from '../../utils/EndPoints';
 
 interface Member {
     name: string;
@@ -27,8 +27,10 @@ interface Member {
     zonal: string;
     panchayath: string;
     userId: string | undefined;
+    franchiseName: string;
 }
 interface Package {
+    packageName: string;
     franchiseName: string;
     packageAmount: number;
 }
@@ -51,6 +53,7 @@ const RegisterBoxed = () => {
         zonal: '',
         panchayath: '',
         userId: params.id,
+        franchiseName: '',
     });
     const [stateList, setStateList] = useState<any>([]);
     const [districtList, setDistrictList] = useState([]);
@@ -132,7 +135,7 @@ const RegisterBoxed = () => {
     //-----------list Not selected district --------
     const getNotSelectedDistrictList = async () => {
         try {
-            const response = await ApiCall('get', `${districtlistindropdownUrl}/${selectedStateId}`);
+            const response = await ApiCall('get', `${districtlistinNotdropdownUrl}/${selectedStateId}`);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -165,7 +168,7 @@ const RegisterBoxed = () => {
     //-----------list Not Selected Zonal --------
     const getZonalNotSelectedlist = async () => {
         try {
-            const response = await ApiCall('get', `${zonallistindropdownUrl}/${selectedDistrictId}`);
+            const response = await ApiCall('get', `${zonallistinNotdropdownUrl}/${selectedDistrictId}`);
             console.log(response);
 
             if (response instanceof Error) {
@@ -235,14 +238,17 @@ const RegisterBoxed = () => {
                     zonal: '',
                     panchayath: '',
                     userId: '',
+                    franchiseName: '',
                 });
                 navigate('/auth/boxed-signin');
                 Show_Toast({ message: 'Member added successfully', type: true });
             } else {
                 Show_Toast({ message: 'Member added failed', type: false });
             }
-        } catch (error) {
+        } catch (error:any) {
             console.log(error);
+            Show_Toast({ message: error?.response?.data?.message, type: false });
+
 
             // Show_Toast({message:error, type:false});
         }
@@ -250,7 +256,7 @@ const RegisterBoxed = () => {
 
     const packageOptions = packageList.map((pack) => ({
         value: pack.franchiseName,
-        label: pack.franchiseName,
+        label: pack?.packageName || pack?.franchiseName,
         packageAmount: pack.packageAmount,
     }));
 
@@ -282,11 +288,14 @@ const RegisterBoxed = () => {
                 <img src="/assets/images/auth/polygon-object.svg" alt="image" className="absolute bottom-0 end-[28%]" />
                 <div className="relative w-full max-w-[870px] rounded-md bg-[linear-gradient(45deg,#fff9f9_0%,rgba(255,255,255,0)_25%,rgba(255,255,255,0)_75%,_#fff9f9_100%)] p-2 dark:bg-[linear-gradient(52.22deg,#0E1726_0%,rgba(14,23,38,0)_18.66%,rgba(14,23,38,0)_51.04%,rgba(14,23,38,0)_80.07%,#0E1726_100%)]">
                     <div className="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[758px] py-20 pt-10">
+                        <div className="w-full flex mb-10">
+                            <img className="w-[150px] text-center" src="/public/marketlogo.png" alt="logo" />
+                        </div>
                         <div className="mx-auto w-full">
-                            <div className="w-full flex justify-center mb-10">
+                            {/* <div className="w-full flex mb-10">
                                 <img className="w-[150px] text-center" src="/public/marketlogo.png" alt="logo" />
-                            </div>
-                            <div className="mb-10">
+                            </div> */}
+                            <div className="mb-10 ">
                                 <h1 className="text-3xl font-extrabold uppercase text-center !leading-snug text-primary md:text-4xl">Sign Up</h1>
                             </div>
                             <form className="space-y-5 dark:text-white" onSubmit={addMemberFun}>
@@ -463,14 +472,14 @@ const RegisterBoxed = () => {
                                                                 console.log(selectedDistrict);
 
                                                                 if (selectedDistrict) {
-                                                                    setAddMember({
-                                                                        ...addMember,
-                                                                        [addMember?.franchise === 'District Franchise' ? 'franchiseName' : 'district']: selectedDistrict?.name,
-                                                                    });
+                                                                    setAddMember((prevAddMember) => ({
+                                                                        ...prevAddMember,
+                                                                        [prevAddMember.franchise === 'District Franchise' ? 'franchiseName' : 'district']: selectedDistrict?.name,
+                                                                    }));
                                                                     setSelectedDistrictId(selectedDistrict?.id);
                                                                 }
                                                             }}
-                                                            value={addMember.district}
+                                                            value={addMember?.franchise === 'District Franchise' ? addMember.franchiseName : addMember.district}
                                                         >
                                                             <option>Select District </option>
                                                             {districtList.map((dist: any) => (
@@ -495,14 +504,14 @@ const RegisterBoxed = () => {
                                                             const selectedZonel = zonalList.find((zonal: any) => zonal.name === selectedValue) as any;
 
                                                             if (selectedZonel) {
-                                                                setAddMember({
-                                                                    ...addMember,
-                                                                    [addMember?.franchise === 'Zonal Franchise' ? 'franchiseName' : 'zonel']: selectedZonel?.name,
-                                                                });
+                                                                setAddMember((prevAddMember) => ({
+                                                                    ...prevAddMember,
+                                                                    [addMember?.franchise === 'Zonal Franchise' ? 'franchiseName' : 'zonal']: selectedZonel?.name,
+                                                                }));
                                                                 setSelectedZonalId(selectedZonel?.id);
                                                             }
                                                         }}
-                                                        value={addMember.zonal}
+                                                        value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
                                                     >
                                                         <option key="default" value="">
                                                             Select Zonel{' '}

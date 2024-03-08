@@ -13,7 +13,7 @@ export const packagesListUrl = '/api/admin/view-package';
 export const memberaddUrl = '/api/user/add-user';
 export const addReferaUrl = '/api/user/add-referal-user';
 export const getLevelOneUsers = '/api/user/view-level1-user';
-export const getLevelTwoUsers=''
+export const getLevelTwoUsers = '/api/user/view-level2-user';
 
 // user
 export const getProfileUrl = '/api/user/view-user-profile';

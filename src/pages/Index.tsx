@@ -15,11 +15,13 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Autoplay, Navigation, Pagination } from 'swiper';
 import IconCaretDown from '../components/Icon/IconCaretDown';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import IconMenuUsers from '../components/Icon/Menu/IconMenuUsers';
 import IconCashBanknotes from '../components/Icon/IconCashBanknotes';
+import IconAirplay from '../components/Icon/IconAirplay';
 
 interface ProfileDetails {
+    id:string
     name: string;
     email: string;
     userStatus: string;
@@ -40,8 +42,22 @@ const Index = () => {
         email: '',
         userStatus: '',
         walletAmount: '',
+        id:''
     });
-    console.log(updateStatus);
+
+    const navigate = useNavigate()
+
+        useEffect(() => {
+            getProfile();
+            getImages();
+            getVideos();
+        }, []);
+useEffect(()=>{
+    const token = localStorage.getItem('User');
+    if(!token){
+        navigate('/auth/boxed-signin');
+    }
+})
 
     const getProfile = async () => {
         try {
@@ -100,11 +116,6 @@ const Index = () => {
         }
     };
 
-    useEffect(() => {
-        getProfile();
-        getImages();
-        getVideos();
-    }, []);
 
     const handleRefresh = () => {
         window.location.reload();
@@ -166,15 +177,42 @@ const Index = () => {
             title: 'My latest Vlog',
         },
     ];
+    // share referal link
+       const shareTitle = 'Check out this awesome link!';
+       const shareUrl = `http://192.168.29.203:5173/auth/boxed-signup/${profielDetails?.id}`; // Replace with the actual URL you want to share
+
+       const handleShare = async () => {
+           if (navigator.share) {
+               try {
+                   await navigator.share({
+                       title: shareTitle,
+                       text: 'Check out this awesome link!',
+                       url: shareUrl,
+                   });
+               } catch (error) {
+                   console.error('Error sharing:', error);
+               }
+           } else {
+               // Fallback for browsers that do not support the Web Share API
+               console.warn('Web Share API is not supported in this browser.');
+               // You can provide alternative sharing methods here (e.g., copy to clipboard)
+           }
+       };
     return (
         <>
             <div>
                 {(updateStatus === 'readyToApprove' || updateStatus === 'pending') && (
                     <div className="bg-yellow-400 p-2 text-center max-w-[150px] text-white font-bold mb-2 rounded-md">
-                        <h4>{updateStatus}</h4>
+                        <h4>wait for Admin Confirmation {updateStatus}</h4>
                     </div>
                 )}
-
+                <h2 className="mb-6 font-bold text-primary text-lg">LATEST NEWS</h2>
+                <div className="overflow-hidden whitespace-nowrap bg-primary py-4 mb-6">
+                    <div className="animate-marquee text-warning text-lg font-bold">
+                        They provide comprehensive coverage of global markets, along with insightful analysis and commentary They provide comprehensive coverage of global markets, along with
+                        insightful analysis and commentary
+                    </div>
+                </div>
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
                     {/* <div className="panel ">
                         <div className="flex justify-between dark:text-white-light mb-5">
@@ -255,7 +293,7 @@ const Index = () => {
                             <img className="w-[117px] h-[72px]" src="/public/assets/images/referal_img.png" alt="" />
                             <div className="flex flex-col gap-5">
                                 <p className="text-center sm:text-left">Sharing is rewarding! Refer your friends and earn a lifetime income</p>
-                                <button type="button" className="font-bold rounded p-2 text-white bg-warning ml-auto sm:ml-0">
+                                <button onClick={handleShare} type="button" className="font-bold rounded p-2 text-white bg-warning ml-auto sm:ml-0">
                                     Refer Now
                                 </button>
                             </div>
@@ -272,8 +310,8 @@ const Index = () => {
                     </div>
                 </div>
 
-                <div className="mt-10 lg:mt-16 text-[#00335B] font-bold text-lg">
-                    <h2 className="mb-6 font-bold">FLASH FEED</h2>
+                <div className="mt-10 lg:mt-16 text-primary ">
+                    <h2 className="mb-6 font-bold text-lg">FLASH FEED</h2>
 
                     <div className="swiper mt-10" id="slider2">
                         <div className="swiper-wrapper">
@@ -303,24 +341,28 @@ const Index = () => {
                                     },
                                 }}
                             >
-                                {slideVideos.length>0 ? (slideVideos.map((item: any) => {
-                                    console.log(`http://192.168.29.152:8000/uploads/${item.videoThambnail}`);
+                                {slideVideos.length > 0 ? (
+                                    slideVideos.map((item: any) => {
+                                        console.log(`http://192.168.29.152:8000/uploads/${item.videoThambnail}`);
 
-                                    return (
-                                        <SwiperSlide key={item._id}>
-                                            <img src={`http://192.168.29.152:8000/uploads/${item.videoThambnail}`} className="w-full h-[250px] rounded-lg" alt="itemImg" />
-                                            <Link to={`${item.videoLink}`} target="_blank">
-                                                <button
-                                                    type="button"
-                                                    className="absolute left-1/2 top-1/3 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/3 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
-                                                >
-                                                    <IconPlayCircle className="h-[62px] w-[62px] text-warning" fill={true} />
-                                                </button>
-                                            </Link>
-                                            <p>{item.videoTitle}</p>
-                                        </SwiperSlide>
-                                    );
-                                })):(<p>No videos</p>)}
+                                        return (
+                                            <SwiperSlide key={item._id}>
+                                                <img src={`http://192.168.29.152:8000/uploads/${item.videoThambnail}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
+                                                <Link to={`${item.videoLink}`} target="_blank">
+                                                    <button
+                                                        type="button"
+                                                        className="absolute left-1/2 top-1/3 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/3 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
+                                                    >
+                                                        <IconPlayCircle className="h-[62px] w-[62px] " fill={true} />
+                                                    </button>
+                                                </Link>
+                                                <p className='font-semibold text-[14px]'>{item.videoTitle}</p>
+                                            </SwiperSlide>
+                                        );
+                                    })
+                                ) : (
+                                    <p>No videos</p>
+                                )}
                                 {/* {items.map((item:any) => {
                                     return (
                                         <SwiperSlide key={i}>
@@ -345,7 +387,7 @@ const Index = () => {
                             <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
                         </button>
                     </div>
-                    <div className="swiper mt-10" id="slider1">
+                    <div className="swiper mt-20" id="slider1">
                         <div className="swiper-wrapper">
                             <Swiper
                                 modules={[Navigation, Pagination, Autoplay]}

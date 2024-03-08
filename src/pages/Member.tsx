@@ -53,6 +53,7 @@ interface States {
 
 const Member = () => {
     const [addModal, setAddModal] = useState(false);
+    const [activeButton, setActiveButton] = useState('level1');
     const [allMembers, setAllMembers] = useState<any>([]);
     const [addMember, setAddMember] = useState<Member>({
         name: '',
@@ -113,6 +114,7 @@ const Member = () => {
 
     //----Get Level 1 members-----
     const getLevelOneMembers = async () => {
+        setActiveButton('level1');
         try {
             const response = await ApiCall('get', getLevelOneUsers );
             // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
@@ -152,18 +154,21 @@ const Member = () => {
     }
     //----Get Level 2 members-----
     const getLevelTwoMembers = async () => {
-        // try {
-        //     const response=await ApiCall('get',getLevelTwoUsers)
-        //      if (response instanceof Error) {
-        //          console.error('Error fetching allMembers list:', response.message);
-        //      } else if (response.status === 200) {
-        //          setAllMembers(response?.data?);
-        //      } else {
-        //          console.error('Error fetching allMembers list. Unexpected status:', response.status);
-        //      }
-        // } catch (error) {
-        //     console.error('Error fetching allMembers list:', error);
-        // }
+        setActiveButton('level2');
+        try {
+            const response=await ApiCall('get',getLevelTwoUsers)
+            console.log(response);
+            
+             if (response instanceof Error) {
+                 console.error('Error fetching allMembers list:', response.message);
+             } else if (response.status === 200) {
+                 setAllMembers(response?.data?.child2)
+             } else {
+                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
+             }
+        } catch (error) {
+            console.error('Error fetching allMembers list:', error);
+        }
     };
 
     const getStateList = async () => {
@@ -266,6 +271,7 @@ const Member = () => {
     const getPackagesList = async () => {
         try {
             const response = await ApiCall('get', packagesListUrl);
+console.log(response);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -282,10 +288,10 @@ const Member = () => {
     const addMemberFun = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            const response = await ApiCall('post', memberaddUrl, addMember);
-            if (response instanceof Error) {
-                console.error('Error fetching state list:', response.message);
-            } else if (response.status === 200) {
+            const response:any = await ApiCall('post', memberaddUrl, addMember);
+            console.log(response.error);
+            
+           if (response.status === 200) {
                 // setValidated(false);
                 setAddMember({
                     name: '',
@@ -303,11 +309,10 @@ const Member = () => {
                 });
                 setAddModal(false);
                 Show_Toast({ message: 'Member added successfully', type: true });
-            } else {
-                Show_Toast({ message: 'Member added failed', type: false });
             }
-        } catch (error) {
-            console.log(error);
+        } catch (error:any) {
+            console.log(error?.response?.data?.message);
+            Show_Toast({ message: error?.response?.data?.message, type: false });
 
             // Show_Toast({message:error, type:false});
         }
@@ -339,13 +344,17 @@ const Member = () => {
             <div className="flex gap-5 w-full mb-4">
                 <div
                     onClick={getLevelOneMembers}
-                    className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[150px] w-full"
+                    className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
+                        activeButton === 'level1' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                    } justify-center max-w-[120px] w-full`}
                 >
                     Level 1
                 </div>
                 <div
                     onClick={getLevelTwoMembers}
-                    className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[150px] w-full"
+                    className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
+                        activeButton === 'level2' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                    } justify-center max-w-[120px] w-full`}
                 >
                     Level 2
                 </div>
