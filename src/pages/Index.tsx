@@ -7,7 +7,7 @@ import IconX from '../components/Icon/IconX';
 import IconPlus from '../components/Icon/IconPlus';
 import IconCreditCard from '../components/Icon/IconCreditCard';
 import { ApiCall, Base_url } from '../Services/Api';
-import { getImagesUrl, getProfileUrl, getVideoUrl } from '../utils/EndPoints';
+import { AwardsUrl, getImagesUrl, getProfileUrl, getVideoUrl, liveNewsUrl } from '../utils/EndPoints';
 import Carousel from './Components/Carousel';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -21,7 +21,7 @@ import IconCashBanknotes from '../components/Icon/IconCashBanknotes';
 import IconAirplay from '../components/Icon/IconAirplay';
 
 interface ProfileDetails {
-    id:string
+    id: string;
     name: string;
     email: string;
     userStatus: string;
@@ -37,27 +37,31 @@ const Index = () => {
     const [updateStatus, setUpdatedStatus] = useState<string | null>(null);
     const [slideImages, setslideImage] = useState<any>([]);
     const [slideVideos, setSlideVideos] = useState<any>([]);
+    const [awards, setAwards] = useState<any>([]);
+    const [news, setNews] = useState<any>([]);
     const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
         name: '',
         email: '',
         userStatus: '',
         walletAmount: '',
-        id:''
+        id: '',
     });
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-        useEffect(() => {
-            getProfile();
-            getImages();
-            getVideos();
-        }, []);
-useEffect(()=>{
-    const token = localStorage.getItem('User');
-    if(!token){
-        navigate('/auth/boxed-signin');
-    }
-})
+    useEffect(() => {
+        getProfile();
+        getImages();
+        getVideos();
+        showAwards();
+        showLiveNewes()
+    }, []);
+    useEffect(() => {
+        const token = localStorage.getItem('User');
+        if (!token) {
+            navigate('/auth/boxed-signin');
+        }
+    });
 
     const getProfile = async () => {
         try {
@@ -83,7 +87,6 @@ useEffect(()=>{
     const getImages = async () => {
         try {
             const response = await ApiCall('get', getImagesUrl);
-            console.log(response);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -100,12 +103,10 @@ useEffect(()=>{
     const getVideos = async () => {
         try {
             const response = await ApiCall('get', getVideoUrl);
-            console.log(response);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
-                console.log(response?.data?.homeVideoData, 'video');
 
                 setSlideVideos(response?.data?.homeVideoData);
             } else {
@@ -116,6 +117,41 @@ useEffect(()=>{
         }
     };
 
+    //---- Awards----
+    const showAwards = async () => {
+        try {
+            const response = await ApiCall('get', AwardsUrl);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+
+                setAwards(response?.data?.awardData);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    const showLiveNewes = async () => {
+        try {
+            const response = await ApiCall('get', liveNewsUrl);
+            console.log(response);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                console.log(response?.data?.newsData, 'awards');
+
+                setNews(response?.data?.newsData);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
 
     const handleRefresh = () => {
         window.location.reload();
@@ -124,7 +160,6 @@ useEffect(()=>{
         const file = event.target.files?.[0];
         setSelectedFile(file || null);
     };
-    console.log(selectedFile);
     // ---
 
     const handleUpload = async () => {
@@ -178,26 +213,26 @@ useEffect(()=>{
         },
     ];
     // share referal link
-       const shareTitle = 'Check out this awesome link!';
-       const shareUrl = `http://192.168.29.203:5173/auth/boxed-signup/${profielDetails?.id}`; // Replace with the actual URL you want to share
+    const shareTitle = 'Check out this awesome link!';
+    const shareUrl = `http://192.168.29.203:5173/auth/boxed-signup/${profielDetails?.id}`; // Replace with the actual URL you want to share
 
-       const handleShare = async () => {
-           if (navigator.share) {
-               try {
-                   await navigator.share({
-                       title: shareTitle,
-                       text: 'Check out this awesome link!',
-                       url: shareUrl,
-                   });
-               } catch (error) {
-                   console.error('Error sharing:', error);
-               }
-           } else {
-               // Fallback for browsers that do not support the Web Share API
-               console.warn('Web Share API is not supported in this browser.');
-               // You can provide alternative sharing methods here (e.g., copy to clipboard)
-           }
-       };
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: shareTitle,
+                    text: 'Check out this awesome link!',
+                    url: shareUrl,
+                });
+            } catch (error) {
+                console.error('Error sharing:', error);
+            }
+        } else {
+            // Fallback for browsers that do not support the Web Share API
+            console.warn('Web Share API is not supported in this browser.');
+            // You can provide alternative sharing methods here (e.g., copy to clipboard)
+        }
+    };
     return (
         <>
             <div>
@@ -208,10 +243,11 @@ useEffect(()=>{
                 )}
                 <h2 className="mb-6 font-bold text-primary text-lg">LATEST NEWS</h2>
                 <div className="overflow-hidden whitespace-nowrap bg-primary py-4 mb-6">
-                    <div className="animate-marquee text-warning text-lg font-bold">
-                        They provide comprehensive coverage of global markets, along with insightful analysis and commentary They provide comprehensive coverage of global markets, along with
-                        insightful analysis and commentary
-                    </div>
+                    {news.map((n: any) => (
+                        <div key={n?._id} className="animate-marquee text-warning text-lg font-semibold">
+                            {n?.news}
+                        </div>
+                    ))}
                 </div>
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
                     {/* <div className="panel ">
@@ -310,6 +346,36 @@ useEffect(()=>{
                     </div>
                 </div>
 
+                {/*------Start Awards and rewards--------- */}
+                <div className="mt-10 lg:mt-16 text-primary ">
+                    <div className="flex justify-between">
+                        <h2 className="mb-6 font-bold text-lg">Awards and Rewards</h2>
+                        <span
+                            onClick={() => {
+                                navigate('/pages/awards');
+                            }}
+                            className="mb-6 font-bold text-md cursor-pointer"
+                        >
+                            show more....
+                        </span>
+                    </div>
+                    <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
+                        {awards.map((award: any) => {
+                            return (
+                                <div key={award._id} className="min-h-full min-w-[220px] max-w-[220px] gap-2 w-full p-5 bg-white  flex flex-col items-center shadow-md rounded-[12px]">
+                                    <div className="w-20 h-20 ">
+                                        <img className="w-full rounded-full shadow-md" src={`http://192.168.29.152:8000/uploads/${award?.memberImage}`} alt="profile" />
+                                    </div>
+                                    <span className="text-[16px] font-[600]">{award?.memberName}</span>
+                                    <span>{award?.achivedDetails}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+                {/*-----End Awards and rewards ---------*/}
+
+                {/*----Start Flash Feed------  */}
                 <div className="mt-10 lg:mt-16 text-primary ">
                     <h2 className="mb-6 font-bold text-lg">FLASH FEED</h2>
 
@@ -343,8 +409,6 @@ useEffect(()=>{
                             >
                                 {slideVideos.length > 0 ? (
                                     slideVideos.map((item: any) => {
-                                        console.log(`http://192.168.29.152:8000/uploads/${item.videoThambnail}`);
-
                                         return (
                                             <SwiperSlide key={item._id}>
                                                 <img src={`http://192.168.29.152:8000/uploads/${item.videoThambnail}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
@@ -356,7 +420,7 @@ useEffect(()=>{
                                                         <IconPlayCircle className="h-[62px] w-[62px] " fill={true} />
                                                     </button>
                                                 </Link>
-                                                <p className='font-semibold text-[14px]'>{item.videoTitle}</p>
+                                                <p className="font-semibold text-[14px]">{item.videoTitle}</p>
                                             </SwiperSlide>
                                         );
                                     })

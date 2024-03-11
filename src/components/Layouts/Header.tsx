@@ -33,7 +33,8 @@ import IconMenuForms from '../Icon/Menu/IconMenuForms';
 import IconMenuPages from '../Icon/Menu/IconMenuPages';
 import IconMenuMore from '../Icon/Menu/IconMenuMore';
 import { ApiCall } from '../../Services/Api';
-import { getProfileUrl } from '../../utils/EndPoints';
+import { AlertUrl, getProfileUrl } from '../../utils/EndPoints';
+import { Show_Toast } from '../../pages/Components/Toast';
 
 interface ProfileDetails {
     name: string;
@@ -142,6 +143,39 @@ const Header = () => {
     useEffect(() => {
         getProfile();
     }, []);
+
+     const [alert, setAlert] = useState([]);
+
+     const seenNotifications = JSON.parse(localStorage.getItem('seenNotifications') || '[]');
+
+     const markNotificationAsSeen = (notificationId: any) => {
+         const updatedSeenNotifications = [...seenNotifications, notificationId];
+         localStorage.setItem('seenNotifications', JSON.stringify(updatedSeenNotifications));
+     };
+
+     useEffect(() => {
+         let latestNotification;
+         const fetchNotifications = async () => {
+             try {
+                 const res: any = await ApiCall('get', AlertUrl);
+                 const notifications = res?.data?.alertData || [];
+                 setAlert(res?.data?.alertData);
+                 console.log(res);
+
+                 const unseenNotifications: any[] = notifications.filter((notification: any) => !seenNotifications.includes(notification._id));
+
+                 latestNotification = unseenNotifications[0];
+                 if (latestNotification) {
+                     markNotificationAsSeen(latestNotification._id);
+                     Show_Toast({ message: latestNotification.description, type: true });
+                 }
+             } catch (error) {
+                 console.error('Error fetching notifications:', error);
+             }
+         };
+
+         fetchNotifications();
+     }, []);
     return (
         <>
             <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
@@ -253,29 +287,29 @@ const Header = () => {
                                         <li onClick={(e) => e.stopPropagation()}>
                                             <div className="flex items-center px-4 py-2 justify-between font-semibold">
                                                 <h4 className="text-lg">Notification</h4>
-                                                {notifications.length ? <span className="badge bg-primary/80">{notifications.length}New</span> : ''}
+                                                {alert.length ? <span className="badge bg-primary/80">{notifications.length}New</span> : ''}
                                             </div>
                                         </li>
-                                        {notifications.length > 0 ? (
+                                        {alert.length > 0 ? (
                                             <>
-                                                {notifications.map((notification) => {
+                                                {alert.map((notification:any) => {
                                                     return (
-                                                        <li key={notification.id} className="dark:text-white-light/90" onClick={(e) => e.stopPropagation()}>
+                                                        <li key={notification._id} className="dark:text-white-light/90" onClick={(e) => e.stopPropagation()}>
                                                             <div className="group flex items-center px-4 py-2">
                                                                 <div className="grid place-content-center rounded">
                                                                     <div className="w-12 h-12 relative">
-                                                                        <img className="w-12 h-12 rounded-full object-cover" alt="profile" src={`/assets/images/${notification.profile}`} />
-                                                                        <span className="bg-success w-2 h-2 rounded-full block absolute right-[6px] bottom-0"></span>
+                                                                        <IconUser className="w-8 h-8 rounded-full object-cover" />
+                                                                        {/* <span className="bg-success w-2 h-2 rounded-full block absolute right-[6px] bottom-0"></span> */}
                                                                     </div>
                                                                 </div>
                                                                 <div className="ltr:pl-3 rtl:pr-3 flex flex-auto">
                                                                     <div className="ltr:pr-3 rtl:pl-3">
                                                                         <h6
                                                                             dangerouslySetInnerHTML={{
-                                                                                __html: notification.message,
+                                                                                __html: notification.description,
                                                                             }}
                                                                         ></h6>
-                                                                        <span className="text-xs block font-normal dark:text-gray-500">{notification.time}</span>
+                                                                        <span className="text-xs block font-normal dark:text-gray-500">{notification?.time}</span>
                                                                     </div>
                                                                     <button
                                                                         type="button"

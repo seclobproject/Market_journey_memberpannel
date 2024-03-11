@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-// const Home = lazy(()=>import('../pages/Home'))
+const Awards = lazy(() => import('../pages/Awards'));
 const Member =lazy(()=>import('../pages/Member'))
 const Notifications = lazy(() => import('../pages/Notifications'));
 const Package = lazy(()=>import('../pages/package'))
@@ -414,6 +414,10 @@ const routes = [
     {
         path: '/pages/notifications',
         element: <Notifications />,
+    },
+    {
+        path: '/pages/awards',
+        element: <Awards />,
     },
 
     {

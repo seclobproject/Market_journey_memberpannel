@@ -20,6 +20,14 @@ export const getProfileUrl = '/api/user/view-user-profile';
 export const editProfileUrl = '/api/user/edit-profile';
 
 // Home
-
+export const liveNewsUrl = '/api/admin/view-news-details';
 export const getImagesUrl = '/api/admin/view-home-images';
 export const getVideoUrl = '/api/admin/view-home-videos';
+
+// Awards and Rewards
+
+export const AwardsUrl = '/api/admin/view-award-details';
+
+// Alert
+
+export const AlertUrl = '/api/admin/view-alert-details';
