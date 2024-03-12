@@ -3685,16 +3685,4 @@
     -webkit-animation-name: slideOutUp;
     animation-name: slideOutUp;
 }
-@keyframes marquee {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(-100%);
-  }
-}
 
-.animate-marquee {
-  animation: marquee 30s linear infinite;
-  display: inline-block;
-}

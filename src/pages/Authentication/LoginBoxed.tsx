@@ -10,16 +10,16 @@ import { Show_Toast } from '../Components/Toast';
 
 const LoginBoxed = () => {
     const [userDetails, setUserDetails] = useState<any>({});
-    const [errormessage,setErrorMessage]=useState('')
-      const [showPassword, setShowPassword] = useState(false);
+    const [errormessage, setErrorMessage] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-      const handleTogglePassword = () => {
-          setShowPassword((prevShowPassword) => !prevShowPassword);
-      };
-    
+    const handleTogglePassword = () => {
+        setShowPassword((prevShowPassword) => !prevShowPassword);
+    };
+
     const submitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
@@ -35,19 +35,17 @@ const LoginBoxed = () => {
                 localStorage.setItem('status', result.payload?.data?.status);
                 Show_Toast({ message: 'Login success', type: true });
                 console.log(result?.payload?.data);
-                
+
                 // Navigate to the dashboard
-                navigate('/',{ replace: true });
-            }
-            else{
+                navigate('/', { replace: true });
+            } else {
                 setErrorMessage(result?.payload?.response?.data?.message);
-                console.log(result?.payload?.response?.data?.message);
-                Show_Toast({message:"Invalid Email or Password",type:false})
-            //    <Show_Toast message='User not found' type={false} />;
-                
+                Show_Toast({ message: 'Invalid Email or Password', type: false });
+                //    <Show_Toast message='User not found' type={false} />;
             }
-        } catch (error) {
+        } catch (error:any) {
             console.log(error);
+            console.log(error?.response?.data?.message);
         }
     };
 

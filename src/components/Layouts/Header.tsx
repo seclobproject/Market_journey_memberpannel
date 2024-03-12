@@ -159,7 +159,10 @@ const Header = () => {
              try {
                  const res: any = await ApiCall('get', AlertUrl);
                  const notifications = res?.data?.alertData || [];
-                 setAlert(res?.data?.alertData);
+                 if (Array.isArray(res?.data?.alertData)) {
+                     setAlert(res?.data?.alertData.slice(0, 3));
+                 }
+                //  setAlert(res?.data?.alertData);
                  console.log(res);
 
                  const unseenNotifications: any[] = notifications.filter((notification: any) => !seenNotifications.includes(notification._id));
@@ -311,13 +314,13 @@ const Header = () => {
                                                                         ></h6>
                                                                         <span className="text-xs block font-normal dark:text-gray-500">{notification?.time}</span>
                                                                     </div>
-                                                                    <button
+                                                                    {/* <button
                                                                         type="button"
                                                                         className="ltr:ml-auto rtl:mr-auto text-neutral-300 hover:text-danger opacity-0 group-hover:opacity-100"
                                                                         onClick={() => removeNotification(notification.id)}
                                                                     >
                                                                         <IconXCircle />
-                                                                    </button>
+                                                                    </button> */}
                                                                 </div>
                                                             </div>
                                                         </li>

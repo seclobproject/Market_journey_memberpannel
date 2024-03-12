@@ -271,7 +271,6 @@ const Member = () => {
     const getPackagesList = async () => {
         try {
             const response = await ApiCall('get', packagesListUrl);
-console.log(response);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);

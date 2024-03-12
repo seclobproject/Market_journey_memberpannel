@@ -6,7 +6,6 @@ const Notifications = () => {
     const [alert, setAlert] = useState([]);
 
  useEffect(() => {
-    let latestNotification;
     const fetchNotifications = async () => {
         try {
             const res: any = await ApiCall('get', AlertUrl);
@@ -35,9 +34,9 @@ const Notifications = () => {
                             <p className="not-italic text-[#515365] text-sm dark:text-white-light m-0">{noti?.description}</p>
                         {/* </div> */}
                     </div>
-                    {/* <small className="ltr:text-right rtl:text-left w-full not-italic text-xs text-[#777] block before:w-3 before:h-[1px] before:bg-[#777] before:inline-block before:opacity-50 before:relative before:-top-1 before:ltr:mr-1 rtl:before:ml-1">
-                    Someone famous <cite className="italic">Source Title</cite>
-                </small> */}
+                    <small className="ltr:text-right rtl:text-left w-full not-italic text-xs text-[#777] block before:w-3 before:h-[1px] before:bg-[#777] before:inline-block before:opacity-50 before:relative before:-top-1 before:ltr:mr-1 rtl:before:ml-1">
+                    Someone famous <cite className="italic">{noti?.createdAt}</cite>
+                </small>
                 </blockquote>
             ))}
         </div>

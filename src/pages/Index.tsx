@@ -19,6 +19,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import IconMenuUsers from '../components/Icon/Menu/IconMenuUsers';
 import IconCashBanknotes from '../components/Icon/IconCashBanknotes';
 import IconAirplay from '../components/Icon/IconAirplay';
+import Marquee from 'react-fast-marquee';
 
 interface ProfileDetails {
     id: string;
@@ -46,6 +47,7 @@ const Index = () => {
         walletAmount: '',
         id: '',
     });
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
@@ -162,38 +164,38 @@ const Index = () => {
     };
     // ---
 
-    const handleUpload = async () => {
-        if (selectedFile) {
-            try {
-                const token: any = localStorage.getItem('User');
-                // const parsedData = JSON.parse(token);
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'content-type': 'multipart/form-data',
-                    },
-                };
-                const formData = new FormData();
-                formData.append('transactionNumber', transactionNumber);
-                formData.append('screenshot', selectedFile, selectedFile?.name);
-                const response = await axios.post(`${Base_url}/api/user/user-verification`, formData, config);
-                console.log(response);
-                setSelectedFile(null);
-                // setHideUpload({
-                //     status: 'Pending',
-                // });
-                localStorage.setItem('status', response?.data?.updatedUser?.userStatus);
+ const handleUpload = async () => {
+     if (selectedFile) {
+         try {
+             setLoading(true); // Set loading to true when form submission begins
 
-                setPendingModal(false);
-                handleRefresh();
-                setShowSelectDocumentMessage(false);
-            } catch (error) {
-                console.error('Upload failed:', error);
-            }
-        } else {
-            setShowSelectDocumentMessage(true);
-        }
-    };
+             const token = localStorage.getItem('User');
+             const config = {
+                 headers: {
+                     Authorization: `Bearer ${token}`,
+                     'content-type': 'multipart/form-data',
+                 },
+             };
+             const formData = new FormData();
+             formData.append('transactionNumber', transactionNumber);
+             formData.append('screenshot', selectedFile, selectedFile?.name);
+
+             const response = await axios.post(`${Base_url}/api/user/user-verification`, formData, config);
+             console.log(response);
+             setSelectedFile(null);
+             localStorage.setItem('status', response?.data?.updatedUser?.userStatus);
+             setPendingModal(false);
+             handleRefresh();
+             setShowSelectDocumentMessage(false);
+         } catch (error) {
+             console.error('Upload failed:', error);
+         } finally {
+             setLoading(false); // Set loading to false when form submission completes (success or failure)
+         }
+     } else {
+         setShowSelectDocumentMessage(true);
+     }
+ };
     const items = [
         {
             src: '/assets/images/knowledge/image-5.jpg',
@@ -233,6 +235,10 @@ const Index = () => {
             // You can provide alternative sharing methods here (e.g., copy to clipboard)
         }
     };
+      useEffect(() => {
+          document.documentElement.style.setProperty('--news-count', news.length);
+      }, [news.length]);
+
     return (
         <>
             <div>
@@ -242,12 +248,14 @@ const Index = () => {
                     </div>
                 )}
                 <h2 className="mb-6 font-bold text-primary text-lg">LATEST NEWS</h2>
-                <div className="overflow-hidden whitespace-nowrap bg-primary py-4 mb-6">
-                    {news.map((n: any) => (
-                        <div key={n?._id} className="animate-marquee text-warning text-lg font-semibold">
-                            {n?.news}
-                        </div>
-                    ))}
+                <div className="relative block overflow-hidden bg-primary py-2 mb-6 w-full">
+                    <Marquee className=" text-warning text-[16px] font-semibold w-full h-full">
+                        {news.map((n: any) => (
+                            <span key={n?._id} className="inline min-w-full h-full text-center whitespace-nowrap ">
+                                {n?.news}&nbsp;&nbsp;&nbsp;
+                            </span>
+                        ))}
+                    </Marquee>
                 </div>
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
                     {/* <div className="panel ">
@@ -364,7 +372,7 @@ const Index = () => {
                             return (
                                 <div key={award._id} className="min-h-full min-w-[220px] max-w-[220px] gap-2 w-full p-5 bg-white  flex flex-col items-center shadow-md rounded-[12px]">
                                     <div className="w-20 h-20 ">
-                                        <img className="w-full rounded-full shadow-md" src={`http://192.168.29.152:8000/uploads/${award?.memberImage}`} alt="profile" />
+                                        <img className="w-full rounded-full shadow-md" src={`http://192.168.29.152:6003/uploads/${award?.memberImage}`} alt="profile" />
                                     </div>
                                     <span className="text-[16px] font-[600]">{award?.memberName}</span>
                                     <span>{award?.achivedDetails}</span>
@@ -411,7 +419,7 @@ const Index = () => {
                                     slideVideos.map((item: any) => {
                                         return (
                                             <SwiperSlide key={item._id}>
-                                                <img src={`http://192.168.29.152:8000/uploads/${item.videoThambnail}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
+                                                <img src={`http://192.168.29.152:6003/uploads/${item.videoThambnail}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
                                                 <Link to={`${item.videoLink}`} target="_blank">
                                                     <button
                                                         type="button"
@@ -482,7 +490,7 @@ const Index = () => {
                                 {slideImages.map((item: any) => {
                                     return (
                                         <SwiperSlide key={item._id}>
-                                            <img src={`http://192.168.29.152:8000/uploads/${item?.homeImage}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
+                                            <img src={`http://192.168.29.152:6003/uploads/${item?.homeImage}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
                                         </SwiperSlide>
                                     );
                                 })}
@@ -607,7 +615,7 @@ const Index = () => {
                                                         }}
                                                         className="btn btn-primary text-sm ltr:ml-2 rtl:mr-2 p-2"
                                                     >
-                                                        Save
+                                                        {loading ? 'Saving...' : 'Save'}
                                                     </button>
                                                 </div>
                                             </div>
