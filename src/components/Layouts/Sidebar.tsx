@@ -24,6 +24,8 @@ import IconChatNotification from '../Icon/IconChatNotification';
 import IconBell from '../Icon/IconBell';
 import IconUser from '../Icon/IconUser';
 import IconAward from '../Icon/IconAward';
+import IconPaperclip from '../Icon/IconPaperclip';
+import IconPencilPaper from '../Icon/IconPencilPaper';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -158,10 +160,26 @@ const Sidebar = () => {
                                         </NavLink>
                                     </li>
                                     <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/pages/subscription" className="group">
+                                            <div className="flex items-center">
+                                                <IconAward className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Subscriptions')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/notifications" className="group">
                                             <div className="flex items-center">
                                                 <IconBell className="group-hover:!text-primary shrink-0" />
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Notification')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/pages/news" className="group">
+                                            <div className="flex items-center">
+                                                <IconMenuNotes className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Latest News')}</span>
                                             </div>
                                         </NavLink>
                                     </li>

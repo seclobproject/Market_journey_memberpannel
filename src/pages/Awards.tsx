@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ApiCall } from '../Services/Api';
+import { ApiCall, Base_url } from '../Services/Api';
 import { AwardsUrl } from '../utils/EndPoints';
 
 const Awards = () => {
@@ -32,13 +32,13 @@ const Awards = () => {
             <div className="flex gap-4 flex-wrap">
                 {awards.map((award: any) => {
                     return (
-                            <div className="min-h-full max-w-[220px] gap-2 w-full p-5 bg-white  flex flex-col items-center shadow-md rounded-[12px]">
-                                <div className="w-20 h-20 ">
-                                    <img className="w-full rounded-full shadow-md" src={`http://192.168.29.152:8000/uploads/${award?.memberImage}`} alt="profile" />
-                                </div>
-                                <span className="text-[16px] font-[600]">{award?.memberName}</span>
-                                <span>{award?.achivedDetails}</span>
+                        <div className="min-h-full max-w-[220px] gap-2 w-full p-5 bg-white  flex flex-col items-center shadow-md rounded-[12px]">
+                            <div className="w-20 h-20 ">
+                                <img className="w-full rounded-full shadow-md" src={`${Base_url}/uploads/${award?.memberImage}`} alt="profile" />
                             </div>
+                            <span className="text-[16px] font-[600]">{award?.memberName}</span>
+                            <span>{award?.achivedDetails}</span>
+                        </div>
                     );
                 })}
             </div>

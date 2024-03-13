@@ -19,7 +19,7 @@ import IconCreditCard from '../../components/Icon/IconCreditCard';
 import IconClock from '../../components/Icon/IconClock';
 import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
 import { ApiCall } from '../../Services/Api';
-import { editProfileUrl, getProfileUrl } from '../../utils/EndPoints';
+import { editProfileUrl, getProfileUrl, updateBankDetailsurl } from '../../utils/EndPoints';
 import IconCashBanknotes from '../../components/Icon/IconCashBanknotes';
 import IconBox from '../../components/Icon/IconBox';
 import IconPencil from '../../components/Icon/IconPencil';
@@ -53,6 +53,12 @@ const Profile = () => {
         email: '',
         password: '',
     });
+    const [bankDetails, setBankDetails] = useState({
+        accountNumber: '',
+        bankName: '',
+        ifscCode: '',
+    });
+
     const [confirmPassword, setConfirmPasswod] = useState('');
     const [errorMessage, setErrorMessage] = useState(false);
 
@@ -111,6 +117,31 @@ const Profile = () => {
                     phone: '',
                     email: '',
                     password: '',
+                });
+                setConfirmPasswod('');
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+
+    const handleBankDetails = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const response = await ApiCall('post', updateBankDetailsurl, bankDetails);
+            console.log(response);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setBankDetails(response?.data);
+                getProfile();
+                setBankDetails({
+                    accountNumber: '',
+                    bankName: '',
+                    ifscCode: '',
                 });
                 setConfirmPasswod('');
             } else {
@@ -277,41 +308,41 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                    <form onSubmit={editProfile} className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black ">
-                        <h6 className="text-lg text-warning font-bold mb-5">Edit Bank Details</h6>
+                    <form onSubmit={handleBankDetails} className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black ">
+                        <h6 className="text-lg text-warning font-bold mb-5">Update Bank Details</h6>
                         <div className="flex flex-col sm:flex-row">
                             <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div className="mr-2">
-                                    <label htmlFor="name">Bank Name</label>
+                                    <label htmlFor="bankname">Bank Name</label>
                                     <input
-                                        onChange={(e) => setEditProfileData({ ...editProfleData, name: e.target.value })}
-                                        id="name"
+                                        onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
+                                        id="bankname"
                                         type="text"
                                         value={editProfleData.name}
-                                        placeholder="Enter your name"
+                                        placeholder="Enter bank name"
                                         className="form-input"
                                     />
                                 </div>
 
                                 <div className="mr-2">
-                                    <label htmlFor="address">Account Number</label>
+                                    <label htmlFor="ACNumber">Account Number</label>
                                     <input
-                                        onChange={(e) => setEditProfileData({ ...editProfleData, address: e.target.value })}
-                                        id="address"
-                                        value={editProfleData.address}
+                                        onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })}
+                                        id="ACNumber"
+                                        value={bankDetails.accountNumber}
                                         type="text"
-                                        placeholder="Address"
+                                        placeholder="Account number"
                                         className="form-input"
                                     />
                                 </div>
                                 <div className="mr-2">
-                                    <label htmlFor="email">IFSC code</label>
+                                    <label htmlFor="ifsc">IFSC code</label>
                                     <input
-                                        onChange={(e) => setEditProfileData({ ...editProfleData, email: e.target.value })}
-                                        id="email"
+                                        onChange={(e) => setBankDetails({ ...bankDetails, ifscCode: e.target.value })}
+                                        id="ifsc"
                                         value={editProfleData.email}
-                                        type="email"
-                                        placeholder="Email"
+                                        type="text"
+                                        placeholder="Enter IfscCode"
                                         className="form-input"
                                     />
                                 </div>

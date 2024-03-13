@@ -18,7 +18,7 @@ export const getLevelTwoUsers = '/api/user/view-level2-user';
 // user
 export const getProfileUrl = '/api/user/view-user-profile';
 export const editProfileUrl = '/api/user/edit-profile';
-
+export const updateBankDetailsurl = ''
 // Home
 export const liveNewsUrl = '/api/admin/view-news-details';
 export const getImagesUrl = '/api/admin/view-home-images';

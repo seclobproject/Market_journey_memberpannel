@@ -144,7 +144,6 @@ const Index = () => {
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
-                console.log(response?.data?.newsData, 'awards');
 
                 setNews(response?.data?.newsData);
             } else {
@@ -248,7 +247,7 @@ const Index = () => {
                     </div>
                 )}
                 <h2 className="mb-6 font-bold text-primary text-lg">LATEST NEWS</h2>
-                <div className="relative block overflow-hidden bg-primary py-2 mb-6 w-full">
+                <div onClick={() => navigate('/pages/news')} className="relative block overflow-hidden bg-primary py-2 mb-6 w-full cursor-pointer">
                     <Marquee className=" text-warning text-[16px] font-semibold w-full h-full">
                         {news.map((n: any) => (
                             <span key={n?._id} className="inline min-w-full h-full text-center whitespace-nowrap ">
@@ -372,7 +371,7 @@ const Index = () => {
                             return (
                                 <div key={award._id} className="min-h-full min-w-[220px] max-w-[220px] gap-2 w-full p-5 bg-white  flex flex-col items-center shadow-md rounded-[12px]">
                                     <div className="w-20 h-20 ">
-                                        <img className="w-full rounded-full shadow-md" src={`http://192.168.29.152:6003/uploads/${award?.memberImage}`} alt="profile" />
+                                        <img className="w-full rounded-full shadow-md" src={`${Base_url}/uploads/${award?.memberImage}`} alt="profile" />
                                     </div>
                                     <span className="text-[16px] font-[600]">{award?.memberName}</span>
                                     <span>{award?.achivedDetails}</span>
@@ -419,7 +418,7 @@ const Index = () => {
                                     slideVideos.map((item: any) => {
                                         return (
                                             <SwiperSlide key={item._id}>
-                                                <img src={`http://192.168.29.152:6003/uploads/${item.videoThambnail}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
+                                                <img src={`${Base_url}/uploads/${item.videoThambnail}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
                                                 <Link to={`${item.videoLink}`} target="_blank">
                                                     <button
                                                         type="button"
@@ -490,7 +489,7 @@ const Index = () => {
                                 {slideImages.map((item: any) => {
                                     return (
                                         <SwiperSlide key={item._id}>
-                                            <img src={`http://192.168.29.152:6003/uploads/${item?.homeImage}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
+                                            <img src={`${Base_url}/uploads/${item?.homeImage}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
                                         </SwiperSlide>
                                     );
                                 })}
