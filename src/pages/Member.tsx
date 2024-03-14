@@ -326,12 +326,12 @@ const Member = () => {
     // ----------select state and get state id ---------------
     const stateSelectHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = e.target.value;
-        const selectedState = stateList.find((state: any) => state.name === selectedValue);
+        const selectedState = stateList.find((state: any) => state.stateName === selectedValue);
 
         if (selectedState) {
             setAddMember({
                 ...addMember,
-                state: selectedState.name,
+                state: selectedState.stateName,
             });
             setSelectedStateId(selectedState.id);
         }
@@ -377,6 +377,7 @@ const Member = () => {
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
+                                <th>Sponser Name</th>
                                 <th> franchise Type</th>
                                 <th> franchise Name</th>
                                 <th> Package Amount</th>
@@ -384,12 +385,13 @@ const Member = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {allMembers?.length ? (
+                            {allMembers?.length > 0 ? (
                                 allMembers.map((data: any) => (
                                     <tr key={data?._id}>
                                         <td>{data?.name}</td>
                                         <td>{data?.email}</td>
                                         <td className="whitespace-nowrap">{data?.phone}</td>
+                                        <td>{data?.sponserName}</td>
                                         <td>{data?.franchise}</td>
                                         <td>{data?.franchiseName}</td>
                                         <td>{data?.packageAmount}</td>
@@ -407,10 +409,10 @@ const Member = () => {
                             ) : (
                                 <tr>
                                     <td colSpan={7} style={{ textAlign: 'center' }}>
-                                        {allMembers.length === 0 ? (
-                                            <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
-                                        ) : (
+                                        {allMembers?.length === 0 ? (
                                             <span className="align-middle m-auto mb-10">No Member</span>
+                                        ) : (
+                                            <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
                                         )}
                                     </td>
                                 </tr>
@@ -418,7 +420,7 @@ const Member = () => {
                         </tbody>
                     </table>
                     <InfiniteScroll
-                        dataLength={allMembers.length} //This is important field to render the next data
+                        dataLength={allMembers?.length} //This is important field to render the next data
                         next={fetchData}
                         hasMore={true}
                         loader={<h4></h4>}
@@ -632,8 +634,8 @@ const Member = () => {
                                                                                     Select State
                                                                                 </option>
                                                                                 {stateList.map((singleState: any, idx: any) => (
-                                                                                    <option key={idx} value={singleState.name}>
-                                                                                        {singleState.name}
+                                                                                    <option key={idx} value={singleState.stateName}>
+                                                                                        {singleState.stateName}
                                                                                     </option>
                                                                                 ))}
                                                                             </select>

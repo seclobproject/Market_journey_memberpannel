@@ -263,12 +263,12 @@ const RegisterBoxed = () => {
     // ----------select state and get state id ---------------
     const stateSelectHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = e.target.value;
-        const selectedState = stateList.find((state: any) => state.name === selectedValue);
+        const selectedState = stateList.find((state: any) => state.stateName === selectedValue);
 
         if (selectedState) {
             setAddMember({
                 ...addMember,
-                state: selectedState.name,
+                state: selectedState.stateName,
             });
             setSelectedStateId(selectedState.id);
         }
@@ -452,8 +452,8 @@ const RegisterBoxed = () => {
                                                                 Select State
                                                             </option>
                                                             {stateList.map((singleState: any) => (
-                                                                <option key={singleState.id} value={singleState.name}>
-                                                                    {singleState.name}
+                                                                <option key={singleState.id} value={singleState.stateName}>
+                                                                    {singleState.stateName}
                                                                 </option>
                                                             ))}
                                                         </select>

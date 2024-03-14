@@ -65,16 +65,16 @@ const Withdrawal = () => {
                 <div className="flex justify-between items-center mb-5">
                     <h5 className="font-semibold text-warning text-lg dark:text-white-light">Withdrawal</h5>
                 </div>
-                <div className="panel lg:h-[100px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white mb-3 max-w-sm">
-                    <div className="flex h-full justify-between items-center  dark:text-white-light">
-                        <IconCreditCard className="w-10 h-10 text-warning" />
-                    </div>
+                <div className="panel lg:h-[100px]  sm:h-auto flex gap-4  items-center justify-around bg-[#00335B] text-white mb-3 max-w-sm">
                     <div className="flex flex-col gap-2">
                         <h1 className="text-[25px] font-semibold">₹400006</h1>
                         <h5 className="font-semibold text-md text-warning">Your Balance</h5>
                     </div>
+                    <div className="flex h-full justify-between items-center  dark:text-white-light">
+                        <img src="/public/assets/images/wallet.svg" alt="" />
+                    </div>
                 </div>
-                <button onClick={() => setRequestModal(true)} className="panel flex items-center ml-auto mb-3  p-2 text-base bg-warning text-white justify-center max-w-[220px] w-full ">
+                <button onClick={() => setRequestModal(true)} className="panel flex items-center ml-auto mb-3  p-2 text-base bg-primary text-white justify-center max-w-[220px] w-full ">
                     Request withdrawal cash
                 </button>
                 <div className="table-responsive mb-5">

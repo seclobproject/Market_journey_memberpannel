@@ -43,10 +43,10 @@ const News = () => {
         <div>
             <h2 className=" font-bold text-primary text-lg">Latest News</h2>
             {news.map((n: any, index: number) => (
-                <div key={index} className="w-full flex flex-col h-auto bg-primary text-white p-4 mt-6 gap-3">
-                    <h4 className="text-lg font-semibold text-warning">sample Title</h4>
-                    <span className="text-xs">{n.createdAt}</span>
-                    <p>{n.news}</p>
+                <div key={index} className="w-full flex flex-col h-auto bg-primary text-white p-4 mt-6 gap-3 rounded-md">
+                    <h4 className="text-lg font-semibold text-warning">{n?.title}</h4>
+                    <span className="text-xs">{n?.createdAt}</span>
+                    <p>{n?.news}</p>
                 </div>
             ))}
         </div>

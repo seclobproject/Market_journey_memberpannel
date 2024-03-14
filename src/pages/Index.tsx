@@ -27,6 +27,7 @@ interface ProfileDetails {
     email: string;
     userStatus: string;
     walletAmount: string;
+    tempPackageAmount: string;
 }
 
 const Index = () => {
@@ -45,6 +46,7 @@ const Index = () => {
         email: '',
         userStatus: '',
         walletAmount: '',
+        tempPackageAmount: '',
         id: '',
     });
     const [loading, setLoading] = useState(false);
@@ -56,7 +58,7 @@ const Index = () => {
         getImages();
         getVideos();
         showAwards();
-        showLiveNewes()
+        showLiveNewes();
     }, []);
     useEffect(() => {
         const token = localStorage.getItem('User');
@@ -109,7 +111,6 @@ const Index = () => {
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
-
                 setSlideVideos(response?.data?.homeVideoData);
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
@@ -127,7 +128,6 @@ const Index = () => {
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
-
                 setAwards(response?.data?.awardData);
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
@@ -144,7 +144,6 @@ const Index = () => {
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
-
                 setNews(response?.data?.newsData);
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
@@ -163,38 +162,38 @@ const Index = () => {
     };
     // ---
 
- const handleUpload = async () => {
-     if (selectedFile) {
-         try {
-             setLoading(true); // Set loading to true when form submission begins
+    const handleUpload = async () => {
+        if (selectedFile) {
+            try {
+                setLoading(true); // Set loading to true when form submission begins
 
-             const token = localStorage.getItem('User');
-             const config = {
-                 headers: {
-                     Authorization: `Bearer ${token}`,
-                     'content-type': 'multipart/form-data',
-                 },
-             };
-             const formData = new FormData();
-             formData.append('transactionNumber', transactionNumber);
-             formData.append('screenshot', selectedFile, selectedFile?.name);
+                const token = localStorage.getItem('User');
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'content-type': 'multipart/form-data',
+                    },
+                };
+                const formData = new FormData();
+                formData.append('transactionNumber', transactionNumber);
+                formData.append('screenshot', selectedFile, selectedFile?.name);
 
-             const response = await axios.post(`${Base_url}/api/user/user-verification`, formData, config);
-             console.log(response);
-             setSelectedFile(null);
-             localStorage.setItem('status', response?.data?.updatedUser?.userStatus);
-             setPendingModal(false);
-             handleRefresh();
-             setShowSelectDocumentMessage(false);
-         } catch (error) {
-             console.error('Upload failed:', error);
-         } finally {
-             setLoading(false); // Set loading to false when form submission completes (success or failure)
-         }
-     } else {
-         setShowSelectDocumentMessage(true);
-     }
- };
+                const response = await axios.post(`${Base_url}/api/user/user-verification`, formData, config);
+                console.log(response);
+                setSelectedFile(null);
+                localStorage.setItem('status', response?.data?.updatedUser?.userStatus);
+                setPendingModal(false);
+                handleRefresh();
+                setShowSelectDocumentMessage(false);
+            } catch (error) {
+                console.error('Upload failed:', error);
+            } finally {
+                setLoading(false); // Set loading to false when form submission completes (success or failure)
+            }
+        } else {
+            setShowSelectDocumentMessage(true);
+        }
+    };
     const items = [
         {
             src: '/assets/images/knowledge/image-5.jpg',
@@ -234,9 +233,9 @@ const Index = () => {
             // You can provide alternative sharing methods here (e.g., copy to clipboard)
         }
     };
-      useEffect(() => {
-          document.documentElement.style.setProperty('--news-count', news.length);
-      }, [news.length]);
+    useEffect(() => {
+        document.documentElement.style.setProperty('--news-count', news.length);
+    }, [news.length]);
 
     return (
         <>
@@ -246,16 +245,21 @@ const Index = () => {
                         <h4>wait for Admin Confirmation {updateStatus}</h4>
                     </div>
                 )}
-                <h2 className="mb-6 font-bold text-primary text-lg">LATEST NEWS</h2>
-                <div onClick={() => navigate('/pages/news')} className="relative block overflow-hidden bg-primary py-2 mb-6 w-full cursor-pointer">
-                    <Marquee className=" text-warning text-[16px] font-semibold w-full h-full">
-                        {news.map((n: any) => (
-                            <span key={n?._id} className="inline min-w-full h-full text-center whitespace-nowrap ">
-                                {n?.news}&nbsp;&nbsp;&nbsp;
-                            </span>
-                        ))}
-                    </Marquee>
-                </div>
+                {news.length !== 0 && (
+                    <>
+                        <h2 className="mb-6 font-bold text-primary text-lg">LATEST NEWS</h2>
+                        <div className="relative block overflow-hidden bg-primary py-2 mb-6 w-full cursor-pointer">
+                            <Marquee className=" text-warning text-[16px] font-semibold w-full h-full">
+                                {news.map((n: any) => (
+                                    <span key={n?._id} className="inline min-w-full h-full text-center whitespace-nowrap ">
+                                        {n?.news}&nbsp;&nbsp;&nbsp;
+                                    </span>
+                                ))}
+                            </Marquee>
+                        </div>
+                    </>
+                )}
+
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
                     {/* <div className="panel ">
                         <div className="flex justify-between dark:text-white-light mb-5">
@@ -342,14 +346,19 @@ const Index = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="panel min-h-[200px] sm:h-auto flex flex-col justify-between bg-[#00335B] text-white">
-                        <div className="flex justify-between dark:text-white-light mb-5">
-                            <h5 className="font-semibold text-lg ">10 day left</h5>
+                    <div className="panel min-h-[200px] max-w-md sm:h-auto flex  justify-between bg-[#00335B] text-white relative">
+                        <div className="flex flex-col gap-5 z-10">
+                            <div className=" dark:text-white-light">
+                                <h5 className=" text-md ">
+                                    <span className="text-4xl font-bold">10</span> day left
+                                </h5>
+                            </div>
+                            <p className="text-left sm:text-left max-w-[230px]">Your monthly subscription plan has 10 days to renew Subscription is 0 Please upload the screenshot</p>
+                            <button type="button" className="text-white hover:text-white bg-warning z-10 font-bold rounded border-warning p-2 mr-auto border ">
+                                Subscription Package
+                            </button>
                         </div>
-                        <p className="text-center sm:text-left">Your monthly subscription plan has 10 days to renew Subscription is 0 Please upload the screenshot</p>
-                        <button type="button" className="text-warning hover:text-white hover:bg-warning z-10 font-bold rounded border-warning p-2 ml-auto border ">
-                            Subscribe
-                        </button>
+                        <img className="absolute right-0 top-0 h-[95%] z-0" src="/public/assets/images/subscription.png" alt="" />
                     </div>
                 </div>
 
@@ -366,19 +375,31 @@ const Index = () => {
                             show more....
                         </span>
                     </div>
-                    <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
-                        {awards.map((award: any) => {
-                            return (
-                                <div key={award._id} className="min-h-full min-w-[220px] max-w-[220px] gap-2 w-full p-5 bg-white  flex flex-col items-center shadow-md rounded-[12px]">
-                                    <div className="w-20 h-20 ">
-                                        <img className="w-full rounded-full shadow-md" src={`${Base_url}/uploads/${award?.memberImage}`} alt="profile" />
-                                    </div>
-                                    <span className="text-[16px] font-[600]">{award?.memberName}</span>
-                                    <span>{award?.achivedDetails}</span>
-                                </div>
-                            );
-                        })}
-                    </div>
+                    {awards.length !== 0 ? (
+                        <>
+                            <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
+                                {awards.map((award: any) => {
+                                    return (
+                                        <div key={award._id} className="min-h-full min-w-[220px] max-w-[220px] gap-2 w-full p-5 bg-white  flex flex-col items-center shadow-md rounded-[12px]">
+                                            <div className="w-20 h-20 ">
+                                                <img className="w-full rounded-full shadow-md" src={`${Base_url}/uploads/${award?.memberImage}`} alt="profile" />
+                                            </div>
+                                            <span className="text-[16px] font-[600]">{award?.memberName}</span>
+                                            <span>{award?.achivedDetails}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="min-h-full min-w-[220px] max-w-[220px] gap-2 w-full p-5 bg-gray-200  flex flex-col items-center shadow-md rounded-[12px]">
+                                <div className="w-20 h-20 "></div>
+                                <span className="text-[16px] font-[600]"></span>
+                                <span></span>
+                            </div>
+                        </>
+                    )}
                 </div>
                 {/*-----End Awards and rewards ---------*/}
 
@@ -387,6 +408,8 @@ const Index = () => {
                     <h2 className="mb-6 font-bold text-lg">FLASH FEED</h2>
 
                     <div className="swiper mt-10" id="slider2">
+                         {slideVideos.length > 0 ? (
+                         <>
                         <div className="swiper-wrapper">
                             <Swiper
                                 modules={[Navigation, Pagination, Autoplay]}
@@ -414,8 +437,10 @@ const Index = () => {
                                     },
                                 }}
                             >
-                                {slideVideos.length > 0 ? (
-                                    slideVideos.map((item: any) => {
+                               
+                                    {slideVideos.map((item: any) => {
+                                        // console.log(${Base_url}/uploads/${item.videoThambnail});
+                                        
                                         return (
                                             <SwiperSlide key={item._id}>
                                                 <img src={`${Base_url}/uploads/${item.videoThambnail}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
@@ -430,10 +455,8 @@ const Index = () => {
                                                 <p className="font-semibold text-[14px]">{item.videoTitle}</p>
                                             </SwiperSlide>
                                         );
-                                    })
-                                ) : (
-                                    <p>No videos</p>
-                                )}
+                                    })}
+                              
                                 {/* {items.map((item:any) => {
                                     return (
                                         <SwiperSlide key={i}>
@@ -457,53 +480,63 @@ const Index = () => {
                         <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
                             <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
                         </button>
+                       </>
+                        ) : (
+                            <div className="max-w-[350px] h-[200px] rounded-lg bg-gray-200" />
+                        )}
                     </div>
                     <div className="swiper mt-20" id="slider1">
-                        <div className="swiper-wrapper">
-                            <Swiper
-                                modules={[Navigation, Pagination, Autoplay]}
-                                navigation={{
-                                    nextEl: '.swiper-button-next-ex1',
-                                    prevEl: '.swiper-button-prev-ex1',
-                                }}
-                                // pagination={{
-                                //     clickable: true,
-                                // }}
-                                autoplay={{ delay: 3000 }}
-                                loop={true}
-                                breakpoints={{
-                                    1024: {
-                                        slidesPerView: 3,
-                                        spaceBetween: 30,
-                                    },
-                                    768: {
-                                        slidesPerView: 2,
-                                        spaceBetween: 40,
-                                    },
-                                    320: {
-                                        slidesPerView: 1,
-                                        spaceBetween: 20,
-                                    },
-                                }}
-                            >
-                                {slideImages.map((item: any) => {
-                                    return (
-                                        <SwiperSlide key={item._id}>
-                                            <img src={`${Base_url}/uploads/${item?.homeImage}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
-                                        </SwiperSlide>
-                                    );
-                                })}
-                            </Swiper>
-                        </div>
-                        <button className="swiper-button-prev-ex1 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
-                            <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
-                        </button>
-                        <button className="swiper-button-next-ex1 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
-                            <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
-                        </button>
+                        {slideImages.length > 0 ? (
+                            <>
+                                <div className="swiper-wrapper">
+                                    <Swiper
+                                        modules={[Navigation, Pagination, Autoplay]}
+                                        navigation={{
+                                            nextEl: '.swiper-button-next-ex1',
+                                            prevEl: '.swiper-button-prev-ex1',
+                                        }}
+                                        // pagination={{
+                                        //     clickable: true,
+                                        // }}
+                                        autoplay={{ delay: 3000 }}
+                                        loop={true}
+                                        breakpoints={{
+                                            1024: {
+                                                slidesPerView: 3,
+                                                spaceBetween: 30,
+                                            },
+                                            768: {
+                                                slidesPerView: 2,
+                                                spaceBetween: 40,
+                                            },
+                                            320: {
+                                                slidesPerView: 1,
+                                                spaceBetween: 20,
+                                            },
+                                        }}
+                                    >
+                                        {slideImages.map((item: any) => {
+                                            return (
+                                                <SwiperSlide key={item._id}>
+                                                    <img src={`${Base_url}/uploads/${item?.homeImage}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
+                                                </SwiperSlide>
+                                            );
+                                        })}
+                                    </Swiper>
+                                </div>
+                                <button className="swiper-button-prev-ex1 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                    <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
+                                </button>
+                                <button className="swiper-button-next-ex1 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                    <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
+                                </button>
+                            </>
+                        ) : (
+                            <div className="max-w-[350px] h-[200px] rounded-lg bg-gray-200" />
+                        )}
                     </div>
 
-                    <Transition appear show={modal} as={Fragment}>
+                    {/* <Transition appear show={modal} as={Fragment}>
                         <Dialog as="div" open={modal} onClose={() => setModal(false)}>
                             <Transition.Child
                                 as={Fragment}
@@ -539,7 +572,7 @@ const Index = () => {
                                 </div>
                             </div>
                         </Dialog>
-                    </Transition>
+                    </Transition> */}
                 </div>
             </div>
             {pendingModal && (
@@ -570,12 +603,14 @@ const Index = () => {
                                     >
                                         <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg my-8 text-black dark:text-white-dark">
                                             <div className="flex bg-[#FBFBFB] dark:bg-[#121C2C] items-center justify-between px-5 py-3">
-                                                <div className="font-bold text-lg">Verify your Account</div>
+                                                <div className="font-bold text-primary text-lg">Verify your Account</div>
                                             </div>
                                             <div className="p-5">
                                                 <div className="flex flex-col">
                                                     <div>
-                                                        <label htmlFor="transactionId" className="text-[14px]">
+                                                        <h3 className="text-primary font-semibold">Package Amount</h3>
+                                                        <h1 className="text-2xl text-primary font-bold mb-4">₹{profielDetails?.tempPackageAmount}</h1>
+                                                        <label htmlFor="transactionId" className="text-[14px] text-primary">
                                                             Your Transaction Id{' '}
                                                         </label>
                                                         <input
@@ -584,10 +619,10 @@ const Index = () => {
                                                             className="w-full border border-solid border-primary p-2 rounded-md outline-primary"
                                                             onChange={(e) => setTransacrionNumber(e.target.value)}
                                                         />
-                                                        <label htmlFor="transactionId" className="mt-3 text-[14px]">
+                                                        <label htmlFor="transactionId" className="mt-3 text-[14px] text-primary">
                                                             Your payment screenshot
                                                         </label>
-                                                        <label htmlFor="imageUpload2" className="btn btn-outline-primary text-sm p-2">
+                                                        <label htmlFor="imageUpload2" className="btn btn-outline-primary text-sm p-2 text-primary">
                                                             Select Document
                                                             <input type="file" id="imageUpload2" className="hidden" onChange={handleImageUpload} accept="image/*" />
                                                         </label>

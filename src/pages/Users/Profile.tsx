@@ -143,7 +143,6 @@ const Profile = () => {
                     bankName: '',
                     ifscCode: '',
                 });
-                setConfirmPasswod('');
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
             }
@@ -283,8 +282,8 @@ const Profile = () => {
                             </div>
                         </div>
                     </form>
-                    <div className="panel mb-5 p-12 max-w-[540px] w-full">
-                        <div className="flex items-center justify-between mb-5 ">
+                    <div className="panel mb-5 p-5 max-w-[590px] w-full">
+                        <div className="flex mb-5 ">
                             <h5 className="font-semibold text-warning text-lg dark:text-white-light">Bank Details</h5>
                         </div>
                         <div className="mb-5">

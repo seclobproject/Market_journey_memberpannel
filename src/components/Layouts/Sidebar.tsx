@@ -118,22 +118,14 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                    {/* <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/package" className="group">
                                             <div className="flex items-center">
                                                 <IconBox fill className="group-hover:!text-primary shrink-0" />
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Package')}</span>
                                             </div>
                                         </NavLink>
-                                    </li>
-                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
-                                        <NavLink to="/pages/report" className="group">
-                                            <div className="flex items-center">
-                                                <IconMenuPages className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Report')}</span>
-                                            </div>
-                                        </NavLink>
-                                    </li>
+                                    </li> */}
 
                                     <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/withdrawal" className="group">
@@ -148,6 +140,14 @@ const Sidebar = () => {
                                             <div className="flex items-center">
                                                 <IconShoppingBag className="group-hover:!text-primary shrink-0" />
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Recent Transaction')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/pages/report" className="group">
+                                            <div className="flex items-center">
+                                                <IconMenuPages className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Report')}</span>
                                             </div>
                                         </NavLink>
                                     </li>

@@ -9,6 +9,9 @@ export const zonallistinNotdropdownUrl = '/api/admin/view-nottaken-zonals';
 
 //packages
 export const packagesListUrl = '/api/admin/view-package';
+
+// withdrawal
+export const withDrawalRequestUrl = ''
 // member
 export const memberaddUrl = '/api/user/add-user';
 export const addReferaUrl = '/api/user/add-referal-user';
@@ -18,6 +21,7 @@ export const getLevelTwoUsers = '/api/user/view-level2-user';
 // user
 export const getProfileUrl = '/api/user/view-user-profile';
 export const editProfileUrl = '/api/user/edit-profile';
+
 export const updateBankDetailsurl = ''
 // Home
 export const liveNewsUrl = '/api/admin/view-news-details';
