@@ -83,30 +83,30 @@ const Header = () => {
         walletAmount: '',
     });
 
-    const [notifications, setNotifications] = useState([
-        {
-            id: 1,
-            profile: 'user-profile.jpeg',
-            message: '<strong className="text-sm mr-1">John Doe</strong>invite you to <strong>Prototyping</strong>',
-            time: '45 min ago',
-        },
-        {
-            id: 2,
-            profile: 'profile-34.jpeg',
-            message: '<strong className="text-sm mr-1">Adam Nolan</strong>mentioned you to <strong>UX Basics</strong>',
-            time: '9h Ago',
-        },
-        {
-            id: 3,
-            profile: 'profile-16.jpeg',
-            message: '<strong className="text-sm mr-1">Anna Morgan</strong>Upload a file',
-            time: '9h Ago',
-        },
-    ]);
+    // const [notifications, setNotifications] = useState([
+    //     {
+    //         id: 1,
+    //         profile: 'user-profile.jpeg',
+    //         message: '<strong className="text-sm mr-1">John Doe</strong>invite you to <strong>Prototyping</strong>',
+    //         time: '45 min ago',
+    //     },
+    //     {
+    //         id: 2,
+    //         profile: 'profile-34.jpeg',
+    //         message: '<strong className="text-sm mr-1">Adam Nolan</strong>mentioned you to <strong>UX Basics</strong>',
+    //         time: '9h Ago',
+    //     },
+    //     {
+    //         id: 3,
+    //         profile: 'profile-16.jpeg',
+    //         message: '<strong className="text-sm mr-1">Anna Morgan</strong>Upload a file',
+    //         time: '9h Ago',
+    //     },
+    // ]);
 
-    const removeNotification = (value: number) => {
-        setNotifications(notifications.filter((user) => user.id !== value));
-    };
+    // const removeNotification = (value: number) => {
+    //     setNotifications(notifications.filter((user) => user.id !== value));
+    // };
 
     const [search, setSearch] = useState(false);
 
@@ -290,7 +290,7 @@ const Header = () => {
                                         <li onClick={(e) => e.stopPropagation()}>
                                             <div className="flex items-center px-4 py-2 justify-between font-semibold">
                                                 <h4 className="text-lg">Notification</h4>
-                                                {alert.length ? <span className="badge bg-primary/80">{notifications.length}New</span> : ''}
+                                                {/* {alert.length ? <span className="badge bg-primary/80">{notifications.length}New</span> : ''} */}
                                             </div>
                                         </li>
                                         {alert.length > 0 ? (

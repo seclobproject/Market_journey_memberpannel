@@ -23,29 +23,25 @@ const LoginBoxed = () => {
     const submitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const result = await dispatch(loginApi(userDetails));
+            const result:any = await dispatch(loginApi(userDetails));
             const token = result.payload?.data?.access_token;
-
-            console.log(result);
-            console.log(token);
 
             if (token) {
                 // Store the token in local storage
                 localStorage.setItem('User', token);
                 localStorage.setItem('status', result.payload?.data?.status);
                 Show_Toast({ message: 'Login success', type: true });
-                console.log(result?.payload?.data);
-
                 // Navigate to the dashboard
                 navigate('/', { replace: true });
             } else {
                 setErrorMessage(result?.payload?.response?.data?.message);
+                console.log(result?.error?.message);
+                // Show_Toast({ message: result?.error?.message, type: false });
                 Show_Toast({ message: 'Invalid Email or Password', type: false });
                 //    <Show_Toast message='User not found' type={false} />;
             }
         } catch (error:any) {
             console.log(error);
-            console.log(error?.response?.data?.message);
         }
     };
 

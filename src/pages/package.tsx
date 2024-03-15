@@ -1,60 +1,49 @@
-import React from 'react';
-import Tippy from '@tippyjs/react';
-import IconTrashLines from '../components/Icon/IconTrashLines';
-const tableData = [
-    {
-        name: 'John Doe',
-        office: 'London',
-        sale: 120,
-    },
-    {
-        name: 'Shaun Park',
-        office: 'New York',
-        sale: 400,
-    },
-    {
-        name: 'Alma Clarke',
-        office: 'Amazon',
-        sale: 310,
-    },
-    {
-        name: 'Vincent Carpenter',
-        office: 'Canada',
-        sale: 100,
-    },
-];
-const Member = () => {
+import React, { useEffect, useState } from 'react';
+import { ApiCall } from '../Services/Api';
+import { packagesListUrl } from '../utils/EndPoints';
+
+
+const Package = () => {
+const [packagesList,setPackagesList]=useState([])
+
+   useEffect(() => {
+       const fetchPackages = async () => {
+           try {
+               const res: any = await ApiCall('get', packagesListUrl);
+               console.log(res);
+               
+               setPackagesList(res?.data?.packageData);
+           } catch (error) {
+               console.error('Error fetching notifications:', error);
+           }
+       };
+
+       fetchPackages();
+   }, []);
+    
     return (
         <div className="panel">
             <div className="flex items-center justify-between mb-5">
                 <h5 className="font-semibold text-warning text-lg dark:text-white-light">Package</h5>
             </div>
-            <div className="table-responsive mb-5">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Package Name </th>
-                            <th>Franchise </th>
-                            <th> Amount </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tableData.map((data) => {
-                            return (
-                                <tr key={data.name}>
-                                    <td>
-                                        <div className="whitespace-nowrap">{data.name}</div>
-                                    </td>
-                                    <td>{data.office}</td>
-                                    <td>{data.sale}</td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
+            {packagesList.map((pkg: any) => (
+                <div className="max-w-[600px] flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2
+                
+                ">
+                    <div className="flex gap-4">
+                        <div className="flex flex-col gap-2">
+                            <h4 className="text-white font-semibold text-base">Franchise</h4>
+                            <h6 className="text-white text-[14px]">{pkg?.packageName} </h6>
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <h3 className="text-white font-semibold text-base">Package</h3>
+                        <span className="text-white text-sm">₹ {pkg?.packageAmount}</span>
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };
 
-export default Member;
+export default Package;

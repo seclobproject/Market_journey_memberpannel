@@ -282,7 +282,7 @@ const Profile = () => {
                             </div>
                         </div>
                     </form>
-                    <div className="panel mb-5 p-5 max-w-[590px] w-full">
+                    <div className="panel mb-5 p-5 max-w-[486px] w-full">
                         <div className="flex mb-5 ">
                             <h5 className="font-semibold text-warning text-lg dark:text-white-light">Bank Details</h5>
                         </div>

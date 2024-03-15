@@ -69,6 +69,7 @@ const Member = () => {
         panchayath: '',
         franchiseName:'',
     });
+    
     const [stateList, setStateList] = useState<any>([]);
     const [districtList, setDistrictList] = useState([]);
     const [zonalList, setZonalList] = useState([]);
@@ -117,6 +118,7 @@ const Member = () => {
         setActiveButton('level1');
         try {
             const response = await ApiCall('get', getLevelOneUsers );
+            
             // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
 
             if (response instanceof Error) {
@@ -131,33 +133,32 @@ const Member = () => {
         }
     };
     // pagination in Level 1 data
-    const fetchData=()=>{
-        setPageNumber(pageNumber + 1)
-        const getLevelOneMembers = async () => {
-            try {
-                const response = await ApiCall('get', getLevelOneUsers,);
-                // const response = await ApiCall('get', getLevelOneUsers, '', { page: pageNumber, pageSize: 10 });
-                console.log(response);
+    // const fetchData=()=>{
+    //     setPageNumber(pageNumber + 1)
+    //     const getLevelOneMembers = async () => {
+    //         try {
+    //             const response = await ApiCall('get', getLevelOneUsers,);
+    //             // const response = await ApiCall('get', getLevelOneUsers, '', { page: pageNumber, pageSize: 10 });
+    //             console.log(response);
 
-                if (response instanceof Error) {
-                    console.error('Error fetching allMembers list:', response.message);
-                } else if (response.status === 200) {
-                    setAllMembers(allMembers.concat(response?.data?.child1));
-                } else {
-                    console.error('Error fetching allMembers list. Unexpected status:', response.status);
-                }
-            } catch (error) {
-                console.error('Error fetching allMembers list:', error);
-            }
-        };
-        getLevelOneMembers()
-    }
+    //             if (response instanceof Error) {
+    //                 console.error('Error fetching allMembers list:', response.message);
+    //             } else if (response.status === 200) {
+    //                 setAllMembers(allMembers.concat(response?.data?.child1));
+    //             } else {
+    //                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching allMembers list:', error);
+    //         }
+    //     };
+    //     getLevelOneMembers()
+    // }
     //----Get Level 2 members-----
     const getLevelTwoMembers = async () => {
         setActiveButton('level2');
         try {
             const response=await ApiCall('get',getLevelTwoUsers)
-            console.log(response);
             
              if (response instanceof Error) {
                  console.error('Error fetching allMembers list:', response.message);
@@ -386,6 +387,8 @@ const Member = () => {
                         </thead>
                         <tbody>
                             {allMembers?.length > 0 ? (
+                                console.log(allMembers,'dfsf'),
+                                
                                 allMembers.map((data: any) => (
                                     <tr key={data?._id}>
                                         <td>{data?.name}</td>
@@ -419,12 +422,13 @@ const Member = () => {
                             )}
                         </tbody>
                     </table>
-                    <InfiniteScroll
-                        dataLength={allMembers?.length} //This is important field to render the next data
+                    {/* <InfiniteScroll
+                        dataLength={allMembers?.length} 
                         next={fetchData}
                         hasMore={true}
                         loader={<h4></h4>}
-                        children={undefined} // endMessage={
+                        children={undefined} 
+                        // endMessage={
                         //     <p style={{ textAlign: 'center' }}>
                         //         <b>Yay! You have seen it all</b>
                         //     </p>
@@ -435,9 +439,9 @@ const Member = () => {
                         // pullDownToRefreshThreshold={50}
                         // pullDownToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8595; Pull down to refresh</h3>}
                         // releaseToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>}
-                    >
+                    // >
                         {/* {items} */}
-                    </InfiniteScroll>
+                    {/* </InfiniteScroll> */}
                 </div>
                 <div>
                     <Transition appear show={addModal} as={Fragment}>

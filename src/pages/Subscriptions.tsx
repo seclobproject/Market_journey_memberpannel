@@ -11,7 +11,7 @@ const Subscriptions = () => {
                         </h5>
                     </div>
                     <p className="text-left sm:text-left max-w-[230px]">Your monthly subscription plan has 10 days to renew Subscription is 0 Please upload the screenshot</p>
-                    <button type="button" className="text-white hover:text-white bg-warning z-10 font-bold rounded border-warning p-2 mr-auto border ">
+                    <button type="button" className="text-white hover:text-white bg-warning z-10 font-bold rounded-lg border-warning p-2 mr-auto border ">
                         Subscription Package
                     </button>
                 </div>
