@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from '../../store';
+import { IRootState, useAppDispatch, useAppSelector } from '../../store';
 import Dropdown from '../../components/Dropdown';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import { useEffect, useState } from 'react';
@@ -24,28 +24,29 @@ import IconCashBanknotes from '../../components/Icon/IconCashBanknotes';
 import IconBox from '../../components/Icon/IconBox';
 import IconPencil from '../../components/Icon/IconPencil';
 import IconPhoneCall from '../../components/Icon/IconPhoneCall';
-interface ProfileDetails {
-    name: string;
-    address: string;
-    phone: string;
-    email: string;
-    franchise: string;
-    franchiseN: string;
-    userStatus: string;
-    walletAmount: string;
-}
+import { userProfileApi } from '../../store/UserSlice';
+// interface ProfileDetails {
+//     name: string;
+//     address: string;
+//     phone: string;
+//     email: string;
+//     franchise: string;
+//     franchiseN: string;
+//     userStatus: string;
+//     walletAmount: string;
+// }
 
 const Profile = () => {
-    const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
-        name: '',
-        address: '',
-        phone: '',
-        email: '',
-        franchise: '',
-        franchiseN: '',
-        userStatus: '',
-        walletAmount: '',
-    });
+    // const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
+    //     name: '',
+    //     address: '',
+    //     phone: '',
+    //     email: '',
+    //     franchise: '',
+    //     franchiseN: '',
+    //     userStatus: '',
+    //     walletAmount: '',
+    // });
     const [editProfleData, setEditProfileData] = useState({
         name: '',
         address: '',
@@ -61,11 +62,11 @@ const Profile = () => {
 
     const [confirmPassword, setConfirmPasswod] = useState('');
     const [errorMessage, setErrorMessage] = useState(false);
-
-    const dispatch = useDispatch();
+    const { user } = useAppSelector((state) => state.user);
+    const dispatch = useAppDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Profile'));
-        getProfile();
+       dispatch(userProfileApi()); 
     }, []);
     useEffect(() => {
         if (confirmPassword === editProfleData.password) {
@@ -77,22 +78,22 @@ const Profile = () => {
 
     //----------Get user profile -----------
 
-    const getProfile = async () => {
-        try {
-            const response = await ApiCall('get', getProfileUrl);
-            console.log(response);
+    // const getProfile = async () => {
+    //     try {
+    //         const response = await ApiCall('get', getProfileUrl);
+    //         console.log(response);
 
-            if (response instanceof Error) {
-                console.error('Error fetching state list:', response.message);
-            } else if (response.status === 200) {
-                setProfileDetails(response?.data);
-            } else {
-                console.error('Error fetching state list. Unexpected status:', response.status);
-            }
-        } catch (error) {
-            console.error('Error fetching state list:', error);
-        }
-    };
+    //         if (response instanceof Error) {
+    //             console.error('Error fetching state list:', response.message);
+    //         } else if (response.status === 200) {
+    //             setProfileDetails(response?.data);
+    //         } else {
+    //             console.error('Error fetching state list. Unexpected status:', response.status);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching state list:', error);
+    //     }
+    // };
     //--------------------------------
 
     // ---------- Edit profile --------------
@@ -109,8 +110,8 @@ const Profile = () => {
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
-                setProfileDetails(response?.data);
-                getProfile();
+                // setProfileDetails(response?.data);
+               dispatch(userProfileApi()); 
                 setEditProfileData({
                     name: '',
                     address: '',
@@ -137,7 +138,7 @@ const Profile = () => {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 setBankDetails(response?.data);
-                getProfile();
+                dispatch(userProfileApi()); 
                 setBankDetails({
                     accountNumber: '',
                     bankName: '',
@@ -176,38 +177,38 @@ const Profile = () => {
                         <div className="mb-5">
                             <div className="flex flex-col justify-center items-center">
                                 <img src="/assets/images/userProfile.jpg" alt="img" className="w-24 h-24 rounded-full object-cover mb-5" />
-                                <p className="font-semibold text-primary text-xl">{profielDetails.name}</p>
-                                <p className={profielDetails.userStatus === 'approved' ? 'text-green-500' : 'text-warning'}>{profielDetails.userStatus}</p>
+                                <p className="font-semibold text-primary text-xl">{user.name}</p>
+                                <p className={user.userStatus === 'approved' ? 'text-green-500' : 'text-warning'}>{user.userStatus}</p>
                             </div>
                             <div className="mt-5 flex m-auto space-y-4 flex-wrap text-md font-semibold text-white-dark gap-5">
                                 <ul className="mt-5 m-auto space-y-4 max-w-[280px]">
                                     <li>
                                         <button className="flex items-center gap-2">
                                             <IconMail className="w-5 h-5 shrink-0" fill />
-                                            <span className="text-primary truncate">Email : {profielDetails.email}</span>
+                                            <span className="text-primary truncate">Email : {user.email}</span>
                                         </button>
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <IconPhoneCall fill />
-                                        Phone : {profielDetails.phone}
+                                        Phone : {user.phone}
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <IconMapPin className="shrink-0" fill />
-                                        Address : {profielDetails.address}
+                                        Address : {user.address}
                                     </li>
                                 </ul>
                                 <ul className="mt-5 m-auto space-y-4">
                                     <li className="flex items-center gap-2">
                                         <IconCashBanknotes className="shrink-0" fill />
-                                        walletAmount : {profielDetails.walletAmount}
+                                        walletAmount : {user.walletAmount}
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <IconBox className="shrink-0" />
-                                        Franchise Type : {profielDetails.franchise}
+                                        Franchise Type : {user.franchise}
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <IconPencil className="shrink-0" fill />
-                                        Franchise Name : {profielDetails.franchise}
+                                        Franchise Name : {user.franchise}
                                     </li>
                                 </ul>
                             </div>

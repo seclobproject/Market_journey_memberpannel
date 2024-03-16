@@ -27,18 +27,20 @@ const [packagesList,setPackagesList]=useState([])
                 <h5 className="font-semibold text-warning text-lg dark:text-white-light">Package</h5>
             </div>
             {packagesList.map((pkg: any) => (
-                <div className="max-w-[600px] flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2
+                <div
+                    className="max-w-[600px] flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2
                 
-                ">
+                "
+                >
                     <div className="flex gap-4">
                         <div className="flex flex-col gap-2">
                             <h4 className="text-white font-semibold text-base">Franchise</h4>
-                            <h6 className="text-white text-[14px]">{pkg?.packageName} </h6>
+                            <h6 className="text-warning text-[14px]">{pkg?.packageName} </h6>
                         </div>
                     </div>
                     <div className="flex flex-col gap-2">
                         <h3 className="text-white font-semibold text-base">Package</h3>
-                        <span className="text-white text-sm">₹ {pkg?.packageAmount}</span>
+                        <span className="text-warning text-sm">₹ {pkg?.packageAmount}</span>
                     </div>
                 </div>
             ))}

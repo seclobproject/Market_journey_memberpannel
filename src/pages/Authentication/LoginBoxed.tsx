@@ -63,8 +63,8 @@ const LoginBoxed = () => {
                                 <img className="w-[150px] text-center" src="/public/marketlogo.png" alt="logo" />
                             </div>
                             <div className="mb-10">
-                                <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign in</h1>
-                                <p className="text-base font-bold leading-normal text-white-dark">Enter your email and password to login</p>
+                                <h1 className="text-3xl font-extrabold uppercase !leading-snug  text-primary md:text-4xl">Log in</h1>
+                                <p className="text-base mt-2 leading-normal text-white-dark">Enter your email and password to login</p>
                             </div>
 
                             <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
@@ -105,8 +105,8 @@ const LoginBoxed = () => {
                                 </div>
                                 {errormessage && <p className="text-center text-red-700">{errormessage}</p>}
 
-                                <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                    Sign in
+                                <button type="submit" className="btn bg-primary text-white !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                    Log In
                                 </button>
                             </form>
                             <div className="relative my-7 text-center md:mb-9"></div>

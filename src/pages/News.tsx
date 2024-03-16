@@ -18,6 +18,8 @@ const News = () => {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 // Format createdAt timestamps
+                console.log(response);
+                
                 const formattedNews = response.data.newsData.map((item: any) => ({
                     ...item,
                     createdAt: formatTimestamp(item.createdAt),
@@ -40,6 +42,7 @@ const News = () => {
     };
 
     return (
+
         <div>
             <h2 className=" font-bold text-primary text-lg">Latest News</h2>
             {news.map((n: any, index: number) => (

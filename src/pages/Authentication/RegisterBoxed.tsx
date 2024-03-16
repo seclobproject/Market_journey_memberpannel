@@ -288,7 +288,7 @@ const RegisterBoxed = () => {
                 <img src="/assets/images/auth/polygon-object.svg" alt="image" className="absolute bottom-0 end-[28%]" />
                 <div className="relative w-full max-w-[870px] rounded-md bg-[linear-gradient(45deg,#fff9f9_0%,rgba(255,255,255,0)_25%,rgba(255,255,255,0)_75%,_#fff9f9_100%)] p-2 dark:bg-[linear-gradient(52.22deg,#0E1726_0%,rgba(14,23,38,0)_18.66%,rgba(14,23,38,0)_51.04%,rgba(14,23,38,0)_80.07%,#0E1726_100%)]">
                     <div className="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[758px] py-20 pt-10">
-                        <div className="w-full flex mb-10">
+                        <div className="w-full flex justify-center mb-10">
                             <img className="w-[150px] text-center" src="/public/marketlogo.png" alt="logo" />
                         </div>
                         <div className="mx-auto w-full">
@@ -494,27 +494,27 @@ const RegisterBoxed = () => {
                                         )}
                                         {(addMember?.franchise === 'Zonal Franchise' || addMember?.franchise === 'Mobile Franchise') && (
                                             <div>
-                                                <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'Zonel Franchise Name' : 'Zonel'}</label>
+                                                <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'Zonal Franchise Name' : 'Zonal'}</label>
                                                 <div className="relative text-white-dark">
                                                     <select
                                                         className="form-input ps-10 placeholder:text-white-dark"
                                                         required
                                                         onChange={(e) => {
                                                             const selectedValue = e.target.value;
-                                                            const selectedZonel = zonalList.find((zonal: any) => zonal.name === selectedValue) as any;
+                                                            const selectedzonal = zonalList.find((zonal: any) => zonal.name === selectedValue) as any;
 
-                                                            if (selectedZonel) {
+                                                            if (selectedzonal) {
                                                                 setAddMember((prevAddMember) => ({
                                                                     ...prevAddMember,
-                                                                    [addMember?.franchise === 'Zonal Franchise' ? 'franchiseName' : 'zonal']: selectedZonel?.name,
+                                                                    [addMember?.franchise === 'Zonal Franchise' ? 'franchiseName' : 'zonal']: selectedzonal?.name,
                                                                 }));
-                                                                setSelectedZonalId(selectedZonel?.id);
+                                                                setSelectedZonalId(selectedzonal?.id);
                                                             }
                                                         }}
                                                         value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
                                                     >
                                                         <option key="default" value="">
-                                                            Select Zonel{' '}
+                                                            Select Zonal{' '}
                                                         </option>
                                                         {zonalList.map((zonal: any) => (
                                                             <option key={zonal.id}>{zonal.name}</option>
@@ -545,7 +545,7 @@ const RegisterBoxed = () => {
                                     </div>
                                 </div>
                                 <div className="w-full flex justify-center">
-                                    <button type="submit" className="btn btn-gradient !mt-6 w-1/2 border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                    <button type="submit" className="btn bg-primary text-white !mt-6 w-1/2 border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
                                         Sign Up
                                     </button>
                                 </div>
@@ -554,7 +554,7 @@ const RegisterBoxed = () => {
                                 <div className="text-center dark:text-white">
                                     Already have an account ?&nbsp;
                                     <Link to="/auth/boxed-signin" className="uppercase text-primary underline transition hover:text-black dark:hover:text-white">
-                                        SIGN IN
+                                       LOG IN
                                     </Link>
                                 </div>
                             </div>

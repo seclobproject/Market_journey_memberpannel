@@ -46,10 +46,10 @@ interface Package {
     franchiseName: string;
     packageAmount: number;
 }
-interface States {
-    name: String;
-    id: String;
-}
+// interface States {
+//     name: String;
+//     id: String;
+// }
 
 const Member = () => {
     const [addModal, setAddModal] = useState(false);
@@ -83,7 +83,7 @@ const Member = () => {
     const [totalMembers,setTotalMembers]=useState(0)
 
     useEffect(() => {
-        getLevelOneMembers();
+        // getLevelOneMembers();
         getPackagesList();
         getStateList();
     }, []);
@@ -114,24 +114,24 @@ const Member = () => {
     //---------------------
 
     //----Get Level 1 members-----
-    const getLevelOneMembers = async () => {
-        setActiveButton('level1');
-        try {
-            const response = await ApiCall('get', getLevelOneUsers );
+    // const getLevelOneMembers = async () => {
+    //     setActiveButton('level1');
+    //     try {
+    //         const response = await ApiCall('get', getLevelOneUsers );
             
-            // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
+    //         // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
 
-            if (response instanceof Error) {
-                console.error('Error fetching allMembers list:', response.message);
-            } else if (response.status === 200) {
-                setAllMembers(response?.data?.child1);
-            } else {
-                console.error('Error fetching allMembers list. Unexpected status:', response.status);
-            }
-        } catch (error) {
-            console.error('Error fetching allMembers list:', error);
-        }
-    };
+    //         if (response instanceof Error) {
+    //             console.error('Error fetching allMembers list:', response.message);
+    //         } else if (response.status === 200) {
+    //             setAllMembers(response?.data?.child1);
+    //         } else {
+    //             console.error('Error fetching allMembers list. Unexpected status:', response.status);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching allMembers list:', error);
+    //     }
+    // };
     // pagination in Level 1 data
     // const fetchData=()=>{
     //     setPageNumber(pageNumber + 1)
@@ -342,8 +342,8 @@ const Member = () => {
     return (
         <>
             <div className="flex gap-5 w-full mb-4">
-                <div
-                    onClick={getLevelOneMembers}
+                {/* <div
+                    // onClick={getLevelOneMembers}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
                         activeButton === 'level1' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
@@ -357,7 +357,7 @@ const Member = () => {
                     } justify-center max-w-[120px] w-full`}
                 >
                     Level 2
-                </div>
+                </div> */}
             </div>
             <div className="panel">
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
@@ -378,7 +378,7 @@ const Member = () => {
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
-                                <th>Sponser Name</th>
+                                <th>Sponsor Name</th>
                                 <th> franchise Type</th>
                                 <th> franchise Name</th>
                                 <th> Package Amount</th>
@@ -684,26 +684,26 @@ const Member = () => {
                                                                 addMember?.franchise === 'Platinum course' ||
                                                                 addMember?.franchise === 'Algo course') && (
                                                                 <div>
-                                                                    <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'Zonel Franchise Name' : 'Zonel'}</label>
+                                                                    <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'zonal Franchise Name' : 'zonal'}</label>
                                                                     <div className="relative text-white-dark">
                                                                         <select
                                                                             className="form-input ps-10 placeholder:text-white-dark"
                                                                             onChange={(e) => {
                                                                                 const selectedValue = e.target.value;
-                                                                                const selectedZonel = zonalList.find((zonal: any) => zonal.name === selectedValue) as any;
+                                                                                const selectedzonal = zonalList.find((zonal: any) => zonal.name === selectedValue) as any;
 
-                                                                                if (selectedZonel) {
+                                                                                if (selectedzonal) {
                                                                                     setAddMember((prevAddMember) => ({
                                                                                         ...prevAddMember,
-                                                                                        [addMember?.franchise === 'Zonal Franchise' ? 'franchiseName' : 'zonal']: selectedZonel?.name,
+                                                                                        [addMember?.franchise === 'Zonal Franchise' ? 'franchiseName' : 'zonal']: selectedzonal?.name,
                                                                                     }));
-                                                                                    setSelectedZonalId(selectedZonel?.id);
+                                                                                    setSelectedZonalId(selectedzonal?.id);
                                                                                 }
                                                                             }}
                                                                             value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
                                                                         >
                                                                             <option key="default" value="">
-                                                                                Select Zonel{' '}
+                                                                                Select zonal{' '}
                                                                             </option>
                                                                             {zonalList.map((zonal: any) => (
                                                                                 <option key={zonal.id}>{zonal.name}</option>

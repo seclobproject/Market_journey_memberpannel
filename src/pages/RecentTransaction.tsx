@@ -240,7 +240,7 @@ const RecentTransaction = () => {
                                                         onClick={() => setRequestModal(false)}
                                                         className="btn bg-primary text-white !mt-6 w-full max-w-[150px] border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"
                                                     >
-                                                        cansel
+                                                        cancel
                                                     </button>
                                                     <button
                                                         type="submit"

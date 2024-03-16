@@ -20,15 +20,17 @@ import IconMenuUsers from '../components/Icon/Menu/IconMenuUsers';
 import IconCashBanknotes from '../components/Icon/IconCashBanknotes';
 import IconAirplay from '../components/Icon/IconAirplay';
 import Marquee from 'react-fast-marquee';
+import { useAppDispatch, useAppSelector } from '../store';
+import { userProfileApi } from '../store/UserSlice';
 
-interface ProfileDetails {
-    id: string;
-    name: string;
-    email: string;
-    userStatus: string;
-    walletAmount: string;
-    tempPackageAmount: string;
-}
+// interface ProfileDetails {
+//     id: string;
+//     name: string;
+//     email: string;
+//     userStatus: string;
+//     walletAmount: string;
+//     tempPackageAmount: string;
+// }
 
 const Index = () => {
     const [modal, setModal] = useState(false);
@@ -41,20 +43,22 @@ const Index = () => {
     const [slideVideos, setSlideVideos] = useState<any>([]);
     const [awards, setAwards] = useState<any>([]);
     const [news, setNews] = useState<any>([]);
-    const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
-        name: '',
-        email: '',
-        userStatus: '',
-        walletAmount: '',
-        tempPackageAmount: '',
-        id: '',
-    });
+    // const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
+    //     name: '',
+    //     email: '',
+    //     userStatus: '',
+    //     walletAmount: '',
+    //     tempPackageAmount: '',
+    //     id: '',
+    // });
     const [loading, setLoading] = useState(false);
+    const { user } = useAppSelector((state) => state.user);
+
 
     const navigate = useNavigate();
-
+    const dispatch = useAppDispatch();
     useEffect(() => {
-        getProfile();
+        dispatch(userProfileApi());
         getImages();
         getVideos();
         showAwards();
@@ -67,26 +71,26 @@ const Index = () => {
         }
     });
 
-    const getProfile = async () => {
-        try {
-            const response = await ApiCall('get', getProfileUrl);
-            console.log(response);
+    // const getProfile = async () => {
+    //     try {
+    //         const response = await ApiCall('get', getProfileUrl);
+    //         console.log(response);
 
-            if (response instanceof Error) {
-                console.error('Error fetching state list:', response.message);
-            } else if (response.status === 200) {
-                setProfileDetails(response?.data);
-                localStorage.setItem('status', response?.data?.userStatus);
-                if (response?.data?.userStatus === 'pending') {
-                    setPendingModal(true);
-                }
-            } else {
-                console.error('Error fetching state list. Unexpected status:', response.status);
-            }
-        } catch (error) {
-            console.error('Error fetching state list:', error);
-        }
-    };
+    //         if (response instanceof Error) {
+    //             console.error('Error fetching state list:', response.message);
+    //         } else if (response.status === 200) {
+    //             setProfileDetails(response?.data);
+    //             localStorage.setItem('status', response?.data?.userStatus);
+    //             if (response?.data?.userStatus === 'pending') {
+    //                 setPendingModal(true);
+    //             }
+    //         } else {
+    //             console.error('Error fetching state list. Unexpected status:', response.status);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching state list:', error);
+    //     }
+    // };
     //--------- get sliding images-------
     const getImages = async () => {
         try {
@@ -194,27 +198,27 @@ const Index = () => {
             setShowSelectDocumentMessage(true);
         }
     };
-    const items = [
-        {
-            src: '/assets/images/knowledge/image-5.jpg',
-            title: 'Excessive sugar is harmful',
-        },
-        {
-            src: '/assets/images/knowledge/image-6.jpg',
-            title: 'Creative Photography',
-        },
-        {
-            src: '/assets/images/knowledge/image-7.jpg',
-            title: 'Plan your next trip',
-        },
-        {
-            src: '/assets/images/knowledge/image-8.jpg',
-            title: 'My latest Vlog',
-        },
-    ];
+    // const items = [
+    //     {
+    //         src: '/assets/images/knowledge/image-5.jpg',
+    //         title: 'Excessive sugar is harmful',
+    //     },
+    //     {
+    //         src: '/assets/images/knowledge/image-6.jpg',
+    //         title: 'Creative Photography',
+    //     },
+    //     {
+    //         src: '/assets/images/knowledge/image-7.jpg',
+    //         title: 'Plan your next trip',
+    //     },
+    //     {
+    //         src: '/assets/images/knowledge/image-8.jpg',
+    //         title: 'My latest Vlog',
+    //     },
+    // ];
     // share referal link
     const shareTitle = 'Check out this awesome link!';
-    const shareUrl = `http://192.168.29.203:5173/auth/boxed-signup/${profielDetails?.id}`; // Replace with the actual URL you want to share
+    const shareUrl = `http://192.168.29.203:5173/auth/boxed-signup/${user?.id}`; // Replace with the actual URL you want to share
 
     const handleShare = async () => {
         if (navigator.share) {
@@ -248,8 +252,8 @@ const Index = () => {
                 {news.length !== 0 && (
                     <>
                         <h2 className="mb-6 font-bold text-primary text-lg">LATEST NEWS</h2>
-                        <div className="relative block overflow-hidden bg-primary py-2 mb-6 w-full cursor-pointer">
-                            <Marquee className=" text-warning text-[16px] font-semibold w-full h-full">
+                        <div className="relative block overflow-hidden bg-[#DDE4EB] py-2 mb-6 w-full cursor-pointer">
+                            <Marquee className=" text-primary text-[16px] font-semibold w-full h-full">
                                 {news.map((n: any) => (
                                     <span key={n?._id} className="inline min-w-full h-full text-center whitespace-nowrap ">
                                         {n?.news}&nbsp;&nbsp;&nbsp;
@@ -270,7 +274,7 @@ const Index = () => {
                         </div>
                     </div> */}
 
-                    <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                    {/* <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
                         <div className="flex h-full justify-between items-center  dark:text-white-light">
                             <IconMenuUsers className="w-10 h-10 text-warning" />
                         </div>
@@ -305,27 +309,20 @@ const Index = () => {
                             <h1 className="text-[25px] font-semibold">₹740</h1>
                             <h5 className="font-semibold text-md text-warning">InDirectIncome</h5>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                     <div
                         className="panel overflow-hidden before:bg-primary before:absolute before:-right-44 before:top-0 before:bottom-0 before:m-auto before:rounded-full before:w-96 before:h-96 grid grid-cols-1 content-between "
                         style={{ background: 'linear-gradient(0deg, #00c6fb -227%, #132239)' }}
                     >
-                        <div className="flex items-start justify-between text-white-light mb-16 z-[7]">
+                        <div className="flex relative items-start justify-between text-white-light mb-16 z-[7]">
                             <h5 className="font-semibold text-lg">Total Balance</h5>
-                            <img src="/public/assets/images/rupee.png" alt="rupee" />
+                            <img className="absolute right-2 top-2 sm:w-[80px] w-auto" src="/public/assets/images/total_wallet.svg" alt="rupee" />
                         </div>
                         <div className="flex items-center justify-between z-10">
                             <div className="flex items-center justify-between">
-                                <div className="relative text-2xl text-white whitespace-nowrap">₹ {profielDetails.walletAmount}</div>
-
-                                {/* <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] place-content-center ltr:mr-2 rtl:ml-2">
-                                    <IconPlus />
-                                </button>
-                                <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] grid place-content-center">
-                                    <IconCreditCard />
-                                </button> */}
+                                <div className="relative text-2xl  text-white whitespace-nowrap">₹ {user?.walletAmount}</div>
                             </div>
                             {/* <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] z-10">
                                 Upgrade
@@ -408,56 +405,55 @@ const Index = () => {
                     <h2 className="mb-6 font-bold text-lg">FLASH FEED</h2>
 
                     <div className="swiper mt-10" id="slider2">
-                         {slideVideos.length > 0 ? (
-                         <>
-                        <div className="swiper-wrapper">
-                            <Swiper
-                                modules={[Navigation, Pagination, Autoplay]}
-                                navigation={{
-                                    nextEl: '.swiper-button-next-ex2',
-                                    prevEl: '.swiper-button-prev-ex2',
-                                }}
-                                // pagination={{
-                                //     clickable: true,
-                                // }}
-                                autoplay={{ delay: 4000 }}
-                                loop={true}
-                                breakpoints={{
-                                    1024: {
-                                        slidesPerView: 3,
-                                        spaceBetween: 30,
-                                    },
-                                    768: {
-                                        slidesPerView: 2,
-                                        spaceBetween: 40,
-                                    },
-                                    320: {
-                                        slidesPerView: 1,
-                                        spaceBetween: 20,
-                                    },
-                                }}
-                            >
-                               
-                                    {slideVideos.map((item: any) => {
-                                        // console.log(${Base_url}/uploads/${item.videoThambnail});
-                                        
-                                        return (
-                                            <SwiperSlide key={item._id}>
-                                                <img src={`${Base_url}/uploads/${item.videoThambnail}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
-                                                <Link to={`${item.videoLink}`} target="_blank">
-                                                    <button
-                                                        type="button"
-                                                        className="absolute left-1/2 top-1/3 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/3 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
-                                                    >
-                                                        <IconPlayCircle className="h-[62px] w-[62px] " fill={true} />
-                                                    </button>
-                                                </Link>
-                                                <p className="font-semibold text-[14px]">{item.videoTitle}</p>
-                                            </SwiperSlide>
-                                        );
-                                    })}
-                              
-                                {/* {items.map((item:any) => {
+                        {slideVideos.length > 0 ? (
+                            <>
+                                <div className="swiper-wrapper">
+                                    <Swiper
+                                        modules={[Navigation, Pagination, Autoplay]}
+                                        navigation={{
+                                            nextEl: '.swiper-button-next-ex2',
+                                            prevEl: '.swiper-button-prev-ex2',
+                                        }}
+                                        // pagination={{
+                                        //     clickable: true,
+                                        // }}
+                                        autoplay={{ delay: 4000 }}
+                                        loop={true}
+                                        breakpoints={{
+                                            1024: {
+                                                slidesPerView: 3,
+                                                spaceBetween: 30,
+                                            },
+                                            768: {
+                                                slidesPerView: 2,
+                                                spaceBetween: 40,
+                                            },
+                                            320: {
+                                                slidesPerView: 1,
+                                                spaceBetween: 20,
+                                            },
+                                        }}
+                                    >
+                                        {slideVideos.map((item: any) => {
+                                            // console.log(${Base_url}/uploads/${item.videoThambnail});
+
+                                            return (
+                                                <SwiperSlide key={item._id}>
+                                                    <img src={`${Base_url}/uploads/${item.videoThambnail}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
+                                                    <Link to={`${item.videoLink}`} target="_blank">
+                                                        <button
+                                                            type="button"
+                                                            className="absolute left-1/2 top-1/3 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/3 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
+                                                        >
+                                                            <IconPlayCircle className="h-[62px] w-[62px] " fill={true} />
+                                                        </button>
+                                                    </Link>
+                                                    <p className="font-semibold text-[14px]">{item.videoTitle}</p>
+                                                </SwiperSlide>
+                                            );
+                                        })}
+
+                                        {/* {items.map((item:any) => {
                                     return (
                                         <SwiperSlide key={i}>
                                             <img src={`/public/assets/images/carousel2.jpeg`} className="w-full rounded-lg" alt="itemImg" />
@@ -472,15 +468,15 @@ const Index = () => {
                                         </SwiperSlide>
                                     );
                                 })} */}
-                            </Swiper>
-                        </div>
-                        <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
-                            <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
-                        </button>
-                        <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
-                            <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
-                        </button>
-                       </>
+                                    </Swiper>
+                                </div>
+                                <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                    <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
+                                </button>
+                                <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                    <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
+                                </button>
+                            </>
                         ) : (
                             <div className="max-w-[350px] h-[200px] rounded-lg bg-gray-200" />
                         )}
@@ -609,7 +605,7 @@ const Index = () => {
                                                 <div className="flex flex-col">
                                                     <div>
                                                         <h3 className="text-primary font-semibold">Package Amount</h3>
-                                                        <h1 className="text-2xl text-primary font-bold mb-4">₹{profielDetails?.tempPackageAmount}</h1>
+                                                        <h1 className="text-2xl text-primary font-bold mb-4">₹{user?.tempPackageAmount}</h1>
                                                         <label htmlFor="transactionId" className="text-[14px] text-primary">
                                                             Your Transaction Id{' '}
                                                         </label>

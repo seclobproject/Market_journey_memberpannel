@@ -19,9 +19,9 @@ const Subscriptions = () => {
             </div>
 
             <div className="mt-4 flex flex-col gap-2 ">
-              <h1 className='text-xl font-semibold mt-5'>Transaction History</h1>
-              <div className='w-full h-[1.8px] bg-warning mb-2'></div>
-                <div className="w-full flex justify-between min-h-[100px] bg-primary rounded-3xl p-4">
+                <h1 className="text-xl font-semibold mt-5">Transaction History</h1>
+                <div className="w-full h-[1.8px] bg-warning mb-2"></div>
+                <div className="w-full flex justify-between min-h-[100px] bg-[#DDE4EB] rounded-3xl p-4">
                     <div className="flex gap-4">
                         <svg className="w-[40px] h-[68px]" width="23" height="12" viewBox="0 0 23 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -35,13 +35,13 @@ const Subscriptions = () => {
                         </svg>
 
                         <div className="flex flex-col">
-                            <h4 className="text-white text-lg">Name</h4>
-                            <h6 className="text-gray-400">first level</h6>
-                            <span className="text-gray-400">20-07-2024</span>
+                            <h4 className="text-primary font-semibold text-lg">Name</h4>
+                            <h6 className="text-primary">first level</h6>
+                            <span className="text-primary">20-07-2024</span>
                         </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                        <h3 className="text-white font-bold text-lg">₹56788</h3>
+                        <h3 className="text-primary font-bold text-lg">₹56788</h3>
                         <span
                             className="text-white bg-green-500 px-2 py-1 rounded-[10px]
               {status === 'accepted' ? 'bg-green-500' : status === 'rejected' ? 'bg-red' : 'bg-yellow'}"
@@ -50,7 +50,7 @@ const Subscriptions = () => {
                         </span>
                     </div>
                 </div>
-                <div className="w-full flex justify-between min-h-[100px] bg-primary rounded-3xl p-4">
+                <div className="w-full flex justify-between min-h-[100px] bg-[#DDE4EB] rounded-3xl p-4">
                     <div className="flex gap-4">
                         <svg className="w-[40px] h-[68px]" width="23" height="12" viewBox="0 0 23 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -63,13 +63,13 @@ const Subscriptions = () => {
                             />
                         </svg>
                         <div className="flex flex-col">
-                            <h4 className="text-white text-lg">Name</h4>
-                            <h6 className="text-gray-400">first level</h6>
-                            <span className="text-gray-400">20-07-2024</span>
+                            <h4 className="text-primary font-semibold text-lg">Name</h4>
+                            <h6 className="text-primary">first level</h6>
+                            <span className="text-primary">20-07-2024</span>
                         </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                        <h3 className="text-white font-bold text-lg">₹56788</h3>
+                        <h3 className="text-primary font-bold text-lg">₹56788</h3>
                         <span
                             className="text-white bg-yellow-500 px-2 py-1 rounded-[10px]
               {status === 'accepted' ? 'bg-green-500' : status === 'rejected' ? 'bg-red' : 'bg-yellow'}"
@@ -78,7 +78,7 @@ const Subscriptions = () => {
                         </span>
                     </div>
                 </div>
-                <div className="w-full flex justify-between min-h-[100px] bg-primary rounded-3xl p-4">
+                <div className="w-full flex justify-between min-h-[100px] bg-[#DDE4EB] rounded-3xl p-4">
                     <div className="flex gap-4">
                         <svg className="w-[40px] h-[68px]" width="23" height="12" viewBox="0 0 23 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -91,13 +91,13 @@ const Subscriptions = () => {
                             />
                         </svg>
                         <div className="flex flex-col">
-                            <h4 className="text-white text-lg">Name</h4>
-                            <h6 className="text-gray-400">first level</h6>
-                            <span className="text-gray-400">20-07-2024</span>
+                            <h4 className="text-primary font-semibold text-lg">Name</h4>
+                            <h6 className="text-primary">first level</h6>
+                            <span className="text-primary">20-07-2024</span>
                         </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                        <h3 className="text-white font-bold text-lg">₹56788</h3>
+                        <h3 className="text-primary font-bold text-lg">₹56788</h3>
                         <span
                             className="text-white bg-red-500 px-2 py-1 rounded-[10px]
               {status === 'accepted' ? 'bg-green-500' : status === 'rejected' ? 'bg-red' : 'bg-yellow'}"

@@ -163,9 +163,9 @@ const Withdrawal = () => {
                                                 <div className="flex  w-full flex-col lg:flex-row gap-5 lg:flex-wrap">
                                                     <div className="space-y-5 w-full">
                                                         <div>
-                                                            <label htmlFor="Name">Amount</label>
+                                                            <label htmlFor="Amount">Amount</label>
                                                             <div className="relative text-white-dark">
-                                                                <input onChange={(e) => {}} id="Name" type="text" placeholder="Enter Name" className="form-input ps-10 placeholder:text-white-dark" />
+                                                                <input onChange={(e) => {}} id="Name" type="text" placeholder="Enter Amount" className="form-input ps-10 placeholder:text-white-dark" />
                                                                 <span className="absolute start-4 top-1/2 -translate-y-1/2">{/* <IconUser fill={true} /> */}</span>
                                                             </div>
                                                         </div>
@@ -174,9 +174,9 @@ const Withdrawal = () => {
                                                 <div className="flex  w-full flex-col lg:flex-row gap-5 lg:flex-wrap">
                                                     <div className="space-y-5  w-full">
                                                         <div>
-                                                            <label htmlFor="Name">TDS Amount</label>
+                                                            <label htmlFor="TDSAmount">TDS Amount</label>
                                                             <div className="relative text-white-dark">
-                                                                <input onChange={(e) => {}} id="Name" type="text" placeholder="Enter Name" className="form-input ps-10 placeholder:text-white-dark" />
+                                                                <input onChange={(e) => {}} id="Name" type="text" placeholder="Enter TDS Amount" className="form-input ps-10 placeholder:text-white-dark" />
                                                                 <span className="absolute start-4 top-1/2 -translate-y-1/2">{/* <IconUser fill={true} /> */}</span>
                                                             </div>
                                                         </div>
@@ -185,9 +185,9 @@ const Withdrawal = () => {
                                                 <div className="flex  w-full flex-col lg:flex-row gap-5 lg:flex-wrap">
                                                     <div className="space-y-5 w-full">
                                                         <div>
-                                                            <label htmlFor="Name">Total Amount</label>
+                                                            <label htmlFor="TotalAmount">Total Amount</label>
                                                             <div className="relative text-white-dark">
-                                                                <input onChange={(e) => {}} id="Name" type="text" placeholder="Enter Name" className="form-input ps-10 placeholder:text-white-dark" />
+                                                                <input onChange={(e) => {}} id="Name" type="text" placeholder="Enter Total Amount" className="form-input ps-10 placeholder:text-white-dark" />
                                                                 <span className="absolute start-4 top-1/2 -translate-y-1/2">{/* <IconUser fill={true} /> */}</span>
                                                             </div>
                                                         </div>
@@ -201,7 +201,7 @@ const Withdrawal = () => {
                                                         onClick={() => setRequestModal(false)}
                                                         className="btn bg-primary text-white !mt-6 w-full max-w-[150px] border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"
                                                     >
-                                                        cansel
+                                                        cancel
                                                     </button>
                                                     <button
                                                         type="submit"

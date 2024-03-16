@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { IRootState } from '../../store';
+import { IRootState, useAppSelector } from '../../store';
 import { toggleRTL, toggleTheme, toggleSidebar } from '../../store/themeConfigSlice';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -36,15 +36,22 @@ import { ApiCall } from '../../Services/Api';
 import { AlertUrl, getProfileUrl } from '../../utils/EndPoints';
 import { Show_Toast } from '../../pages/Components/Toast';
 
-interface ProfileDetails {
-    name: string;
-    email: string;
-    userStatus: string;
-    walletAmount: string;
-}
+// interface ProfileDetails {
+//     name: string;
+//     email: string;
+//     userStatus: string;
+//     walletAmount: string;
+// }
 
 const Header = () => {
     const [logoutModal, setLogoutModal] = useState(false);
+        // const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
+        //     name: '',
+        //     email: '',
+        //     userStatus: '',
+        //     walletAmount: '',
+        // });
+            const { user } = useAppSelector((state) => state.user);
     const location = useLocation();
     const navigate = useNavigate();
     useEffect(() => {
@@ -76,12 +83,7 @@ const Header = () => {
     function createMarkup(messages: any) {
         return { __html: messages };
     }
-    const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
-        name: '',
-        email: '',
-        userStatus: '',
-        walletAmount: '',
-    });
+
 
     // const [notifications, setNotifications] = useState([
     //     {
@@ -108,7 +110,7 @@ const Header = () => {
     //     setNotifications(notifications.filter((user) => user.id !== value));
     // };
 
-    const [search, setSearch] = useState(false);
+    // const [search, setSearch] = useState(false);
 
     const setLocale = (flag: string) => {
         setFlag(flag);
@@ -124,25 +126,25 @@ const Header = () => {
 
     const handleLogout = () => {};
 
-    const getProfile = async () => {
-        try {
-            const response = await ApiCall('get', getProfileUrl);
-            console.log(response);
+    // const getProfile = async () => {
+    //     try {
+    //         const response = await ApiCall('get', getProfileUrl);
+    //         console.log(response);
 
-            if (response instanceof Error) {
-                console.error('Error fetching state list:', response.message);
-            } else if (response.status === 200) {
-                setProfileDetails(response?.data);
-            } else {
-                console.error('Error fetching state list. Unexpected status:', response.status);
-            }
-        } catch (error) {
-            console.error('Error fetching state list:', error);
-        }
-    };
-    useEffect(() => {
-        getProfile();
-    }, []);
+    //         if (response instanceof Error) {
+    //             console.error('Error fetching state list:', response.message);
+    //         } else if (response.status === 200) {
+    //             setProfileDetails(response?.data);
+    //         } else {
+    //             console.error('Error fetching state list. Unexpected status:', response.status);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching state list:', error);
+    //     }
+    // };
+    // useEffect(() => {
+    //     getProfile();
+    // }, []);
 
      const [alert, setAlert] = useState([]);
 
@@ -295,7 +297,7 @@ const Header = () => {
                                         </li>
                                         {alert.length > 0 ? (
                                             <>
-                                                {alert.map((notification:any) => {
+                                                {alert.map((notification: any) => {
                                                     return (
                                                         <li key={notification._id} className="dark:text-white-light/90" onClick={(e) => e.stopPropagation()}>
                                                             <div className="group flex items-center px-4 py-2">
@@ -360,11 +362,11 @@ const Header = () => {
                                                 <img className="rounded-md w-10 h-10 object-cover" src="/assets/images/userProfile.jpg" alt="userProfile" />
                                                 <div className="ltr:pl-4 rtl:pr-4 truncate">
                                                     <h4 className="text-base">
-                                                        {profielDetails.name}
+                                                        {user.name}
                                                         <span className="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pro</span>
                                                     </h4>
                                                     <button type="button" className="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white">
-                                                        {profielDetails.email}
+                                                        {user.email}
                                                     </button>
                                                 </div>
                                             </div>
