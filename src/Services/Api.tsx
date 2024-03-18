@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// export const Base_url = 'http://192.168.29.152:6003';
-export const Base_url = 'https://marketjourney.in';
+export const Base_url = 'http://192.168.29.152:6003';
+// export const Base_url = 'https://marketjourney.in';
 
 interface ApiCallResponse {
     status?: number;
@@ -19,7 +19,7 @@ export const ApiCall = async (method: string, endPoint: string, data?: any, para
             params: params,
             headers: {
                 'Content-Type': content_type ?? 'application/json',
-                Authorization: `Bearer ${token}`,
+                Authorization: token ? `Bearer ${token}` : '',
             },
         });
         return {

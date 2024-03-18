@@ -1,30 +1,22 @@
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { IRootState, useAppDispatch, useAppSelector } from '../../store';
-import Dropdown from '../../components/Dropdown';
+import { useAppDispatch, useAppSelector } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import { useEffect, useState } from 'react';
 import IconPencilPaper from '../../components/Icon/IconPencilPaper';
-import IconCoffee from '../../components/Icon/IconCoffee';
-import IconCalendar from '../../components/Icon/IconCalendar';
+
 import IconMapPin from '../../components/Icon/IconMapPin';
 import IconMail from '../../components/Icon/IconMail';
-import IconPhone from '../../components/Icon/IconPhone';
-import IconTwitter from '../../components/Icon/IconTwitter';
-import IconDribbble from '../../components/Icon/IconDribbble';
-import IconGithub from '../../components/Icon/IconGithub';
-import IconShoppingBag from '../../components/Icon/IconShoppingBag';
-import IconTag from '../../components/Icon/IconTag';
-import IconCreditCard from '../../components/Icon/IconCreditCard';
-import IconClock from '../../components/Icon/IconClock';
-import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
+
 import { ApiCall } from '../../Services/Api';
-import { editProfileUrl, getProfileUrl, updateBankDetailsurl } from '../../utils/EndPoints';
+import { editProfileUrl, updateBankDetailsurl } from '../../utils/EndPoints';
 import IconCashBanknotes from '../../components/Icon/IconCashBanknotes';
 import IconBox from '../../components/Icon/IconBox';
 import IconPencil from '../../components/Icon/IconPencil';
 import IconPhoneCall from '../../components/Icon/IconPhoneCall';
 import { userProfileApi } from '../../store/UserSlice';
+import IconUser from '../../components/Icon/IconUser';
+import IconNotes from '../../components/Icon/IconNotes';
+import IconCode from '../../components/Icon/IconCode';
 // interface ProfileDetails {
 //     name: string;
 //     address: string;
@@ -55,7 +47,8 @@ const Profile = () => {
         password: '',
     });
     const [bankDetails, setBankDetails] = useState({
-        accountNumber: '',
+        holderName: '',
+        accountNum: '',
         bankName: '',
         ifscCode: '',
     });
@@ -64,10 +57,12 @@ const Profile = () => {
     const [errorMessage, setErrorMessage] = useState(false);
     const { user } = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
+
     useEffect(() => {
         dispatch(setPageTitle('Profile'));
-       dispatch(userProfileApi()); 
+        dispatch(userProfileApi());
     }, []);
+
     useEffect(() => {
         if (confirmPassword === editProfleData.password) {
             setErrorMessage(false);
@@ -111,7 +106,7 @@ const Profile = () => {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 // setProfileDetails(response?.data);
-               dispatch(userProfileApi()); 
+                dispatch(userProfileApi());
                 setEditProfileData({
                     name: '',
                     address: '',
@@ -128,6 +123,8 @@ const Profile = () => {
         }
     };
 
+    // ----------update the bank details ----------------
+
     const handleBankDetails = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -138,9 +135,10 @@ const Profile = () => {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 setBankDetails(response?.data);
-                dispatch(userProfileApi()); 
+                dispatch(userProfileApi());
                 setBankDetails({
-                    accountNumber: '',
+                    holderName: '',
+                    accountNum: '',
                     bankName: '',
                     ifscCode: '',
                 });
@@ -151,6 +149,7 @@ const Profile = () => {
             console.error('Error fetching state list:', error);
         }
     };
+    // ---------------------------------
 
     return (
         <div>
@@ -167,7 +166,7 @@ const Profile = () => {
             <div className="pt-5">
                 {/* <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5"> */}
                 <div className="flex flex-wrap justify-evenly">
-                    <div className="panel mb-5 ">
+                    <div className="panel mb-5 max-w-[586px] w-full">
                         <div className="flex items-center justify-between mb-5">
                             <h5 className="font-semibold text-warning text-lg dark:text-white-light">Profile</h5>
                             {/* <Link to="/users/user-account-settings" className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
@@ -214,7 +213,7 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                    <form onSubmit={editProfile} className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black ">
+                    <form onSubmit={editProfile} className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black w-full  md:max-w-[486px]">
                         <h6 className="text-lg text-warning font-bold mb-5">Edit Details</h6>
                         <div className="flex flex-col sm:flex-row">
                             <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -283,7 +282,7 @@ const Profile = () => {
                             </div>
                         </div>
                     </form>
-                    <div className="panel mb-5 p-5 max-w-[486px] w-full">
+                    <div className="panel mb-5 p-5 max-w-[586px] w-full">
                         <div className="flex mb-5 ">
                             <h5 className="font-semibold text-warning text-lg dark:text-white-light">Bank Details</h5>
                         </div>
@@ -291,24 +290,30 @@ const Profile = () => {
                             <div className="mt-5 flex m-auto space-y-4 flex-wrap text-md font-semibold text-white-dark gap-5">
                                 <ul className="mt-5 m-auto space-y-4 max-w-[280px]">
                                     <li>
-                                        <button className="flex items-center gap-2">
-                                            <IconMail className="w-5 h-5 shrink-0" fill />
-                                            <span className="text-primary truncate">Bank Name : Federal bank </span>
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <IconUser className="w-5 h-5 shrink-0" fill />
+                                            <span className="text-primary truncate">Account Holder Name : {user?.bankDetails?.holderName}</span>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div className="flex items-center gap-2">
+                                            <IconNotes className="w-5 h-5 shrink-0" fill />
+                                            <span className="text-primary truncate">Bank Name : {user?.bankDetails?.bankName}</span>
+                                        </div>
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <IconPhoneCall fill />
-                                        Account Number : 7652345678987654
+                                        <IconPencilPaper fill />
+                                        Account Number : {user?.bankDetails?.accountNum}
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <IconMapPin className="shrink-0" fill />
-                                        IFSC code : FDL876rtyertyui
+                                        <IconCode className="shrink-0" fill />
+                                        IFSC code : {user?.bankDetails?.ifscCode}
                                     </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <form onSubmit={handleBankDetails} className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black ">
+                    <form onSubmit={handleBankDetails} className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black w-full  md:max-w-[486px]">
                         <h6 className="text-lg text-warning font-bold mb-5">Update Bank Details</h6>
                         <div className="flex flex-col sm:flex-row">
                             <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -318,8 +323,19 @@ const Profile = () => {
                                         onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
                                         id="bankname"
                                         type="text"
-                                        value={editProfleData.name}
+                                        value={bankDetails.bankName}
                                         placeholder="Enter bank name"
+                                        className="form-input"
+                                    />
+                                </div>
+                                <div className="mr-2">
+                                    <label htmlFor="holderName">Account holder name</label>
+                                    <input
+                                        onChange={(e) => setBankDetails({ ...bankDetails, holderName: e.target.value })}
+                                        id="holderName"
+                                        type="text"
+                                        value={bankDetails.holderName}
+                                        placeholder="Enter holder name"
                                         className="form-input"
                                     />
                                 </div>
@@ -327,9 +343,9 @@ const Profile = () => {
                                 <div className="mr-2">
                                     <label htmlFor="ACNumber">Account Number</label>
                                     <input
-                                        onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })}
+                                        onChange={(e) => setBankDetails({ ...bankDetails, accountNum: e.target.value })}
                                         id="ACNumber"
-                                        value={bankDetails.accountNumber}
+                                        value={bankDetails.accountNum}
                                         type="text"
                                         placeholder="Account number"
                                         className="form-input"
@@ -340,7 +356,7 @@ const Profile = () => {
                                     <input
                                         onChange={(e) => setBankDetails({ ...bankDetails, ifscCode: e.target.value })}
                                         id="ifsc"
-                                        value={editProfleData.email}
+                                        value={bankDetails.ifscCode}
                                         type="text"
                                         placeholder="Enter IfscCode"
                                         className="form-input"

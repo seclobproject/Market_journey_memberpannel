@@ -23,7 +23,7 @@ const LoginBoxed = () => {
     const submitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const result:any = await dispatch(loginApi(userDetails));
+            const result: any = await dispatch(loginApi(userDetails));
             const token = result.payload?.data?.access_token;
 
             if (token) {
@@ -34,17 +34,14 @@ const LoginBoxed = () => {
                 // Navigate to the dashboard
                 navigate('/', { replace: true });
             } else {
-                setErrorMessage(result?.payload?.response?.data?.message);
-                console.log(result?.error?.message);
-                // Show_Toast({ message: result?.error?.message, type: false });
-                Show_Toast({ message: 'Invalid Email or Password', type: false });
-                //    <Show_Toast message='User not found' type={false} />;
+                setErrorMessage(result?.payload?.response?.data?.message || 'Invalid Email or Password');
+                Show_Toast({ message: errormessage, type: false });
             }
-        } catch (error:any) {
-            console.log(error);
+        } catch (error: any) {
+            console.error('Error occurred during login:', error);
+            Show_Toast({ message: 'An error occurred during login', type: false });
         }
     };
-
     return (
         <div>
             <div className="absolute inset-0">
@@ -126,3 +123,26 @@ const LoginBoxed = () => {
 };
 
 export default LoginBoxed;
+
+// Function to set the token in localStorage along with the timestamp
+const setTokenWithExpiry = (key: string, token: string) => {
+    const now = new Date();
+    const expiry = new Date(now.getTime() + 24 * 60 * 60 * 1000); // Expiry time in milliseconds (24 hours)
+    localStorage.setItem(key, JSON.stringify({ value: token, expiry: expiry.toISOString() }));
+};
+
+// Function to get the token from localStorage
+const getTokenWithExpiry = (key: string) => {
+    const itemStr = localStorage.getItem(key);
+    if (!itemStr) {
+        return null;
+    }
+    const item = JSON.parse(itemStr);
+    const expiry = new Date(item.expiry);
+    const now = new Date();
+    if (now.getTime() > expiry.getTime()) {
+        localStorage.removeItem(key); // Remove the token if it's expired
+        return null;
+    }
+    return item.value;
+};

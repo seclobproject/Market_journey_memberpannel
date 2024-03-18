@@ -85,27 +85,6 @@ const Header = () => {
     }
 
 
-    // const [notifications, setNotifications] = useState([
-    //     {
-    //         id: 1,
-    //         profile: 'user-profile.jpeg',
-    //         message: '<strong className="text-sm mr-1">John Doe</strong>invite you to <strong>Prototyping</strong>',
-    //         time: '45 min ago',
-    //     },
-    //     {
-    //         id: 2,
-    //         profile: 'profile-34.jpeg',
-    //         message: '<strong className="text-sm mr-1">Adam Nolan</strong>mentioned you to <strong>UX Basics</strong>',
-    //         time: '9h Ago',
-    //     },
-    //     {
-    //         id: 3,
-    //         profile: 'profile-16.jpeg',
-    //         message: '<strong className="text-sm mr-1">Anna Morgan</strong>Upload a file',
-    //         time: '9h Ago',
-    //     },
-    // ]);
-
     // const removeNotification = (value: number) => {
     //     setNotifications(notifications.filter((user) => user.id !== value));
     // };
@@ -148,32 +127,32 @@ const Header = () => {
 
      const [alert, setAlert] = useState([]);
 
-     const seenNotifications = JSON.parse(localStorage.getItem('seenNotifications') || '[]');
+    //  const seenNotifications = JSON.parse(localStorage.getItem('seenNotifications') || '[]');
 
-     const markNotificationAsSeen = (notificationId: any) => {
-         const updatedSeenNotifications = [...seenNotifications, notificationId];
-         localStorage.setItem('seenNotifications', JSON.stringify(updatedSeenNotifications));
-     };
+    //  const markNotificationAsSeen = (notificationId: any) => {
+    //      const updatedSeenNotifications = [...seenNotifications, notificationId];
+    //      localStorage.setItem('seenNotifications', JSON.stringify(updatedSeenNotifications));
+    //  };
 
      useEffect(() => {
          let latestNotification;
          const fetchNotifications = async () => {
              try {
                  const res: any = await ApiCall('get', AlertUrl);
-                 const notifications = res?.data?.alertData || [];
+                //  const notifications = res?.data?.alertData || [];
                  if (Array.isArray(res?.data?.alertData)) {
                      setAlert(res?.data?.alertData.slice(0, 3));
                  }
                 //  setAlert(res?.data?.alertData);
                  console.log(res);
 
-                 const unseenNotifications: any[] = notifications.filter((notification: any) => !seenNotifications.includes(notification._id));
+                //  const unseenNotifications: any[] = notifications.filter((notification: any) => !seenNotifications.includes(notification._id));
 
-                 latestNotification = unseenNotifications[0];
-                 if (latestNotification) {
-                     markNotificationAsSeen(latestNotification._id);
-                     Show_Toast({ message: latestNotification.description, type: true });
-                 }
+                //  latestNotification = unseenNotifications[0];
+                //  if (latestNotification) {
+                //      markNotificationAsSeen(latestNotification._id);
+                //      Show_Toast({ message: latestNotification.description, type: true });
+                //  }
              } catch (error) {
                  console.error('Error fetching notifications:', error);
              }
@@ -303,7 +282,7 @@ const Header = () => {
                                                             <div className="group flex items-center px-4 py-2">
                                                                 <div className="grid place-content-center rounded">
                                                                     <div className="w-12 h-12 relative">
-                                                                        <IconUser className="w-8 h-8 rounded-full object-cover" />
+                                                                        <img src="/public/web logo-01.png" alt="img" className="w-14 h-14 rounded-full object-none m-auto" />
                                                                         {/* <span className="bg-success w-2 h-2 rounded-full block absolute right-[6px] bottom-0"></span> */}
                                                                     </div>
                                                                 </div>

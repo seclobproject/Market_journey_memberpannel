@@ -5,8 +5,8 @@ import { getProfileUrl } from "../utils/EndPoints";
 
 interface UserState {
     loading: boolean;
-    user: any; // Use 'any' type here to allow any properties
-    error: any ; // Nullable to handle initial state
+    user: any; 
+    error: any ; 
 }
 
 export const userProfileApi = createAsyncThunk<any>('user/Profile', async () => {
@@ -35,8 +35,9 @@ const userSlice = createSlice({
             state.loading = true;
         
         }).addCase(userProfileApi.fulfilled,(state,action)=>{
-            state.user=action.payload.data
-            state.loading=false
+            state.user = action.payload.data;
+            localStorage.setItem('status', action?.payload?.data?.userStatus);
+            state.loading = false;
         }).addCase(userProfileApi.rejected,(state,action)=>{
             state.error = action.error;
             state.loading=false

@@ -66,8 +66,12 @@ const Index = () => {
     }, []);
     useEffect(() => {
         const token = localStorage.getItem('User');
+        
+        const status = localStorage.getItem('status')
         if (!token) {
             navigate('/auth/boxed-signin');
+        }if(status==='pending'){
+            setPendingModal(true)
         }
     });
 
@@ -198,24 +202,7 @@ const Index = () => {
             setShowSelectDocumentMessage(true);
         }
     };
-    // const items = [
-    //     {
-    //         src: '/assets/images/knowledge/image-5.jpg',
-    //         title: 'Excessive sugar is harmful',
-    //     },
-    //     {
-    //         src: '/assets/images/knowledge/image-6.jpg',
-    //         title: 'Creative Photography',
-    //     },
-    //     {
-    //         src: '/assets/images/knowledge/image-7.jpg',
-    //         title: 'Plan your next trip',
-    //     },
-    //     {
-    //         src: '/assets/images/knowledge/image-8.jpg',
-    //         title: 'My latest Vlog',
-    //     },
-    // ];
+
     // share referal link
     const shareTitle = 'Check out this awesome link!';
     const shareUrl = `http://192.168.29.203:5173/auth/boxed-signup/${user?.id}`; // Replace with the actual URL you want to share

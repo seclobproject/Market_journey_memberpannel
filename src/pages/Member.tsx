@@ -1,17 +1,12 @@
 import React, { FormEvent, Fragment, useEffect, useState } from 'react';
 import Tippy from '@tippyjs/react';
-import IconTrashLines from '../components/Icon/IconTrashLines';
 import { Dialog, Transition } from '@headlessui/react';
-import { CloseButton } from '@mantine/core';
-import { CrossIcon } from 'react-select/dist/declarations/src/components/indicators';
-import { useDispatch } from 'react-redux';
 import { Show_Toast } from './Components/Toast';
 import { ApiCall } from '../Services/Api';
 import {
     districtlistinNotdropdownUrl,
     districtlistindropdownUrl,
-    getLevelOneUsers,
-    getLevelTwoUsers,
+    getUsers,
     memberaddUrl,
     packagesListUrl,
     panchayathlistindropdownUrl,
@@ -26,6 +21,7 @@ import IconPhone from '../components/Icon/IconPhone';
 import IconLockDots from '../components/Icon/IconLockDots';
 import IconCashBanknotes from '../components/Icon/IconCashBanknotes';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import IconArrowBackward from '../components/Icon/IconArrowBackward';
 
 interface Member {
     name: string;
@@ -39,22 +35,19 @@ interface Member {
     district: string;
     zonal: string;
     panchayath: string;
-    franchiseName:string;
+    franchiseName: string;
 }
 interface Package {
     packageName: string;
     franchiseName: string;
     packageAmount: number;
 }
-// interface States {
-//     name: String;
-//     id: String;
-// }
 
 const Member = () => {
     const [addModal, setAddModal] = useState(false);
-    const [activeButton, setActiveButton] = useState('level1');
+    const [showViewTreeColumn, setShowViewTreeColumn] = useState(true);
     const [allMembers, setAllMembers] = useState<any>([]);
+    const [previousMemberData, setPreviousMemberData] = useState(null);
     const [addMember, setAddMember] = useState<Member>({
         name: '',
         email: '',
@@ -67,9 +60,9 @@ const Member = () => {
         district: '',
         zonal: '',
         panchayath: '',
-        franchiseName:'',
+        franchiseName: '',
     });
-    
+
     const [stateList, setStateList] = useState<any>([]);
     const [districtList, setDistrictList] = useState([]);
     const [zonalList, setZonalList] = useState([]);
@@ -79,11 +72,12 @@ const Member = () => {
     const [selectedDistrictId, setSelectedDistrictId] = useState(null);
     const [selectedZonalId, setSelectedZonalId] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
-    const [pageNumber,setPageNumber]=useState(0)
-    const [totalMembers,setTotalMembers]=useState(0)
+    const [pageNumber, setPageNumber] = useState(0);
+    const [totalMembers, setTotalMembers] = useState(0);
+
 
     useEffect(() => {
-        // getLevelOneMembers();
+        getMembers();
         getPackagesList();
         getStateList();
     }, []);
@@ -106,32 +100,47 @@ const Member = () => {
             getPanchayathList();
         }
     }, [selectedStateId, selectedDistrictId, selectedZonalId]);
-    //------ show password-----
 
+    //------ show password-----
     const handleTogglePassword = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
     };
     //---------------------
 
-    //----Get Level 1 members-----
-    // const getLevelOneMembers = async () => {
-    //     setActiveButton('level1');
-    //     try {
-    //         const response = await ApiCall('get', getLevelOneUsers );
-            
-    //         // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
+    //----Get Level members-----
+    const getMembers = async (id?: string) => {
+        try {
+            const response = await ApiCall('get', getUsers, '', { id: id });
 
-    //         if (response instanceof Error) {
-    //             console.error('Error fetching allMembers list:', response.message);
-    //         } else if (response.status === 200) {
-    //             setAllMembers(response?.data?.child1);
-    //         } else {
-    //             console.error('Error fetching allMembers list. Unexpected status:', response.status);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching allMembers list:', error);
-    //     }
-    // };
+            // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
+
+            if (response instanceof Error) {
+                console.error('Error fetching allMembers list:', response.message);
+            } else if (response.status === 200) {
+                setPreviousMemberData(allMembers);
+                setAllMembers(response?.data?.child1);
+            } else {
+                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching allMembers list:', error);
+        }
+    };
+
+    const handleBack = () => {
+        if (previousMemberData) {
+            setAllMembers(previousMemberData); // Revert to previous data
+            setPreviousMemberData(null); // Clear previous data
+        }
+        setShowViewTreeColumn(true);
+    };
+
+    //------ Remove the tree column from the table  -------
+    const handleViewTreeClick = (id?: string) => {
+        getMembers(id);
+        setShowViewTreeColumn(false);
+    };
+
     // pagination in Level 1 data
     // const fetchData=()=>{
     //     setPageNumber(pageNumber + 1)
@@ -154,23 +163,8 @@ const Member = () => {
     //     };
     //     getLevelOneMembers()
     // }
-    //----Get Level 2 members-----
-    const getLevelTwoMembers = async () => {
-        setActiveButton('level2');
-        try {
-            const response=await ApiCall('get',getLevelTwoUsers)
-            
-             if (response instanceof Error) {
-                 console.error('Error fetching allMembers list:', response.message);
-             } else if (response.status === 200) {
-                 setAllMembers(response?.data?.child2)
-             } else {
-                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
-             }
-        } catch (error) {
-            console.error('Error fetching allMembers list:', error);
-        }
-    };
+
+    //------------------- get all state------------------
 
     const getStateList = async () => {
         try {
@@ -187,6 +181,7 @@ const Member = () => {
             console.error('Error fetching state list:', error);
         }
     };
+
     //-----------list district --------
     const getDistrictList = async () => {
         try {
@@ -203,6 +198,7 @@ const Member = () => {
             console.error('Error fetching state list:', error);
         }
     };
+
     //-----------list Not selected district --------
     const getNotSelectedDistrictList = async () => {
         try {
@@ -284,14 +280,15 @@ const Member = () => {
             console.error('Error fetching state list:', error);
         }
     };
+
     //---------Add--member---------
     const addMemberFun = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            const response:any = await ApiCall('post', memberaddUrl, addMember);
+            const response: any = await ApiCall('post', memberaddUrl, addMember);
             console.log(response.error);
-            
-           if (response.status === 200) {
+
+            if (response.status === 200) {
                 // setValidated(false);
                 setAddMember({
                     name: '',
@@ -305,18 +302,18 @@ const Member = () => {
                     district: '',
                     zonal: '',
                     panchayath: '',
-                    franchiseName:'',
+                    franchiseName: '',
                 });
                 setAddModal(false);
                 Show_Toast({ message: 'Member added successfully', type: true });
             }
-        } catch (error:any) {
+        } catch (error: any) {
             console.log(error?.response?.data?.message);
             Show_Toast({ message: error?.response?.data?.message, type: false });
-
-            // Show_Toast({message:error, type:false});
         }
     };
+
+    // --------------------------
 
     const packageOptions = packageList.map((pack) => ({
         value: pack?.packageName,
@@ -370,11 +367,15 @@ const Member = () => {
                         Add
                     </button>
                 </div>
+                {showViewTreeColumn === false && (
+                    <button className="bg-primary text-white p-2 rounded-lg mb-2" onClick={handleBack}>
+                        <IconArrowBackward />
+                    </button>
+                )}
                 <div className="table-responsive mb-5">
                     <table>
                         <thead>
                             <tr>
-                                {/* <th>sponser name</th> */}
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
@@ -382,13 +383,12 @@ const Member = () => {
                                 <th> franchise Type</th>
                                 <th> franchise Name</th>
                                 <th> Package Amount</th>
-                                {/* <th> Status</th> */}
+                                {showViewTreeColumn && <th>View Tree</th>}
                             </tr>
                         </thead>
                         <tbody>
                             {allMembers?.length > 0 ? (
-                                console.log(allMembers,'dfsf'),
-                                
+                                (console.log(allMembers, 'dfsf'),
                                 allMembers.map((data: any) => (
                                     <tr key={data?._id}>
                                         <td>{data?.name}</td>
@@ -398,6 +398,13 @@ const Member = () => {
                                         <td>{data?.franchise}</td>
                                         <td>{data?.franchiseName}</td>
                                         <td>{data?.packageAmount}</td>
+                                        {showViewTreeColumn && (
+                                            <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
+                                                <button className="bg-primary text-center text-white p-2 rounded-sm">
+                                                    <i className="fas fa-sitemap mr-2"></i> View Tree
+                                                </button>
+                                            </td>
+                                        )}
                                         {/* <td>
                                             <button
                                                 className={`whitespace-nowrap text-white p-1.5 rounded-lg ${
@@ -408,7 +415,7 @@ const Member = () => {
                                             </button>
                                         </td> */}
                                     </tr>
-                                ))
+                                )))
                             ) : (
                                 <tr>
                                     <td colSpan={7} style={{ textAlign: 'center' }}>
@@ -443,6 +450,7 @@ const Member = () => {
                         {/* {items} */}
                     {/* </InfiniteScroll> */}
                 </div>
+
                 <div>
                     <Transition appear show={addModal} as={Fragment}>
                         <Dialog
@@ -737,7 +745,7 @@ const Member = () => {
                                                         </div>
                                                     </div>
                                                     <button type="submit" className="btn bg-primary text-white !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                                        Sign Up
+                                                        Add
                                                     </button>
                                                 </form>
                                             </div>
