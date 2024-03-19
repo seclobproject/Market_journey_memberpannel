@@ -36,7 +36,7 @@ const userSlice = createSlice({
         
         }).addCase(userProfileApi.fulfilled,(state,action)=>{
             state.user = action.payload.data;
-            localStorage.setItem('status', action?.payload?.data?.userStatus);
+            sessionStorage.setItem('status', action?.payload?.data?.userStatus);
             state.loading = false;
         }).addCase(userProfileApi.rejected,(state,action)=>{
             state.error = action.error;

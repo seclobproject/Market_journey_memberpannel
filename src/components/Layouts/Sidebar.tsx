@@ -68,7 +68,7 @@ const Sidebar = () => {
     }, [location]);
 
     const fetchStatus = async () => {
-        const userStatus = await localStorage.getItem('status');
+        const userStatus = await sessionStorage.getItem('status');
         if (userStatus === 'readyToApprove') {
             setViewSidebar(true);
             console.log(viewSidebar);

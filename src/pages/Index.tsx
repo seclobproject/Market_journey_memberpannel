@@ -22,6 +22,7 @@ import IconAirplay from '../components/Icon/IconAirplay';
 import Marquee from 'react-fast-marquee';
 import { useAppDispatch, useAppSelector } from '../store';
 import { userProfileApi } from '../store/UserSlice';
+// import { getTokenWithExpiry } from './Authentication/LoginBoxed';
 
 // interface ProfileDetails {
 //     id: string;
@@ -54,7 +55,6 @@ const Index = () => {
     const [loading, setLoading] = useState(false);
     const { user } = useAppSelector((state) => state.user);
 
-
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     useEffect(() => {
@@ -65,13 +65,14 @@ const Index = () => {
         showLiveNewes();
     }, []);
     useEffect(() => {
-        const token = localStorage.getItem('User');
-        
-        const status = localStorage.getItem('status')
+        // const token: any = getTokenWithExpiry('User');
+        const token = sessionStorage.getItem('User');
+        const status = sessionStorage.getItem('status');
         if (!token) {
             navigate('/auth/boxed-signin');
-        }if(status==='pending'){
-            setPendingModal(true)
+        }
+        if (status === 'pending') {
+            setPendingModal(true);
         }
     });
 
@@ -175,7 +176,7 @@ const Index = () => {
             try {
                 setLoading(true); // Set loading to true when form submission begins
 
-                const token = localStorage.getItem('User');
+                const token: any = sessionStorage.getItem('User');
                 const config = {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -189,7 +190,7 @@ const Index = () => {
                 const response = await axios.post(`${Base_url}/api/user/user-verification`, formData, config);
                 console.log(response);
                 setSelectedFile(null);
-                localStorage.setItem('status', response?.data?.updatedUser?.userStatus);
+                sessionStorage.setItem('status', response?.data?.updatedUser?.userStatus);
                 setPendingModal(false);
                 handleRefresh();
                 setShowSelectDocumentMessage(false);
@@ -342,7 +343,7 @@ const Index = () => {
                                 Subscription Package
                             </button>
                         </div>
-                        <img className="absolute right-0 top-0 h-[95%] z-0" src="/public/assets/images/subscription.png" alt="" />
+                        <img className="absolute right-5 top-[25%] h-[50%]  z-0" src="/public/assets/images/subscription.svg" alt="" />
                     </div>
                 </div>
 

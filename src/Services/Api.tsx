@@ -11,7 +11,7 @@ interface ApiCallResponse {
 
 export const ApiCall = async (method: string, endPoint: string, data?: any, params?: any, content_type: string = 'application/json'): Promise<ApiCallResponse | Error> => {
     try {
-        let token = localStorage.getItem('User');
+        let token: any = sessionStorage.getItem('User');
         const res = await axios({
             method: method,
             url: `${Base_url}${endPoint}`,

@@ -28,8 +28,9 @@ const LoginBoxed = () => {
 
             if (token) {
                 // Store the token in local storage
-                localStorage.setItem('User', token);
-                localStorage.setItem('status', result.payload?.data?.status);
+                sessionStorage.setItem('User', token);
+                // setTokenWithExpiry('User',token)
+                sessionStorage.setItem('status', result.payload?.data?.status);
                 Show_Toast({ message: 'Login success', type: true });
                 // Navigate to the dashboard
                 navigate('/', { replace: true });
@@ -125,24 +126,24 @@ const LoginBoxed = () => {
 export default LoginBoxed;
 
 // Function to set the token in localStorage along with the timestamp
-const setTokenWithExpiry = (key: string, token: string) => {
-    const now = new Date();
-    const expiry = new Date(now.getTime() + 24 * 60 * 60 * 1000); // Expiry time in milliseconds (24 hours)
-    localStorage.setItem(key, JSON.stringify({ value: token, expiry: expiry.toISOString() }));
-};
+// const setTokenWithExpiry = (key: string, token: string) => {
+//     const now = new Date();
+//     const expiry = new Date(now.getTime() + 24 * 60 * 60 * 1000); // Expiry time in milliseconds (24 hours)
+//     localStorage.setItem(key, JSON.stringify({ value: token, expiry: expiry.toISOString() }));
+// };
 
 // Function to get the token from localStorage
-const getTokenWithExpiry = (key: string) => {
-    const itemStr = localStorage.getItem(key);
-    if (!itemStr) {
-        return null;
-    }
-    const item = JSON.parse(itemStr);
-    const expiry = new Date(item.expiry);
-    const now = new Date();
-    if (now.getTime() > expiry.getTime()) {
-        localStorage.removeItem(key); // Remove the token if it's expired
-        return null;
-    }
-    return item.value;
-};
+// export const getTokenWithExpiry = (key: string) => {
+//     const itemStr = localStorage.getItem('User');
+//     if (!itemStr) {
+//         return null;
+//     }
+//     const item = JSON.parse(itemStr);
+//     const expiry = new Date(item.expiry);
+//     const now = new Date();
+//     if (now.getTime() > expiry.getTime()) {
+//         localStorage.removeItem('User'); 
+//         return null;
+//     }
+//     return item.value;
+// };

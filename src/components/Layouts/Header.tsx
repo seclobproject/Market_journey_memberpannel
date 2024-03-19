@@ -395,8 +395,8 @@ const Header = () => {
                             </button>
                             <button
                                 onClick={() => {
-                                    localStorage.removeItem('User');
-                                    localStorage.removeItem('status');
+                                    sessionStorage.removeItem('User');
+                                    sessionStorage.removeItem('status');
                                     setLogoutModal(false);
                                     navigate('/auth/boxed-signin', { replace: true });
                                 }}
