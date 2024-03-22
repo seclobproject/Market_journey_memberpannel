@@ -45,9 +45,9 @@ interface Package {
 
 const Member = () => {
     const [addModal, setAddModal] = useState(false);
-    const [showViewTreeColumn, setShowViewTreeColumn] = useState(true);
+    // const [showViewTreeColumn, setShowViewTreeColumn] = useState(true);
     const [allMembers, setAllMembers] = useState<any>([]);
-    const [previousMemberData, setPreviousMemberData] = useState(null);
+    // const [previousMemberData, setPreviousMemberData] = useState(null);
     const [addMember, setAddMember] = useState<Member>({
         name: '',
         email: '',
@@ -74,7 +74,6 @@ const Member = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [pageNumber, setPageNumber] = useState(0);
     const [totalMembers, setTotalMembers] = useState(0);
-
 
     useEffect(() => {
         getMembers();
@@ -117,7 +116,7 @@ const Member = () => {
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
-                setPreviousMemberData(allMembers);
+                // setPreviousMemberData(allMembers);
                 setAllMembers(response?.data?.child1);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
@@ -127,18 +126,18 @@ const Member = () => {
         }
     };
 
-    const handleBack = () => {
-        if (previousMemberData) {
-            setAllMembers(previousMemberData); // Revert to previous data
-            setPreviousMemberData(null); // Clear previous data
-        }
-        setShowViewTreeColumn(true);
-    };
+    // const handleBack = () => {
+    //     if (previousMemberData) {
+    //         setAllMembers(previousMemberData); // Revert to previous data
+    //         setPreviousMemberData(null); // Clear previous data
+    //     }
+    //     setShowViewTreeColumn(true);
+    // };
 
     //------ Remove the tree column from the table  -------
     const handleViewTreeClick = (id?: string) => {
         getMembers(id);
-        setShowViewTreeColumn(false);
+        // setShowViewTreeColumn(false);
     };
 
     // pagination in Level 1 data
@@ -367,11 +366,35 @@ const Member = () => {
                         Add
                     </button>
                 </div>
-                {showViewTreeColumn === false && (
-                    <button className="bg-primary text-white p-2 rounded-lg mb-2" onClick={handleBack}>
+                {/* {showViewTreeColumn === false && ( */}
+                {/* <button className="bg-primary text-white p-2 rounded-lg mb-2" onClick={handleBack}>
                         <IconArrowBackward />
-                    </button>
-                )}
+                    </button> */}
+                {/* )} */}
+                <select
+                    onChange={(e) => {
+                        const selectedValue = e.target.value;
+                        // const selectedOption = packageOptions.find((option) => option.value === selectedValue);
+
+                        // if (selectedOption) {
+                        //     setAddMember({
+                        //         ...addMember,
+                        //         franchise: selectedOption.value,
+                        //         packageAmount: selectedOption.packageAmount,
+                        //     });
+                        // }
+                    }}
+                    value={addMember.franchise}
+                    className="form-input ps-10 placeholder:text-white-dark max-w-xs mb-4"
+                >
+                    <option value="default">
+                        Select a franchise type
+                    </option>
+                    {/* {packageOptions.map((option) => ( */}
+                    <option>Zonal Franchise</option>
+                    <option>Mobile Franchise</option>
+                    {/* ))} */}
+                </select>
                 <div className="table-responsive mb-5">
                     <table>
                         <thead>
@@ -383,7 +406,9 @@ const Member = () => {
                                 <th> franchise Type</th>
                                 <th> franchise Name</th>
                                 <th> Package Amount</th>
-                                {showViewTreeColumn && <th>View Tree</th>}
+                                {/* {showViewTreeColumn && */}
+                                <th>View Tree</th>
+                                {/* } */}
                             </tr>
                         </thead>
                         <tbody>
@@ -398,13 +423,13 @@ const Member = () => {
                                         <td>{data?.franchise}</td>
                                         <td>{data?.franchiseName}</td>
                                         <td>{data?.packageAmount}</td>
-                                        {showViewTreeColumn && (
-                                            <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
-                                                <button className="bg-primary text-center text-white p-2 rounded-sm">
-                                                    <i className="fas fa-sitemap mr-2"></i> View Tree
-                                                </button>
-                                            </td>
-                                        )}
+                                        {/* {showViewTreeColumn && ( */}
+                                        <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
+                                            <button className="bg-primary text-center text-white p-2 rounded-sm">
+                                                <i className="fas fa-sitemap mr-2"></i> View Tree
+                                            </button>
+                                        </td>
+                                        {/* )} */}
                                         {/* <td>
                                             <button
                                                 className={`whitespace-nowrap text-white p-1.5 rounded-lg ${
