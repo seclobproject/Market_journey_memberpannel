@@ -40,7 +40,7 @@ const LoginBoxed = () => {
             }
         } catch (error: any) {
             console.error('Error occurred during login:', error);
-            Show_Toast({ message: 'An error occurred during login', type: false });
+            // Show_Toast({ message: 'An error occurred during login', type: false });
         }
     };
     return (

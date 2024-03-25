@@ -459,7 +459,7 @@ const routes = [
         layout: 'blank',
     },
     {
-        path: '/pages/error404',
+        path: '*',
         element: <ERROR404 />,
         layout: 'blank',
     },

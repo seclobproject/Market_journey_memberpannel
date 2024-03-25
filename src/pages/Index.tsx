@@ -388,6 +388,63 @@ const Index = () => {
                 </div>
                 {/*-----End Awards and rewards ---------*/}
 
+                {/* pool Rank list */}
+
+                <div className="mt-10 lg:mt-16 text-primary ">
+                    <div className="flex justify-between">
+                        <h2 className="mb-6 font-bold text-lg">Rank list</h2>
+                    </div>
+                    <>
+                        <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
+                            <div className="min-h-full  gap-4 w-full p-4 bg-primary  flex items-center shadow-md rounded-[12px]">
+                                <span className="text-white font-semibold whitespace-nowrap mr-2">Pool A</span>
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-white font-medium">member's</span>
+                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-white font-medium"> Amount</span>
+                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
+                                </div>
+                            </div>
+                            <div className="min-h-full   gap-4 w-full p-4 bg-primary  flex items-center shadow-md rounded-[12px]">
+                                <span className="text-white font-semibold whitespace-nowrap mr-2">Pool B</span>
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-white font-medium">member's</span>
+                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-white font-medium"> Amount</span>
+                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
+                                </div>
+                            </div>
+                            <div className="min-h-full   gap-4 w-full p-4 bg-primary  flex items-center shadow-md rounded-[12px]">
+                                <span className="text-white font-semibold whitespace-nowrap mr-2">Pool C</span>
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-white font-medium">member's</span>
+                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-white font-medium"> Amount</span>
+                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
+                                </div>
+                            </div>
+                            <div className="min-h-full   gap-4 w-full p-4 bg-primary  flex items-center shadow-md rounded-[12px]">
+                                <span className="text-white font-semibold whitespace-nowrap mr-2">Pool D</span>
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-white font-medium">member's</span>
+                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-white font-medium"> Amount</span>
+                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                </div>
+                {/* pool Rank list end */}
+
                 {/*----Start Flash Feed------  */}
                 <div className="mt-10 lg:mt-16 text-primary ">
                     <h2 className="mb-6 font-bold text-lg">FLASH FEED</h2>
