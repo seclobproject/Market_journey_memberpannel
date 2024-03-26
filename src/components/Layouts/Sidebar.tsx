@@ -151,14 +151,14 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                    {/* <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/awards" className="group">
                                             <div className="flex items-center">
                                                 <IconAward className="group-hover:!text-primary shrink-0" />
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Awards')}</span>
                                             </div>
                                         </NavLink>
-                                    </li>
+                                    </li> */}
                                     <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/subscription" className="group">
                                             <div className="flex items-center">

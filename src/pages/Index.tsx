@@ -22,6 +22,7 @@ import IconAirplay from '../components/Icon/IconAirplay';
 import Marquee from 'react-fast-marquee';
 import { useAppDispatch, useAppSelector } from '../store';
 import { userProfileApi } from '../store/UserSlice';
+import RankList from './Components/RankList';
 // import { getTokenWithExpiry } from './Authentication/LoginBoxed';
 
 // interface ProfileDetails {
@@ -396,50 +397,10 @@ const Index = () => {
                     </div>
                     <>
                         <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
-                            <div className="min-h-full  gap-4 w-full p-4 bg-primary  flex items-center shadow-md rounded-[12px]">
-                                <span className="text-white font-semibold whitespace-nowrap mr-2">Pool A</span>
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-white font-medium">member's</span>
-                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-white font-medium"> Amount</span>
-                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
-                                </div>
-                            </div>
-                            <div className="min-h-full   gap-4 w-full p-4 bg-primary  flex items-center shadow-md rounded-[12px]">
-                                <span className="text-white font-semibold whitespace-nowrap mr-2">Pool B</span>
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-white font-medium">member's</span>
-                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-white font-medium"> Amount</span>
-                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
-                                </div>
-                            </div>
-                            <div className="min-h-full   gap-4 w-full p-4 bg-primary  flex items-center shadow-md rounded-[12px]">
-                                <span className="text-white font-semibold whitespace-nowrap mr-2">Pool C</span>
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-white font-medium">member's</span>
-                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-white font-medium"> Amount</span>
-                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
-                                </div>
-                            </div>
-                            <div className="min-h-full   gap-4 w-full p-4 bg-primary  flex items-center shadow-md rounded-[12px]">
-                                <span className="text-white font-semibold whitespace-nowrap mr-2">Pool D</span>
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-white font-medium">member's</span>
-                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                    <span className="text-white font-medium"> Amount</span>
-                                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">100</span>
-                                </div>
-                            </div>
+                            <RankList pool={'Pool A'} members={100} amount={100} />
+                            <RankList pool={'Pool B'} members={100} amount={100} />
+                            <RankList pool={'Pool C'} members={100} amount={100} />
+                            <RankList pool={'Pool D'} members={100} amount={100} />
                         </div>
                     </>
                 </div>

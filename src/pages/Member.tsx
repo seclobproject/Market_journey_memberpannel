@@ -45,7 +45,7 @@ interface Package {
 
 const Member = () => {
     const [addModal, setAddModal] = useState(false);
-    // const [showViewTreeColumn, setShowViewTreeColumn] = useState(true);
+    const [showViewTreeColumn, setShowViewTreeColumn] = useState(true);
     const [allMembers, setAllMembers] = useState<any>([]);
     // const [previousMemberData, setPreviousMemberData] = useState(null);
     const [addMember, setAddMember] = useState<Member>({
@@ -125,19 +125,15 @@ const Member = () => {
             console.error('Error fetching allMembers list:', error);
         }
     };
-
-    // const handleBack = () => {
-    //     if (previousMemberData) {
-    //         setAllMembers(previousMemberData); // Revert to previous data
-    //         setPreviousMemberData(null); // Clear previous data
-    //     }
-    //     setShowViewTreeColumn(true);
-    // };
-
+    // -----handle back ---------
+const BackTree=()=>{
+    getMembers()
+     setShowViewTreeColumn(true);
+}
     //------ Remove the tree column from the table  -------
     const handleViewTreeClick = (id?: string) => {
         getMembers(id);
-        // setShowViewTreeColumn(false);
+        setShowViewTreeColumn(false);
     };
 
     // pagination in Level 1 data
@@ -366,11 +362,11 @@ const Member = () => {
                         Add
                     </button>
                 </div>
-                {/* {showViewTreeColumn === false && ( */}
-                {/* <button className="bg-primary text-white p-2 rounded-lg mb-2" onClick={handleBack}>
+                {showViewTreeColumn === false && (
+                    <button className="bg-primary text-white p-2 rounded-lg mr-2" onClick={BackTree}>
                         <IconArrowBackward />
-                    </button> */}
-                {/* )} */}
+                    </button>
+                )}
                 <select
                     onChange={(e) => {
                         const selectedValue = e.target.value;
@@ -387,9 +383,7 @@ const Member = () => {
                     value={addMember.franchise}
                     className="form-input ps-10 placeholder:text-white-dark max-w-xs mb-4"
                 >
-                    <option value="default">
-                        Select a franchise type
-                    </option>
+                    <option value="default">Select a franchise type</option>
                     {/* {packageOptions.map((option) => ( */}
                     <option>Zonal Franchise</option>
                     <option>Mobile Franchise</option>
