@@ -31,6 +31,7 @@ interface Member {
     phone: string;
     franchise: string;
     packageAmount: string | number;
+    packageAmountGst: string | number;
     state: string;
     district: string;
     zonal: string;
@@ -47,6 +48,7 @@ const Member = () => {
     const [addModal, setAddModal] = useState(false);
     const [showViewTreeColumn, setShowViewTreeColumn] = useState(true);
     const [allMembers, setAllMembers] = useState<any>([]);
+   const [userId, setUserId] = useState<string | undefined>();
     // const [previousMemberData, setPreviousMemberData] = useState(null);
     const [addMember, setAddMember] = useState<Member>({
         name: '',
@@ -56,6 +58,7 @@ const Member = () => {
         address: '',
         phone: '',
         packageAmount: '',
+        packageAmountGst:'',
         state: '',
         district: '',
         zonal: '',
@@ -72,7 +75,7 @@ const Member = () => {
     const [selectedDistrictId, setSelectedDistrictId] = useState(null);
     const [selectedZonalId, setSelectedZonalId] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
-    const [pageNumber, setPageNumber] = useState(0);
+    const [pageNumber, setPageNumber] = useState(1);
     const [totalMembers, setTotalMembers] = useState(0);
 
     useEffect(() => {
@@ -100,6 +103,10 @@ const Member = () => {
         }
     }, [selectedStateId, selectedDistrictId, selectedZonalId]);
 
+    useEffect(() => {
+        calculateTotalGstAmount(); 
+    }, [addMember.packageAmount]);
+
     //------ show password-----
     const handleTogglePassword = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -109,7 +116,7 @@ const Member = () => {
     //----Get Level members-----
     const getMembers = async (id?: string) => {
         try {
-            const response = await ApiCall('get', getUsers, '', { id: id });
+            const response = await ApiCall('get', getUsers, '', { id: id, page: pageNumber, pageSize: 2 });
 
             // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
 
@@ -126,38 +133,39 @@ const Member = () => {
         }
     };
     // -----handle back ---------
-const BackTree=()=>{
-    getMembers()
-     setShowViewTreeColumn(true);
-}
+    const BackTree = () => {
+        getMembers();
+        setShowViewTreeColumn(true);
+    };
     //------ Remove the tree column from the table  -------
     const handleViewTreeClick = (id?: string) => {
+      setUserId(id);
         getMembers(id);
         setShowViewTreeColumn(false);
     };
 
-    // pagination in Level 1 data
-    // const fetchData=()=>{
-    //     setPageNumber(pageNumber + 1)
-    //     const getLevelOneMembers = async () => {
-    //         try {
-    //             const response = await ApiCall('get', getLevelOneUsers,);
-    //             // const response = await ApiCall('get', getLevelOneUsers, '', { page: pageNumber, pageSize: 10 });
-    //             console.log(response);
+    // pagination in member data
+    const fetchData=()=>{
+        setPageNumber(pageNumber + 1)
+        const getLevelMembers = async () => {
+            try {
+                const response = await ApiCall('get', getUsers, '', { id: userId, page: pageNumber, pageSize: 2 });
+                // const response = await ApiCall('get', getLevelOneUsers, '', { page: pageNumber, pageSize: 10 });
+                console.log(response);
 
-    //             if (response instanceof Error) {
-    //                 console.error('Error fetching allMembers list:', response.message);
-    //             } else if (response.status === 200) {
-    //                 setAllMembers(allMembers.concat(response?.data?.child1));
-    //             } else {
-    //                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
-    //             }
-    //         } catch (error) {
-    //             console.error('Error fetching allMembers list:', error);
-    //         }
-    //     };
-    //     getLevelOneMembers()
-    // }
+                if (response instanceof Error) {
+                    console.error('Error fetching allMembers list:', response.message);
+                } else if (response.status === 200) {
+                    setAllMembers(allMembers.concat(response?.data?.child1));
+                } else {
+                    console.error('Error fetching allMembers list. Unexpected status:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching allMembers list:', error);
+            }
+        };
+        getLevelMembers()
+    }
 
     //------------------- get all state------------------
 
@@ -293,6 +301,7 @@ const BackTree=()=>{
                     address: '',
                     phone: '',
                     packageAmount: '',
+                    packageAmountGst:'',
                     state: '',
                     district: '',
                     zonal: '',
@@ -315,6 +324,18 @@ const BackTree=()=>{
         label: pack?.packageName || pack?.franchiseName,
         packageAmount: pack.packageAmount,
     }));
+
+    //------ calculate pageAmount Gst ---------
+
+    const calculateTotalGstAmount = () => {
+        if (addMember?.packageAmount) {
+            const partAmount = Number(addMember?.packageAmount);
+            const percentage = partAmount * 0.18;
+            const sum = partAmount + percentage;
+            console.log(`Sum: ${sum}`);
+           setAddMember({ ...addMember, packageAmountGst: sum });
+        }
+    };
 
     // ----------select state and get state id ---------------
     const stateSelectHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -448,12 +469,12 @@ const BackTree=()=>{
                             )}
                         </tbody>
                     </table>
-                    {/* <InfiniteScroll
-                        dataLength={allMembers?.length} 
+                    <InfiniteScroll
+                        dataLength={allMembers?.length}
                         next={fetchData}
                         hasMore={true}
                         loader={<h4></h4>}
-                        children={undefined} 
+                        children={undefined}
                         // endMessage={
                         //     <p style={{ textAlign: 'center' }}>
                         //         <b>Yay! You have seen it all</b>
@@ -465,9 +486,9 @@ const BackTree=()=>{
                         // pullDownToRefreshThreshold={50}
                         // pullDownToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8595; Pull down to refresh</h3>}
                         // releaseToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>}
-                    // >
-                        {/* {items} */}
-                    {/* </InfiniteScroll> */}
+                    >
+                        {/* {items}  */}
+                    </InfiniteScroll>
                 </div>
 
                 <div>
@@ -641,6 +662,22 @@ const BackTree=()=>{
                                                                         type="text"
                                                                         value={addMember?.packageAmount}
                                                                         placeholder="packageAmount"
+                                                                        readOnly
+                                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                                    />
+                                                                    <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                        <IconCashBanknotes fill={true} />
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <label htmlFor="packageAmountGst">packageAmountGst</label>
+                                                                <div className="relative text-white-dark">
+                                                                    <input
+                                                                        id="packageAmountGst"
+                                                                        type="text"
+                                                                        value={addMember?.packageAmountGst}
+                                                                        placeholder="packageAmountGst"
                                                                         readOnly
                                                                         className="form-input ps-10 placeholder:text-white-dark"
                                                                     />

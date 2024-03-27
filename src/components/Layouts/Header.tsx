@@ -144,7 +144,6 @@ const Header = () => {
                      setAlert(res?.data?.alertData.slice(0, 3));
                  }
                 //  setAlert(res?.data?.alertData);
-                 console.log(res);
 
                 //  const unseenNotifications: any[] = notifications.filter((notification: any) => !seenNotifications.includes(notification._id));
 

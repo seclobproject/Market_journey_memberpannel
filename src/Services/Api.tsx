@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 export const Base_url = 'http://192.168.29.152:6003';
 // export const Base_url = 'https://marketjourney.in';
@@ -22,6 +22,7 @@ export const ApiCall = async (method: string, endPoint: string, data?: any, para
                 Authorization: token ? `Bearer ${token}` : '',
             },
         });
+
         return {
             status: res?.status,
             data: res.data,

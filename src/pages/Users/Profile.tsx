@@ -166,7 +166,7 @@ const Profile = () => {
             <div className="pt-5">
                 {/* <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5"> */}
                 <div className="flex flex-wrap justify-evenly">
-                    <div className="panel mb-5 max-w-[586px] w-full">
+                    <div className="panel mb-5 min-w-[586px]">
                         <div className="flex items-center justify-between mb-5">
                             <h5 className="font-semibold text-warning text-lg dark:text-white-light">Profile</h5>
                             {/* <Link to="/users/user-account-settings" className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
@@ -180,26 +180,18 @@ const Profile = () => {
                                 <p className={user.userStatus === 'approved' ? 'text-green-500' : 'text-warning'}>{user.userStatus}</p>
                             </div>
                             <div className="mt-5 flex m-auto space-y-4 flex-wrap text-md font-semibold text-white-dark gap-5">
-                                <ul className="mt-5 m-auto space-y-4 max-w-[280px]">
-                                    <li>
-                                        <button className="flex items-center gap-2">
-                                            <IconMail className="w-5 h-5 shrink-0" fill />
-                                            <span className="text-primary truncate">Email : {user.email}</span>
-                                        </button>
-                                    </li>
+                                <ul className="mt-5 m-auto space-y-4 max-w-[280px] text-primary">
                                     <li className="flex items-center gap-2">
+                                        <IconMail className="w-5 h-5 shrink-0" fill />
+                                        <span className=" truncate">Email : {user.email}</span>
+                                    </li>
+                                    <li className="flex items-center gap-2 ">
                                         <IconPhoneCall fill />
                                         Phone : {user.phone}
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <IconMapPin className="shrink-0" fill />
                                         Address : {user.address}
-                                    </li>
-                                </ul>
-                                <ul className="mt-5 m-auto space-y-4">
-                                    <li className="flex items-center gap-2">
-                                        <IconCashBanknotes className="shrink-0" fill />
-                                        walletAmount : {user.walletAmount}
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <IconBox className="shrink-0" />
@@ -208,6 +200,24 @@ const Profile = () => {
                                     <li className="flex items-center gap-2">
                                         <IconPencil className="shrink-0" fill />
                                         Franchise Name : {user.franchise}
+                                    </li>
+                                </ul>
+                                <ul className="mt-5 m-auto space-y-4 text-primary">
+                                    <li className="flex items-center gap-2">
+                                        <IconCashBanknotes className="shrink-0" fill />
+                                        walletAmount : {user.walletAmount}
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <IconCashBanknotes className="shrink-0" fill />
+                                        directIncome : {user.directIncome}
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <IconCashBanknotes className="shrink-0" fill />
+                                        inDirectIncome : {user.inDirectIncome}
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <IconCashBanknotes className="shrink-0" fill />
+                                        totalLevelIncome : {user.totalLevelIncome}
                                     </li>
                                 </ul>
                             </div>
@@ -282,13 +292,13 @@ const Profile = () => {
                             </div>
                         </div>
                     </form>
-                    <div className="panel mb-5 p-5 max-w-[586px] w-full">
+                    <div className="panel mb-5 p-5 min-w-[586px]">
                         <div className="flex mb-5 ">
                             <h5 className="font-semibold text-warning text-lg dark:text-white-light">Bank Details</h5>
                         </div>
                         <div className="mb-5">
                             <div className="mt-5 flex m-auto space-y-4 flex-wrap text-md font-semibold text-white-dark gap-5">
-                                <ul className="mt-5 m-auto space-y-4 max-w-[280px]">
+                                <ul className="mt-5 m-auto space-y-4 max-w-[280px] text-primary">
                                     <li>
                                         <div className="flex items-center gap-2">
                                             <IconUser className="w-5 h-5 shrink-0" fill />

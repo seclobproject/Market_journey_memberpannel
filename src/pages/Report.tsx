@@ -1,66 +1,134 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Tippy from '@tippyjs/react';
 import IconTrashLines from '../components/Icon/IconTrashLines';
-const tableData = [
-    {
-        id: 1,
-        name: 'John Doe',
-        email: 'johndoe@yahoo.com',
-        date: '10/08/2020',
-        sale: 120,
-        status: 'Complete',
-        register: '5 min ago',
-        progress: '40%',
-        position: 'Developer',
-        office: 'London',
-    },
-    {
-        id: 2,
-        name: 'Shaun Park',
-        email: 'shaunpark@gmail.com',
-        date: '11/08/2020',
-        sale: 400,
-        status: 'Pending',
-        register: '11 min ago',
-        progress: '23%',
-        position: 'Designer',
-        office: 'New York',
-    },
-    {
-        id: 3,
-        name: 'Alma Clarke',
-        email: 'alma@gmail.com',
-        date: '12/02/2020',
-        sale: 310,
-        status: 'In Progress',
-        register: '1 hour ago',
-        progress: '80%',
-        position: 'Accountant',
-        office: 'Amazon',
-    },
-    {
-        id: 4,
-        name: 'Vincent Carpenter',
-        email: 'vincent@gmail.com',
-        date: '13/08/2020',
-        sale: 100,
-        status: 'Canceled',
-        register: '1 day ago',
-        progress: '60%',
-        position: 'Data Scientist',
-        office: 'Canada',
-    },
-];
+import { ApiCall } from '../Services/Api';
+import { DirectReportUrl, InDirectReportUrl, LevelIncomeReportUrl } from '../utils/EndPoints';
+import InfiniteScroll from 'react-infinite-scroll-component';
+
 const Report = () => {
+    const [activeButton, setActiveButton] = useState('Direct');
+    const [reports, setReports] = useState<any>([]);
+    const [pageNumber, setPageNumber] = useState(1);
+    useEffect(() => {
+        DirectReport();
+    }, []);
+
+    //-------- direct income -------------
+
+    const DirectReport = async () => {
+        setPageNumber(1);
+        setActiveButton('Direct');
+        try {
+            console.log('====================================');
+            console.log(pageNumber);
+            console.log('====================================');
+            const response = await ApiCall('get', DirectReportUrl, '', { page: pageNumber, pageSize: 10 });
+
+            if (response instanceof Error) {
+                console.error('Error fetching allMembers list:', response.message);
+            } else if (response.status === 200) {
+                setReports(response?.data?.directIncome);
+            } else {
+                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching allMembers list:', error);
+        }
+    };
+
+    // -------InDirect income --------------
+    const InDirectReport = async () => {
+        setPageNumber(1);
+        setActiveButton('InDirect');
+        try {
+            const response = await ApiCall('get', InDirectReportUrl, '', { page: pageNumber, pageSize: 10 });
+
+            if (response instanceof Error) {
+                console.error('Error fetching allMembers list:', response.message);
+            } else if (response.status === 200) {
+                setReports(response?.data?.inDirectIncome);
+            } else {
+                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching allMembers list:', error);
+        }
+    };
+
+    // -------Level Income--------------
+
+    const LevelIncomeReport = async () => {
+        setPageNumber(1);
+        setActiveButton('LevelIncome');
+        try {
+            const response = await ApiCall('get', LevelIncomeReportUrl, '', { page: pageNumber, pageSize: 10 });
+
+            if (response instanceof Error) {
+                console.error('Error fetching allMembers list:', response.message);
+            } else if (response.status === 200) {
+                setReports(response?.data?.levelIncome);
+                // setPaginationDetails(response?.data?.pagination);
+            } else {
+                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching allMembers list:', error);
+        }
+    };
+
+    // pagination in LevelIncome data
+    const fetchData = () => {
+        const LevelIncomeReport = async () => {
+            try {
+                const response = await ApiCall('get', activeButton === 'Direct' ? DirectReportUrl : activeButton === 'InDirect' ? InDirectReportUrl : LevelIncomeReportUrl, '', {
+                    page: pageNumber + 1,
+                    pageSize: 10,
+                });
+
+                if (response instanceof Error) {
+                    console.error('Error fetching allMembers list:', response.message);
+                } else if (response.status === 200) {
+                    setReports(reports.concat(response?.data?.levelIncome));
+                } else {
+                    console.error('Error fetching allMembers list. Unexpected status:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching allMembers list:', error);
+            }
+            setPageNumber(pageNumber + 1);
+        };
+        LevelIncomeReport();
+    };
+
     return (
         <>
-            {/* <div className="flex flex-wrap gap-5 w-full mb-4">
-                <div className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[150px] w-full ">State</div>
-                <div className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[150px] w-full">Destrict</div>
-                <div className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[150px] w-full">constituency</div>
-                <div className="panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-3 text-base bg-primary text-white justify-center max-w-[150px] w-full">panjayathe</div>
-            </div> */}
-            <div className="panel">
+            <div className="flex flex-wrap gap-5 w-full mb-4">
+                <div
+                    onClick={DirectReport}
+                    className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
+                        activeButton === 'Direct' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                    } justify-center max-w-[120px] w-full`}
+                >
+                    Direct
+                </div>
+                <div
+                    onClick={InDirectReport}
+                    className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
+                        activeButton === 'InDirect' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                    } justify-center max-w-[120px] w-full`}
+                >
+                    InDirect
+                </div>
+                <div
+                    onClick={LevelIncomeReport}
+                    className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
+                        activeButton === 'LevelIncome' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                    } justify-center max-w-[120px] w-full`}
+                >
+                    LevelIncome
+                </div>
+            </div>
+            <div className={`panel ${reports.length >= 10 ? 'min-h-[90vh]' : 'h-full'}`}>
                 <div className="flex items-center justify-between mb-5">
                     <h5 className="font-semibold text-warning text-lg dark:text-white-light">Report</h5>
                 </div>
@@ -68,31 +136,52 @@ const Report = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th>sponser name</th>
+                                <th>SIno</th>
                                 <th>Name</th>
-                                <th> District</th>
-                                <th> franchise</th>
-                                <th> Total withdrowal amount</th>
-                                <th> Total renewal</th>
-                                <th>Referal amount</th>
+                                <th> Franchise</th>
+                                <th> PercentageCredited</th>
+                                <th> AmountCredited</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {tableData.map((data) => {
+                            {reports.map((data: any, index: number) => {
                                 return (
-                                    <tr key={data.id}>
+                                    <tr key={index}>
                                         <td>
-                                            <div className="whitespace-nowrap">{data.name}</div>
+                                            <div>{index + 1}</div>
                                         </td>
-                                        <td>{data.date}</td>
-                                        <td>{data.sale}</td>
+                                        <td>
+                                            <div className="whitespace-nowrap">{data?.name}</div>
+                                        </td>
+                                        <td>{data?.franchise}</td>
+                                        <td>{data?.percentageCredited}</td>
 
-                                        <td className="text-center"></td>
+                                        <td className="text-center">{data?.amountCredited}</td>
                                     </tr>
                                 );
                             })}
                         </tbody>
                     </table>
+                    <InfiniteScroll
+                        dataLength={reports?.length}
+                        next={fetchData}
+                        hasMore={true}
+                        children={undefined}
+                        loader={undefined}
+                        //   endMessage={
+                        //     <p style={{ textAlign: 'center' }}>
+                        //         <b>Yay! You have seen it all</b>
+                        //     </p>
+                        // }
+                        // below props only if you need pull down functionality
+                        // refreshFunction={this.refresh}
+                        // pullDownToRefresh
+                        // pullDownToRefreshThreshold={50}
+                        // pullDownToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8595; Pull down to refresh</h3>}
+                        // releaseToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>}
+                    >
+                        {/* {items} */}
+                    </InfiniteScroll>
                 </div>
             </div>
         </>

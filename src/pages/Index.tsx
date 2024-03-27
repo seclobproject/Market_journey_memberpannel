@@ -149,7 +149,6 @@ const Index = () => {
     const showLiveNewes = async () => {
         try {
             const response = await ApiCall('get', liveNewsUrl);
-            console.log(response);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -254,39 +253,12 @@ const Index = () => {
                 )}
 
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
-                    {/* <div className="panel ">
-                        <div className="flex justify-between dark:text-white-light mb-5">
-                            <h5 className="font-semibold text-primary text-lg ">Wallet Amount</h5>
-                        </div>
-                        <div className=" text-warning text-3xl font-bold my-10">
-                            <span>₹ {profielDetails.walletAmount} </span>
-                        </div>
-                    </div> */}
-
-                    {/* <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
-                        <div className="flex h-full justify-between items-center  dark:text-white-light">
-                            <IconMenuUsers className="w-10 h-10 text-warning" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <h1 className="text-[25px] font-semibold">40</h1>
-                            <h5 className="font-semibold text-md text-warning">Total members</h5>
-                        </div>
-                    </div>
-                    <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
-                        <div className="flex h-full justify-between items-center  dark:text-white-light">
-                            <IconCreditCard className="w-10 h-10 text-warning" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <h1 className="text-[25px] font-semibold">₹400006</h1>
-                            <h5 className="font-semibold text-md text-warning">WalletAmount</h5>
-                        </div>
-                    </div>
                     <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
                         <div className="flex h-full justify-between items-center  dark:text-white-light">
                             <IconCashBanknotes className="w-10 h-10 text-warning" />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <h1 className="text-[25px] font-semibold">₹5240</h1>
+                            <h1 className="text-[25px] font-semibold">₹{user?.directIncome}</h1>
                             <h5 className="font-semibold text-md text-warning">DirectIncome</h5>
                         </div>
                     </div>
@@ -295,10 +267,20 @@ const Index = () => {
                             <IconCashBanknotes className="w-10 h-10 text-warning" />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <h1 className="text-[25px] font-semibold">₹740</h1>
+                            <h1 className="text-[25px] font-semibold">₹{user?.inDirectIncome}</h1>
                             <h5 className="font-semibold text-md text-warning">InDirectIncome</h5>
                         </div>
-                    </div> */}
+                    </div>
+
+                    <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                        <div className="flex h-full justify-between items-center  dark:text-white-light">
+                            <IconCreditCard className="w-10 h-10 text-warning" />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <h1 className="text-[25px] font-semibold">₹{user?.totalLevelIncome}</h1>
+                            <h5 className="font-semibold text-md text-warning">LevelIncome</h5>
+                        </div>
+                    </div>
                 </div>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                     <div
