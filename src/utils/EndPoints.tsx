@@ -9,8 +9,6 @@ export const zonallistinNotdropdownUrl = '/api/admin/view-nottaken-zonals';
 //packages
 export const packagesListUrl = '/api/admin/view-package';
 
-// withdrawal
-export const withDrawalRequestUrl = ''
 // member
 export const memberaddUrl = '/api/user/add-user';
 export const addReferaUrl = '/api/user/add-referal-user';
@@ -31,6 +29,10 @@ export const getVideoUrl = '/api/admin/view-home-videos';
 export const DirectReportUrl = '/api/user/direct-referal-report';
 export const InDirectReportUrl = '/api/user/indirect-referal-report';
 export const LevelIncomeReportUrl = '/api/user/level-income-report';
+
+// withdrawal
+export const withdrawalRequestUrl = '/api/user/withdraw-wallet';
+export const withdrawalHistoryUrl = '/api/user/wallet-withdraw-report';
 
 // Awards and Rewards
 export const AwardsUrl = '/api/admin/view-award-details';

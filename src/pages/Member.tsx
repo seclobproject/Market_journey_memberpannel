@@ -72,8 +72,8 @@ const Member = () => {
     const [panchayathList, setPanchayathList] = useState([]);
     const [packageList, setPackageList] = useState<Package[]>([]);
     const [selectedStateId, setSelectedStateId] = useState('');
-    const [selectedDistrictId, setSelectedDistrictId] = useState(null);
-    const [selectedZonalId, setSelectedZonalId] = useState(null);
+    const [selectedDistrictId, setSelectedDistrictId] = useState('');
+    const [selectedZonalId, setSelectedZonalId] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
     const [totalMembers, setTotalMembers] = useState(0);
@@ -346,6 +346,7 @@ const Member = () => {
             setAddMember({
                 ...addMember,
                 state: selectedState.stateName,
+                district:'',
             });
             setSelectedStateId(selectedState.id);
         }
@@ -388,7 +389,7 @@ const Member = () => {
                         <IconArrowBackward />
                     </button>
                 )}
-                <select
+                {/* <select
                     onChange={(e) => {
                         const selectedValue = e.target.value;
                         // const selectedOption = packageOptions.find((option) => option.value === selectedValue);
@@ -404,12 +405,12 @@ const Member = () => {
                     value={addMember.franchise}
                     className="form-input ps-10 placeholder:text-white-dark max-w-xs mb-4"
                 >
-                    <option value="default">Select a franchise type</option>
+                    <option value="default">Select a franchise type</option> */}
                     {/* {packageOptions.map((option) => ( */}
-                    <option>Zonal Franchise</option>
-                    <option>Mobile Franchise</option>
+                    {/* <option>Zonal Franchise</option>
+                    <option>Mobile Franchise</option> */}
                     {/* ))} */}
-                </select>
+                {/* </select> */}
                 <div className="table-responsive mb-5">
                     <table>
                         <thead>
@@ -639,7 +640,13 @@ const Member = () => {
                                                                                     ...addMember,
                                                                                     franchise: selectedOption.value,
                                                                                     packageAmount: selectedOption.packageAmount,
+                                                                                    state: '',
+                                                                                    district:'',
+                                                                                    franchiseName:''
                                                                                 });
+                                                                                setSelectedStateId('');
+                                                                                setSelectedDistrictId('');
+                                                                                setSelectedZonalId('');
                                                                             }
                                                                         }}
                                                                         value={addMember.franchise}
@@ -717,8 +724,6 @@ const Member = () => {
                                                                                 onChange={(e) => {
                                                                                     const selectedValue = e.target.value;
                                                                                     const selectedDistrict = districtList.find((dist: any) => dist.name === selectedValue) as any;
-                                                                                    console.log(selectedValue);
-                                                                                    console.log(selectedDistrict);
 
                                                                                     if (selectedDistrict) {
                                                                                         setAddMember((prevAddMember) => ({
@@ -748,7 +753,7 @@ const Member = () => {
                                                                 addMember?.franchise === 'Platinum course' ||
                                                                 addMember?.franchise === 'Algo course') && (
                                                                 <div>
-                                                                    <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'zonal Franchise Name' : 'zonal'}</label>
+                                                                    <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'zonal-Franchise-Name' : 'zonal'}</label>
                                                                     <div className="relative text-white-dark">
                                                                         <select
                                                                             className="form-input ps-10 placeholder:text-white-dark"
@@ -759,18 +764,18 @@ const Member = () => {
                                                                                 if (selectedzonal) {
                                                                                     setAddMember((prevAddMember) => ({
                                                                                         ...prevAddMember,
-                                                                                        [addMember?.franchise === 'Zonal Franchise' ? 'franchiseName' : 'zonal']: selectedzonal?.name,
+                                                                                        [prevAddMember?.franchise === 'Zonal Franchise' ? 'franchiseName' : 'zonal']: selectedzonal?.name,
                                                                                     }));
                                                                                     setSelectedZonalId(selectedzonal?.id);
                                                                                 }
                                                                             }}
                                                                             value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
                                                                         >
-                                                                            <option key="default" value="">
+                                                                            <option>
                                                                                 Select zonal{' '}
                                                                             </option>
                                                                             {zonalList.map((zonal: any) => (
-                                                                                <option key={zonal.id}>{zonal.name}</option>
+                                                                                <option key={zonal.id} value={zonal.name}>{zonal.name}</option>
                                                                             ))}
                                                                         </select>
                                                                     </div>

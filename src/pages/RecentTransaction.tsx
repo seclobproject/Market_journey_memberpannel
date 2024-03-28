@@ -1,8 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import React, { Fragment, useState } from 'react';
-import IconCreditCard from '../components/Icon/IconCreditCard';
 import { ApiCall } from '../Services/Api';
-import { withDrawalRequestUrl } from '../utils/EndPoints';
+import {  withdrawalRequestUrl } from '../utils/EndPoints';
 const tableData = [
     {
         id: 1,
@@ -60,7 +59,7 @@ const RecentTransaction = () => {
     const handleRequestWithdrawal = async(e:React.FormEvent) => {
         e.preventDefault()
         try {
-            const response = await ApiCall('post', withDrawalRequestUrl, withdrawalDetails);
+            const response = await ApiCall('post', withdrawalRequestUrl, withdrawalDetails);
             console.log(response);
 
             if (response instanceof Error) {

@@ -15,13 +15,9 @@ const Report = () => {
 
     //-------- direct income -------------
 
-    const DirectReport = async () => {
-        setPageNumber(1);
+    const DirectReport = async (pageNumber?: number) => {
         setActiveButton('Direct');
         try {
-            console.log('====================================');
-            console.log(pageNumber);
-            console.log('====================================');
             const response = await ApiCall('get', DirectReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
@@ -37,8 +33,7 @@ const Report = () => {
     };
 
     // -------InDirect income --------------
-    const InDirectReport = async () => {
-        setPageNumber(1);
+    const InDirectReport = async (pageNumber?: number) => {
         setActiveButton('InDirect');
         try {
             const response = await ApiCall('get', InDirectReportUrl, '', { page: pageNumber, pageSize: 10 });
@@ -104,7 +99,7 @@ const Report = () => {
         <>
             <div className="flex flex-wrap gap-5 w-full mb-4">
                 <div
-                    onClick={DirectReport}
+                    onClick={()=>DirectReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
                         activeButton === 'Direct' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
@@ -112,7 +107,7 @@ const Report = () => {
                     Direct
                 </div>
                 <div
-                    onClick={InDirectReport}
+                    onClick={()=>InDirectReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
                         activeButton === 'InDirect' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
@@ -128,7 +123,7 @@ const Report = () => {
                     LevelIncome
                 </div>
             </div>
-            <div className={`panel ${reports.length >= 10 ? 'min-h-[90vh]' : 'h-full'}`}>
+            <div className={`panel ${reports.length >= 10 ? 'min-h-[95vh]' : 'h-full'}`}>
                 <div className="flex items-center justify-between mb-5">
                     <h5 className="font-semibold text-warning text-lg dark:text-white-light">Report</h5>
                 </div>
@@ -148,15 +143,15 @@ const Report = () => {
                                 return (
                                     <tr key={index}>
                                         <td>
-                                            <div>{index + 1}</div>
+                                            <div className="font-medium text-base">{index + 1}</div>
                                         </td>
                                         <td>
-                                            <div className="whitespace-nowrap">{data?.name}</div>
+                                            <div className="whitespace-nowrap font-medium text-base">{data?.name}</div>
                                         </td>
-                                        <td>{data?.franchise}</td>
-                                        <td>{data?.percentageCredited}</td>
+                                        <td className="font-medium text-base">{data?.franchise}</td>
+                                        <td className="font-medium text-base">{data?.percentageCredited}</td>
 
-                                        <td className="text-center">{data?.amountCredited}</td>
+                                        <td className="text-center text-success font-medium text-base">{data?.amountCredited}</td>
                                     </tr>
                                 );
                             })}

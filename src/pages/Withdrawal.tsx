@@ -1,64 +1,83 @@
-import React, { Fragment, useState } from 'react';
+import React, { ChangeEvent, FormEvent, Fragment, ReactEventHandler, useEffect, useState } from 'react';
 import Tippy from '@tippyjs/react';
 import IconTrashLines from '../components/Icon/IconTrashLines';
 import { Dialog, Transition } from '@headlessui/react';
 import IconCreditCard from '../components/Icon/IconCreditCard';
-const tableData = [
-    {
-        id: 1,
-        name: 'John Doe',
-        email: 'johndoe@yahoo.com',
-        date: '10/08/2020',
-        sale: 120,
-        status: 'Complete',
-        register: '5 min ago',
-        progress: '40%',
-        position: 'Developer',
-        office: 'London',
-    },
-    {
-        id: 2,
-        name: 'Shaun Park',
-        email: 'shaunpark@gmail.com',
-        date: '11/08/2020',
-        sale: 400,
-        status: 'Pending',
-        register: '11 min ago',
-        progress: '23%',
-        position: 'Designer',
-        office: 'New York',
-    },
-    {
-        id: 3,
-        name: 'Alma Clarke',
-        email: 'alma@gmail.com',
-        date: '12/02/2020',
-        sale: 310,
-        status: 'In Progress',
-        register: '1 hour ago',
-        progress: '80%',
-        position: 'Accountant',
-        office: 'Amazon',
-    },
-    {
-        id: 4,
-        name: 'Vincent Carpenter',
-        email: 'vincent@gmail.com',
-        date: '13/08/2020',
-        sale: 100,
-        status: 'Canceled',
-        register: '1 day ago',
-        progress: '60%',
-        position: 'Data Scientist', 
-        office: 'Canada',
-    },
-];
+import { ApiCall } from '../Services/Api';
+import { withdrawalHistoryUrl, withdrawalRequestUrl } from '../utils/EndPoints';
+import { Show_Toast } from './Components/Toast';
+import IconUser from '../components/Icon/IconUser';
+
 const Withdrawal = () => {
-        const [requestModal, setRequestModal] = useState(false);
+    const [requestModal, setRequestModal] = useState(false);
+    const [withdrawalHistory, setWithdrawalHistory] = useState<any>();
+    const [withdrawalRequest, setWithdrawalRequest] = useState({ withdrawAmount: '' });
+    const [tdsAmount, setTdsAmount] = useState(0);
+    const [totalAmount, setTotalAmount] = useState(0);
 
-        const handleRequestWithdrawal=()=>{
+    useEffect(() => {
+        getWithdrawalHistory();
+    }, []);
 
+    //-------------- get withdrawal history------------
+
+    const getWithdrawalHistory = async () => {
+        try {
+            const response = await ApiCall('get', withdrawalHistoryUrl);
+
+            if (response instanceof Error) {
+                console.error('Error fetching allMembers list:', response.message);
+            } else if (response.status === 200) {
+                setWithdrawalHistory(response?.data);
+            } else {
+                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching allMembers list:', error);
         }
+    };
+
+    //------- take input value and validation -------------
+
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const amount = e.target.value;
+        if (amount === '') {
+            setTdsAmount(0);
+            setTotalAmount(0);
+            setWithdrawalRequest({ withdrawAmount: '' });
+        } else if (/^[0-9]+$/.test(amount)) {
+            const withdrawAmount = parseFloat(amount);
+            const tenPercentAmount = withdrawAmount * 0.1;
+            const totalAmountAfterDeduction = withdrawAmount - tenPercentAmount;
+
+            setTdsAmount(tenPercentAmount);
+            setTotalAmount(totalAmountAfterDeduction);
+            setWithdrawalRequest({ withdrawAmount: amount });
+        }
+    };
+
+    // ----------withdrawal Request ---------
+
+    const handleRequestWithdrawal = async (e: FormEvent) => {
+        e.preventDefault();
+        try {
+            const response: any = await ApiCall('post', withdrawalRequestUrl, withdrawalRequest);
+            console.log(response.error);
+
+            if (response.status === 200) {
+                setWithdrawalRequest({
+                    withdrawAmount: '',
+                });
+                setRequestModal(false);
+                getWithdrawalHistory()
+                Show_Toast({ message: 'withdrawal requested', type: true });
+            }
+        } catch (error: any) {
+            console.log(error?.response?.data?.message);
+            Show_Toast({ message: error?.response?.data?.message, type: false });
+        }
+    };
+
     return (
         <>
             <div className="panel">
@@ -67,7 +86,7 @@ const Withdrawal = () => {
                 </div>
                 <div className="panel lg:h-[100px]  sm:h-auto flex gap-4  items-center justify-around bg-[#00335B] text-white mb-3 max-w-sm">
                     <div className="flex flex-col gap-2">
-                        <h1 className="text-[25px] font-semibold">₹400006</h1>
+                        <h1 className="text-[25px] font-semibold">₹ {withdrawalHistory?.walletAmount}</h1>
                         <h5 className="font-semibold text-md text-warning">Your Balance</h5>
                     </div>
                     <div className="flex h-full justify-between items-center  dark:text-white-light">
@@ -81,33 +100,25 @@ const Withdrawal = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th>Amount</th>
+                                <th>Requested Amount</th>
                                 <th>TDS Amount</th>
                                 <th> Total Amount</th>
                                 <th> Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {tableData.map((data) => {
+                            {withdrawalHistory?.walletWithdrawHistory?.map((data: any) => {
                                 return (
-                                    <tr key={data.id}>
+                                    <tr key={data?.id}>
                                         <td>
-                                            <div className="whitespace-nowrap">{data.name}</div>
+                                            <div className="whitespace-nowrap">₹ {data?.requestedAmount}</div>
                                         </td>
-                                        <td>{data.date}</td>
-                                        <td>{data.sale}</td>
+                                        <td>{data?.TDS}</td>
+                                        <td>₹ {data?.releasedAmount}</td>
                                         <td>
                                             <div
-                                                className={`whitespace-nowrap ${
-                                                    data.status === 'completed'
-                                                        ? 'text-success'
-                                                        : data.status === 'Pending'
-                                                        ? 'text-secondary'
-                                                        : data.status === 'In Progress'
-                                                        ? 'text-info'
-                                                        : data.status === 'Canceled'
-                                                        ? 'text-danger'
-                                                        : 'text-success'
+                                                className={`whitespace-nowrap w-fit px-2 py-1 text-white rounded-md ${
+                                                    data.status === 'Approved' ? 'bg-success' : data.status === 'Pending' ? 'bg-yellow-400' : 'bg-red-600'
                                                 }`}
                                             >
                                                 {data.status}
@@ -165,7 +176,15 @@ const Withdrawal = () => {
                                                         <div>
                                                             <label htmlFor="Amount">Amount</label>
                                                             <div className="relative text-white-dark">
-                                                                <input onChange={(e) => {}} id="Name" type="text" placeholder="Enter Amount" className="form-input ps-10 placeholder:text-white-dark" />
+                                                                <input
+                                                                    onChange={handleInputChange}
+                                                                    id="Name"
+                                                                    // value={withdrawalRequest.withdrawAmount}
+                                                                    type="number"
+                                                                    required
+                                                                    placeholder="Enter Amount"
+                                                                    className="form-input ps-5 placeholder:text-white-dark"
+                                                                />
                                                                 <span className="absolute start-4 top-1/2 -translate-y-1/2">{/* <IconUser fill={true} /> */}</span>
                                                             </div>
                                                         </div>
@@ -176,8 +195,15 @@ const Withdrawal = () => {
                                                         <div>
                                                             <label htmlFor="TDSAmount">TDS Amount</label>
                                                             <div className="relative text-white-dark">
-                                                                <input onChange={(e) => {}} id="Name" type="text" placeholder="Enter TDS Amount" className="form-input ps-10 placeholder:text-white-dark" />
-                                                                <span className="absolute start-4 top-1/2 -translate-y-1/2">{/* <IconUser fill={true} /> */}</span>
+                                                                {/* <input
+                                                                    onChange={(e) => {}}
+                                                                    id="Name"
+                                                                    type="text"
+                                                                    readOnly
+                                                                    // placeholder="Enter TDS Amount"
+                                                                    className="form-input ps-10 placeholder:text-white-dark"
+                                                                /> */}
+                                                                <span className=" start-4 top-1/2 -translate-y-1/2">{tdsAmount}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -187,8 +213,15 @@ const Withdrawal = () => {
                                                         <div>
                                                             <label htmlFor="TotalAmount">Total Amount</label>
                                                             <div className="relative text-white-dark">
-                                                                <input onChange={(e) => {}} id="Name" type="text" placeholder="Enter Total Amount" className="form-input ps-10 placeholder:text-white-dark" />
-                                                                <span className="absolute start-4 top-1/2 -translate-y-1/2">{/* <IconUser fill={true} /> */}</span>
+                                                                {/* <input
+                                                                    onChange={(e) => {}}
+                                                                    id="Name"
+                                                                    type="text"
+                                                                    readOnly
+                                                                    // placeholder="Enter Total Amount"
+                                                                    className="form-input ps-10 placeholder:text-white-dark"
+                                                                /> */}
+                                                                <span className=" start-4 top-1/2 -translate-y-1/2">{totalAmount}</span>
                                                             </div>
                                                         </div>
                                                     </div>
