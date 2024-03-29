@@ -38,8 +38,8 @@ const Package = () => {
                         </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                        <h3 className="text-white  text-base">Package</h3>
-                        <span className="text-warning font-semiboldy">₹ {pkg?.packageAmount}</span>
+                        <h3 className="text-white  text-base">Package Amount</h3>
+                        <span className="text-warning text-right font-semiboldy">₹ {pkg?.packageAmount}</span>
                     </div>
                 </div>
             ))}

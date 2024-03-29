@@ -406,10 +406,10 @@ const Member = () => {
                     className="form-input ps-10 placeholder:text-white-dark max-w-xs mb-4"
                 >
                     <option value="default">Select a franchise type</option> */}
-                    {/* {packageOptions.map((option) => ( */}
-                    {/* <option>Zonal Franchise</option>
+                {/* {packageOptions.map((option) => ( */}
+                {/* <option>Zonal Franchise</option>
                     <option>Mobile Franchise</option> */}
-                    {/* ))} */}
+                {/* ))} */}
                 {/* </select> */}
                 <div className="table-responsive mb-5">
                     <table>
@@ -432,10 +432,10 @@ const Member = () => {
                                 (console.log(allMembers, 'dfsf'),
                                 allMembers.map((data: any) => (
                                     <tr key={data?._id}>
-                                        <td>{data?.name}</td>
+                                        <td className="capitalize">{data?.name}</td>
                                         <td>{data?.email}</td>
                                         <td className="whitespace-nowrap">{data?.phone}</td>
-                                        <td>{data?.sponserName}</td>
+                                        <td className="capitalize">{data?.sponserName}</td>
                                         <td>{data?.franchise}</td>
                                         <td>{data?.franchiseName}</td>
                                         <td>{data?.packageAmount}</td>
@@ -641,8 +641,8 @@ const Member = () => {
                                                                                     franchise: selectedOption.value,
                                                                                     packageAmount: selectedOption.packageAmount,
                                                                                     state: '',
-                                                                                    district:'',
-                                                                                    franchiseName:''
+                                                                                    district: '',
+                                                                                    franchiseName: '',
                                                                                 });
                                                                                 setSelectedStateId('');
                                                                                 setSelectedDistrictId('');
@@ -771,11 +771,11 @@ const Member = () => {
                                                                             }}
                                                                             value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
                                                                         >
-                                                                            <option>
-                                                                                Select zonal{' '}
-                                                                            </option>
+                                                                            <option>Select zonal </option>
                                                                             {zonalList.map((zonal: any) => (
-                                                                                <option key={zonal.id} value={zonal.name}>{zonal.name}</option>
+                                                                                <option key={zonal.id} value={zonal.name}>
+                                                                                    {zonal.name}
+                                                                                </option>
                                                                             ))}
                                                                         </select>
                                                                     </div>

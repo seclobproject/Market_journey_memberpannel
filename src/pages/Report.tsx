@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Tippy from '@tippyjs/react';
 import IconTrashLines from '../components/Icon/IconTrashLines';
 import { ApiCall } from '../Services/Api';
-import { DirectReportUrl, InDirectReportUrl, LevelIncomeReportUrl } from '../utils/EndPoints';
+import { AutoPoolReportUrl, BonusReportUrl, DirectReportUrl, InDirectReportUrl, LevelIncomeReportUrl } from '../utils/EndPoints';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Report = () => {
@@ -23,7 +23,11 @@ const Report = () => {
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
-                setReports(response?.data?.directIncome);
+                const FormatedReport = response?.data?.directIncome.map((item: any) => ({
+                    ...item,
+                    createdAt: formatTimestamp(item.createdAt),
+                }));
+                setReports(FormatedReport);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
             }
@@ -41,7 +45,11 @@ const Report = () => {
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
-                setReports(response?.data?.inDirectIncome);
+                const FormatedReport = response?.data?.inDirectIncome.map((item: any) => ({
+                    ...item,
+                    createdAt: formatTimestamp(item.createdAt),
+                }));
+                setReports(FormatedReport);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
             }
@@ -61,7 +69,51 @@ const Report = () => {
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
-                setReports(response?.data?.levelIncome);
+                const FormatedReport = response?.data?.levelIncome.map((item: any) => ({
+                    ...item,
+                    createdAt: formatTimestamp(item.createdAt),
+                }));
+                setReports(FormatedReport);
+                // setPaginationDetails(response?.data?.pagination);
+            } else {
+                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching allMembers list:', error);
+        }
+    };
+    // -------Level Income--------------
+
+    const AutoPoolReport = async () => {
+        setPageNumber(1);
+        setActiveButton('LevelIncome');
+        try {
+            const response = await ApiCall('get', AutoPoolReportUrl, '', { page: pageNumber, pageSize: 10 });
+
+            if (response instanceof Error) {
+                console.error('Error fetching allMembers list:', response.message);
+            } else if (response.status === 200) {
+                setReports(response?.data?.autopool);
+                // setPaginationDetails(response?.data?.pagination);
+            } else {
+                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching allMembers list:', error);
+        }
+    };
+    // -------Level Income--------------
+
+    const BonusReport = async () => {
+        setPageNumber(1);
+        setActiveButton('LevelIncome');
+        try {
+            const response = await ApiCall('get', BonusReportUrl, '', { page: pageNumber, pageSize: 10 });
+
+            if (response instanceof Error) {
+                console.error('Error fetching allMembers list:', response.message);
+            } else if (response.status === 200) {
+                setReports(response?.data?.addBonus);
                 // setPaginationDetails(response?.data?.pagination);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
@@ -83,7 +135,11 @@ const Report = () => {
                 if (response instanceof Error) {
                     console.error('Error fetching allMembers list:', response.message);
                 } else if (response.status === 200) {
-                    setReports(reports.concat(response?.data?.levelIncome));
+                    const FormatedReport = response?.data?.levelIncome.map((item: any) => ({
+                        ...item,
+                        createdAt: formatTimestamp(item.createdAt),
+                    }));
+                    setReports(reports.concat(FormatedReport));
                 } else {
                     console.error('Error fetching allMembers list. Unexpected status:', response.status);
                 }
@@ -94,12 +150,23 @@ const Report = () => {
         };
         LevelIncomeReport();
     };
+    // formate date
+    const formatTimestamp = (timestamp: string) => {
+        const date = new Date(timestamp);
+        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} ${date.toLocaleString('en-US', {
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: true,
+        })}`;
+        return formattedDate;
+    };
 
     return (
         <>
             <div className="flex flex-wrap gap-5 w-full mb-4">
                 <div
-                    onClick={()=>DirectReport(1)}
+                    onClick={() => DirectReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
                         activeButton === 'Direct' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
@@ -107,7 +174,7 @@ const Report = () => {
                     Direct
                 </div>
                 <div
-                    onClick={()=>InDirectReport(1)}
+                    onClick={() => InDirectReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
                         activeButton === 'InDirect' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
@@ -122,6 +189,22 @@ const Report = () => {
                 >
                     LevelIncome
                 </div>
+                <div
+                    onClick={AutoPoolReport}
+                    className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
+                        activeButton === 'Autopool' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                    } justify-center max-w-[120px] w-full`}
+                >
+                    Auto pool
+                </div>
+                <div
+                    onClick={BonusReport}
+                    className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
+                        activeButton === 'bonus' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                    } justify-center max-w-[120px] w-full`}
+                >
+                    Bonus
+                </div>
             </div>
             <div className={`panel ${reports.length >= 10 ? 'min-h-[95vh]' : 'h-full'}`}>
                 <div className="flex items-center justify-between mb-5">
@@ -133,9 +216,11 @@ const Report = () => {
                             <tr>
                                 <th>SIno</th>
                                 <th>Name</th>
-                                <th> Franchise</th>
+                                {activeButton !== 'LevelIncome' ? <th> Franchise</th> : <th></th>}
+
                                 <th> PercentageCredited</th>
                                 <th> AmountCredited</th>
+                                <th>Date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -149,9 +234,11 @@ const Report = () => {
                                             <div className="whitespace-nowrap font-medium text-base">{data?.name}</div>
                                         </td>
                                         <td className="font-medium text-base">{data?.franchise}</td>
+
                                         <td className="font-medium text-base">{data?.percentageCredited}</td>
 
                                         <td className="text-center text-success font-medium text-base">{data?.amountCredited}</td>
+                                        <td className="font-medium text-base">{data?.createdAt}</td>
                                     </tr>
                                 );
                             })}

@@ -427,7 +427,7 @@ const RegisterBoxed = () => {
                                             </div>
                                         </div>
                                         <div>
-                                            <label htmlFor="packageAmount">PackageAmount</label>
+                                            <label htmlFor="packageAmount">Package Amount</label>
                                             <div className="relative text-white-dark">
                                                 <input
                                                     id="PackageAmount"

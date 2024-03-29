@@ -29,6 +29,8 @@ export const getVideoUrl = '/api/admin/view-home-videos';
 export const DirectReportUrl = '/api/user/direct-referal-report';
 export const InDirectReportUrl = '/api/user/indirect-referal-report';
 export const LevelIncomeReportUrl = '/api/user/level-income-report';
+export const AutoPoolReportUrl = ''
+export const BonusReportUrl = ''
 
 // withdrawal
 export const withdrawalRequestUrl = '/api/user/withdraw-wallet';
