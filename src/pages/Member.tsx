@@ -48,7 +48,7 @@ const Member = () => {
     const [addModal, setAddModal] = useState(false);
     const [showViewTreeColumn, setShowViewTreeColumn] = useState(true);
     const [allMembers, setAllMembers] = useState<any>([]);
-   const [userId, setUserId] = useState<string | undefined>();
+    const [userId, setUserId] = useState<string | undefined>();
     // const [previousMemberData, setPreviousMemberData] = useState(null);
     const [addMember, setAddMember] = useState<Member>({
         name: '',
@@ -58,7 +58,7 @@ const Member = () => {
         address: '',
         phone: '',
         packageAmount: '',
-        packageAmountGst:'',
+        packageAmountGst: '',
         state: '',
         district: '',
         zonal: '',
@@ -83,6 +83,8 @@ const Member = () => {
         getPackagesList();
         getStateList();
     }, []);
+                        console.log(districtList);
+    
     useEffect(() => {
         if (selectedStateId) {
             if (addMember?.franchise === 'District Franchise') {
@@ -104,7 +106,7 @@ const Member = () => {
     }, [selectedStateId, selectedDistrictId, selectedZonalId]);
 
     useEffect(() => {
-        calculateTotalGstAmount(); 
+        calculateTotalGstAmount();
     }, [addMember.packageAmount]);
 
     //------ show password-----
@@ -139,14 +141,14 @@ const Member = () => {
     };
     //------ Remove the tree column from the table  -------
     const handleViewTreeClick = (id?: string) => {
-      setUserId(id);
+        setUserId(id);
         getMembers(id);
         setShowViewTreeColumn(false);
     };
 
     // pagination in member data
-    const fetchData=()=>{
-        setPageNumber(pageNumber + 1)
+    const fetchData = () => {
+        setPageNumber(pageNumber + 1);
         const getLevelMembers = async () => {
             try {
                 const response = await ApiCall('get', getUsers, '', { id: userId, page: pageNumber, pageSize: 2 });
@@ -164,8 +166,8 @@ const Member = () => {
                 console.error('Error fetching allMembers list:', error);
             }
         };
-        getLevelMembers()
-    }
+        getLevelMembers();
+    };
 
     //------------------- get all state------------------
 
@@ -301,7 +303,7 @@ const Member = () => {
                     address: '',
                     phone: '',
                     packageAmount: '',
-                    packageAmountGst:'',
+                    packageAmountGst: '',
                     state: '',
                     district: '',
                     zonal: '',
@@ -333,7 +335,7 @@ const Member = () => {
             const percentage = partAmount * 0.18;
             const sum = partAmount + percentage;
             console.log(`Sum: ${sum}`);
-           setAddMember({ ...addMember, packageAmountGst: sum });
+            setAddMember({ ...addMember, packageAmountGst: sum });
         }
     };
 
@@ -346,7 +348,7 @@ const Member = () => {
             setAddMember({
                 ...addMember,
                 state: selectedState.stateName,
-                district:'',
+                district: '',
             });
             setSelectedStateId(selectedState.id);
         }
@@ -389,28 +391,55 @@ const Member = () => {
                         <IconArrowBackward />
                     </button>
                 )}
-                {/* <select
+
+                {/* fiter options start */}
+                <select
                     onChange={(e) => {
                         const selectedValue = e.target.value;
-                        // const selectedOption = packageOptions.find((option) => option.value === selectedValue);
-
-                        // if (selectedOption) {
-                        //     setAddMember({
-                        //         ...addMember,
-                        //         franchise: selectedOption.value,
-                        //         packageAmount: selectedOption.packageAmount,
-                        //     });
-                        // }
+                        setSelectedDistrictId(selectedValue);
                     }}
-                    value={addMember.franchise}
-                    className="form-input ps-10 placeholder:text-white-dark max-w-xs mb-4"
+                    // value={e.target.value}
+                    className="form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary"
                 >
-                    <option value="default">Select a franchise type</option> */}
-                {/* {packageOptions.map((option) => ( */}
-                {/* <option>Zonal Franchise</option>
-                    <option>Mobile Franchise</option> */}
-                {/* ))} */}
-                {/* </select> */}
+                    <option value="default">Select a franchise type</option>
+                    {packageList.map((option: any) => {
+                        console.log(option);
+                        return <option value={option?._id}>{option?.franchiseName}</option>;
+                    })}
+                </select>
+                
+                
+                <select
+                    className="form-input ps-10 placeholder:text-white-dark max-w-[220px] ml-2 border-primary"
+                    onChange={(e) => {
+                        const selectedValue = e.target.value;
+
+                        if (selectedValue) {
+                            setSelectedZonalId(selectedValue);
+                        }
+                    }}
+                    // value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
+                >
+                    <option>Select zonal </option>
+                    {zonalList.map((zonal: any) => (
+                        <option key={zonal.id} value={zonal?._id}>
+                            {zonal.name}
+                        </option>
+                    ))}
+                </select>
+                <select
+                    onChange={(e) => {
+                        setAddMember({ ...addMember, panchayath: e.target.value });
+                    }}
+                    className="form-input ps-10 placeholder:text-white-dark max-w-[220px] ml-2 border-primary"
+                >
+                    <option>Select panchayath </option>
+                    {panchayathList.map((panchayath: any) => (
+                        <option key={panchayath.id}>{panchayath.name}</option>
+                    ))}
+                </select>
+                {/* filter options end */}
+
                 <div className="table-responsive mb-5">
                     <table>
                         <thead>

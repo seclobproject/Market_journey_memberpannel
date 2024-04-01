@@ -215,12 +215,13 @@ const Report = () => {
                         <thead>
                             <tr>
                                 <th>SIno</th>
+                                <th>Date</th>
+
                                 <th>Name</th>
                                 {activeButton !== 'LevelIncome' ? <th> Franchise</th> : <th></th>}
 
                                 <th> PercentageCredited</th>
                                 <th> AmountCredited</th>
-                                <th>Date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -230,6 +231,8 @@ const Report = () => {
                                         <td>
                                             <div className="font-medium text-base">{index + 1}</div>
                                         </td>
+                                        <td className="font-medium text-base">{data?.createdAt}</td>
+
                                         <td>
                                             <div className="whitespace-nowrap font-medium text-base">{data?.name}</div>
                                         </td>
@@ -238,7 +241,6 @@ const Report = () => {
                                         <td className="font-medium text-base">{data?.percentageCredited}</td>
 
                                         <td className="text-center text-success font-medium text-base">{data?.amountCredited}</td>
-                                        <td className="font-medium text-base">{data?.createdAt}</td>
                                     </tr>
                                 );
                             })}

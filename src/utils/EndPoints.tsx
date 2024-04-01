@@ -19,6 +19,7 @@ export const getProfileUrl = '/api/user/view-user-profile';
 export const editProfileUrl = '/api/user/edit-profile';
 
 export const updateBankDetailsurl = '/api/user/add-bank-account';
+export const updateNomineeDetailsurl = '/api/user/add-nominee';
 
 // Home
 export const liveNewsUrl = '/api/admin/view-news-details';
