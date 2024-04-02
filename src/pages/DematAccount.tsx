@@ -312,7 +312,7 @@ const DematAccount = () => {
                                         </button>
                                     </div>
                                     <div className="p-5">
-                                        <form className="space-y-3 dark:text-white flex flex-col items-center " onSubmit={handleAddDematAccount}>
+                                        <form className="space-y-3 dark:text-white flex flex-col items-center " onSubmit={handleEditDematAccount}>
                                             <div className="flex  w-full flex-col lg:flex-row gap-5 lg:flex-wrap">
                                                 <div className="space-y-5 w-full">
                                                     <div>
