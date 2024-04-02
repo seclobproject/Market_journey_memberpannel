@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+const DematAccount = lazy(() => import('../pages/DematAccount'));
 const Awards = lazy(() => import('../pages/Awards'));
 const Subscriptions = lazy(() => import('../pages/Subscriptions'));
 const News = lazy(() => import('../pages/News'));
@@ -428,6 +429,10 @@ const routes = [
     {
         path: '/pages/subscription',
         element: <Subscriptions />,
+    },
+    {
+        path: '/pages/demataccount',
+        element: <DematAccount />,
     },
 
     {

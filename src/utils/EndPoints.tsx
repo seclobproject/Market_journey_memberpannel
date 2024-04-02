@@ -21,6 +21,11 @@ export const editProfileUrl = '/api/user/edit-profile';
 export const updateBankDetailsurl = '/api/user/add-bank-account';
 export const updateNomineeDetailsurl = '/api/user/add-nominee';
 
+// demat account
+export const allDematAccountsurl = ''
+export const addDematAccounturl = '/api/user/add-demate-account';
+export const editDematAccounturl=''
+
 // Home
 export const liveNewsUrl = '/api/admin/view-news-details';
 export const getImagesUrl = '/api/admin/view-home-images';

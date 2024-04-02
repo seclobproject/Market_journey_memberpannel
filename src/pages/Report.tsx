@@ -60,7 +60,7 @@ const Report = () => {
 
     // -------Level Income--------------
 
-    const LevelIncomeReport = async () => {
+    const LevelIncomeReport = async (pageNumber?: number) => {
         setPageNumber(1);
         setActiveButton('LevelIncome');
         try {
@@ -69,6 +69,9 @@ const Report = () => {
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
+                console.log('====================================');
+                console.log(response?.data?.levelIncome);
+                console.log('====================================');
                 const FormatedReport = response?.data?.levelIncome.map((item: any) => ({
                     ...item,
                     createdAt: formatTimestamp(item.createdAt),
@@ -84,16 +87,20 @@ const Report = () => {
     };
     // -------Level Income--------------
 
-    const AutoPoolReport = async () => {
+    const AutoPoolReport = async (pageNumber?: number) => {
         setPageNumber(1);
-        setActiveButton('LevelIncome');
+        setActiveButton('Autopool');
         try {
             const response = await ApiCall('get', AutoPoolReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
-                setReports(response?.data?.autopool);
+                const FormatedReport = response?.data?.autopool.map((item: any) => ({
+                    ...item,
+                    createdAt: formatTimestamp(item.createdAt),
+                }));
+                setReports(FormatedReport);
                 // setPaginationDetails(response?.data?.pagination);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
@@ -104,16 +111,20 @@ const Report = () => {
     };
     // -------Level Income--------------
 
-    const BonusReport = async () => {
+    const BonusReport = async (pageNumber?: number) => {
         setPageNumber(1);
-        setActiveButton('LevelIncome');
+        setActiveButton('bonus');
         try {
             const response = await ApiCall('get', BonusReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
-                setReports(response?.data?.addBonus);
+                const FormatedReport = response?.data?.addBonus.map((item: any) => ({
+                    ...item,
+                    createdAt: formatTimestamp(item.createdAt),
+                }));
+                setReports(FormatedReport);
                 // setPaginationDetails(response?.data?.pagination);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
@@ -127,10 +138,21 @@ const Report = () => {
     const fetchData = () => {
         const LevelIncomeReport = async () => {
             try {
-                const response = await ApiCall('get', activeButton === 'Direct' ? DirectReportUrl : activeButton === 'InDirect' ? InDirectReportUrl : LevelIncomeReportUrl, '', {
-                    page: pageNumber + 1,
-                    pageSize: 10,
-                });
+                const response = await ApiCall(
+                    'get',
+                    activeButton === 'Direct'
+                        ? DirectReportUrl
+                        : activeButton === 'InDirect'
+                        ? InDirectReportUrl
+                        : activeButton === 'LevelIncome'
+                        ? LevelIncomeReportUrl
+                        : activeButton === 'Autopool'
+                        ? AutoPoolReportUrl
+                        : BonusReportUrl,{
+                              page: pageNumber + 1,
+                              pageSize: 10,
+                          }
+                );
 
                 if (response instanceof Error) {
                     console.error('Error fetching allMembers list:', response.message);
@@ -182,7 +204,7 @@ const Report = () => {
                     InDirect
                 </div>
                 <div
-                    onClick={LevelIncomeReport}
+                    onClick={() => LevelIncomeReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
                         activeButton === 'LevelIncome' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
@@ -190,7 +212,7 @@ const Report = () => {
                     LevelIncome
                 </div>
                 <div
-                    onClick={AutoPoolReport}
+                    onClick={() => AutoPoolReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
                         activeButton === 'Autopool' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
@@ -198,7 +220,7 @@ const Report = () => {
                     Auto pool
                 </div>
                 <div
-                    onClick={BonusReport}
+                    onClick={() => BonusReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
                         activeButton === 'bonus' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
@@ -218,7 +240,7 @@ const Report = () => {
                                 <th>Date</th>
 
                                 <th>Name</th>
-                                {activeButton !== 'LevelIncome' ? <th> Franchise</th> : <th></th>}
+                                {activeButton !== 'LevelIncome' && activeButton !== 'Autopool' && activeButton !== 'bonus' ? <th> Franchise</th> : <th></th>}
 
                                 <th> PercentageCredited</th>
                                 <th> AmountCredited</th>
