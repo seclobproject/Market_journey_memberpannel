@@ -69,15 +69,12 @@ const Report = () => {
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
-                console.log('====================================');
-                console.log(response?.data?.levelIncome);
-                console.log('====================================');
+   
                 const FormatedReport = response?.data?.levelIncome.map((item: any) => ({
                     ...item,
                     createdAt: formatTimestamp(item.createdAt),
                 }));
                 setReports(FormatedReport);
-                // setPaginationDetails(response?.data?.pagination);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
             }
@@ -85,7 +82,7 @@ const Report = () => {
             console.error('Error fetching allMembers list:', error);
         }
     };
-    // -------Level Income--------------
+    // -------Auto pool report--------------
 
     const AutoPoolReport = async (pageNumber?: number) => {
         setPageNumber(1);
@@ -109,7 +106,7 @@ const Report = () => {
             console.error('Error fetching allMembers list:', error);
         }
     };
-    // -------Level Income--------------
+    // -------Bonus report--------------
 
     const BonusReport = async (pageNumber?: number) => {
         setPageNumber(1);
@@ -148,7 +145,7 @@ const Report = () => {
                         ? LevelIncomeReportUrl
                         : activeButton === 'Autopool'
                         ? AutoPoolReportUrl
-                        : BonusReportUrl,{
+                        : BonusReportUrl,'',{
                               page: pageNumber + 1,
                               pageSize: 10,
                           }
@@ -162,13 +159,15 @@ const Report = () => {
                         createdAt: formatTimestamp(item.createdAt),
                     }));
                     setReports(reports.concat(FormatedReport));
+                     setPageNumber(pageNumber + 1);
                 } else {
                     console.error('Error fetching allMembers list. Unexpected status:', response.status);
                 }
             } catch (error) {
                 console.error('Error fetching allMembers list:', error);
             }
-            setPageNumber(pageNumber + 1);
+            console.log(pageNumber);
+            
         };
         LevelIncomeReport();
     };

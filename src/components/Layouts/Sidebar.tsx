@@ -186,7 +186,7 @@ const Sidebar = () => {
                                     <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/demataccount" className="group">
                                             <div className="flex items-center">
-                                                <i className="fa-solid fa-building-columns group-hover:!text-primary shrink-0"></i>
+                                                <i className="fa-solid fa-building-columns text-gray-400 group-hover:!text-primary shrink-0"></i>
                                                 {/* <Ico fill className="group-hover:!text-primary shrink-0" /> */}
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Demat account')}</span>
                                             </div>

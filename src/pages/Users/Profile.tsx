@@ -266,8 +266,8 @@ const Profile = () => {
                         </div>
                     </div>
                     {/* <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5"> */}
-                    <div className="flex flex-wrap justify-evenly">
-                        <div className="panel mb-5 bg-primary md:min-w-[550px] px-10">
+                    <div className="flex flex-wrap justify-between">
+                        <div className="panel mb-5 bg-primary w-full lg:max-w-[650px] px-10">
                             <div className="flex items-center justify-between">
                                 <h5 className="font-semibold text-warning text-lg dark:text-white-light">Profile</h5>
                                 <div onClick={() => setEditUserModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">
@@ -326,14 +326,14 @@ const Profile = () => {
                                         </li>
                                         <li className="flex items-center gap-3">
                                             <IconPencil className="shrink-0" fill />
-                                            Franchise Name : {user.franchise}
+                                            Franchise Name : {user.franchiseName}
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="panel mb-5 p-5 bg-primary w-full md:max-w-[500px]">
+                        <div className="panel mb-5 p-5 bg-primary w-full lg:max-w-[500px]">
                             <div className="flex mb-5 ">
                                 <h5 className="font-semibold text-warning text-lg dark:text-white-light">Bank Details</h5>
                                 <div onClick={() => setUpdateBankModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">

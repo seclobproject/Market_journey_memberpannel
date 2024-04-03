@@ -22,7 +22,7 @@ export const updateBankDetailsurl = '/api/user/add-bank-account';
 export const updateNomineeDetailsurl = '/api/user/add-nominee';
 
 // demat account
-export const allDematAccountsurl = ''
+export const allDematAccountsurl = '/api/user/view-demate-accounts';
 export const addDematAccounturl = '/api/user/add-demate-account';
 export const editDematAccounturl=''
 

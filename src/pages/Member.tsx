@@ -22,6 +22,8 @@ import IconLockDots from '../components/Icon/IconLockDots';
 import IconCashBanknotes from '../components/Icon/IconCashBanknotes';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import IconArrowBackward from '../components/Icon/IconArrowBackward';
+import IconSearch from '../components/Icon/IconSearch';
+import IconXCircle from '../components/Icon/IconXCircle';
 
 interface Member {
     name: string;
@@ -77,13 +79,13 @@ const Member = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
     const [totalMembers, setTotalMembers] = useState(0);
+    const [search, setSearch] = useState('');
 
     useEffect(() => {
         getMembers();
         getPackagesList();
         getStateList();
     }, []);
-                        console.log(districtList);
     
     useEffect(() => {
         if (selectedStateId) {
@@ -109,6 +111,10 @@ const Member = () => {
         calculateTotalGstAmount();
     }, [addMember.packageAmount]);
 
+    // useEffect(() => {
+
+    // }, [search]);
+
     //------ show password-----
     const handleTogglePassword = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -127,6 +133,8 @@ const Member = () => {
             } else if (response.status === 200) {
                 // setPreviousMemberData(allMembers);
                 setAllMembers(response?.data?.child1);
+                console.log(response?.data?.child1);
+                
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
             }
@@ -357,8 +365,8 @@ const Member = () => {
 
     return (
         <>
-            <div className="flex gap-5 w-full mb-4">
-                {/* <div
+            {/* <div className="flex gap-5 w-full mb-4"> */}
+            {/* <div
                     // onClick={getLevelOneMembers}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
                         activeButton === 'level1' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
@@ -374,10 +382,31 @@ const Member = () => {
                 >
                     Level 2
                 </div> */}
-            </div>
+
+            {/* </div> */}
             <div className="panel">
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
                     <h5 className="font-semibold text-warning text-lg dark:text-white-light">Member</h5>
+                    <div className="sm:ltr:mr-auto sm:rtl:ml-auto">
+                        <form
+                            className={`${search && '!block'} mt-2 sm:mt-0 inset-x-0 sm:translate-y-0 -translate-y-1/2 sm:mx-0  z-10`}
+                            onSubmit={()=>{}}
+                        >
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    className="form-input ltr:pl-9 rtl:pr-9 ltr:sm:pr-4 rtl:sm:pl-4 ltr:pr-9 rtl:pl-9 peer sm:bg-transparent bg-gray-100 placeholder:tracking-widest"
+                                    placeholder="Search..."
+                                    onChange={()=>{(e:any) => {
+                                        setSearch(e.target.value);
+                                    }}}
+                                />
+                                <button type="submit" className="absolute w-9 h-9 inset-0 ltr:right-auto rtl:left-auto appearance-none peer-focus:text-primary">
+                                    <IconSearch className="mx-auto" />
+                                </button>
+                            </div>
+                        </form>
+                    </div>
 
                     <button
                         onClick={() => setAddModal(true)}
@@ -393,51 +422,52 @@ const Member = () => {
                 )}
 
                 {/* fiter options start */}
-                <select
-                    onChange={(e) => {
-                        const selectedValue = e.target.value;
-                        setSelectedDistrictId(selectedValue);
-                    }}
-                    // value={e.target.value}
-                    className="form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary"
-                >
-                    <option value="default">Select a franchise type</option>
-                    {packageList.map((option: any) => {
-                        console.log(option);
-                        return <option value={option?._id}>{option?.franchiseName}</option>;
-                    })}
-                </select>
-                
-                
-                <select
-                    className="form-input ps-10 placeholder:text-white-dark max-w-[220px] ml-2 border-primary"
-                    onChange={(e) => {
-                        const selectedValue = e.target.value;
+                <div className="flex flex-wrap gap-2">
+                    <select
+                        onChange={(e) => {
+                            const selectedValue = e.target.value;
+                            setSelectedDistrictId(selectedValue);
+                        }}
+                        // value={e.target.value}
+                        className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
+                    >
+                        <option value="default">Select a franchise type</option>
+                        {packageList.map((option: any) => {
+                            console.log(option);
+                            return <option value={option?._id}>{option?.franchiseName}</option>;
+                        })}
+                    </select>
 
-                        if (selectedValue) {
-                            setSelectedZonalId(selectedValue);
-                        }
-                    }}
-                    // value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
-                >
-                    <option>Select zonal </option>
-                    {zonalList.map((zonal: any) => (
-                        <option key={zonal.id} value={zonal?._id}>
-                            {zonal.name}
-                        </option>
-                    ))}
-                </select>
-                <select
-                    onChange={(e) => {
-                        setAddMember({ ...addMember, panchayath: e.target.value });
-                    }}
-                    className="form-input ps-10 placeholder:text-white-dark max-w-[220px] ml-2 border-primary"
-                >
-                    <option>Select panchayath </option>
-                    {panchayathList.map((panchayath: any) => (
-                        <option key={panchayath.id}>{panchayath.name}</option>
-                    ))}
-                </select>
+                    <select
+                        className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
+                        onChange={(e) => {
+                            const selectedValue = e.target.value;
+
+                            if (selectedValue) {
+                                setSelectedZonalId(selectedValue);
+                            }
+                        }}
+                        // value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
+                    >
+                        <option>Select zonal </option>
+                        {zonalList.map((zonal: any) => (
+                            <option key={zonal.id} value={zonal?._id}>
+                                {zonal.name}
+                            </option>
+                        ))}
+                    </select>
+                    <select
+                        onChange={(e) => {
+                            setAddMember({ ...addMember, panchayath: e.target.value });
+                        }}
+                        className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
+                    >
+                        <option>Select panchayath </option>
+                        {panchayathList.map((panchayath: any) => (
+                            <option key={panchayath.id}>{panchayath.name}</option>
+                        ))}
+                    </select>
+                </div>
                 {/* filter options end */}
 
                 <div className="table-responsive mb-5">
@@ -458,7 +488,7 @@ const Member = () => {
                         </thead>
                         <tbody>
                             {allMembers?.length > 0 ? (
-                                (console.log(allMembers, 'dfsf'),
+                                (
                                 allMembers.map((data: any) => (
                                     <tr key={data?._id}>
                                         <td className="capitalize">{data?.name}</td>
