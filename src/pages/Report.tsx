@@ -69,7 +69,6 @@ const Report = () => {
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
-   
                 const FormatedReport = response?.data?.levelIncome.map((item: any) => ({
                     ...item,
                     createdAt: formatTimestamp(item.createdAt),
@@ -93,7 +92,9 @@ const Report = () => {
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
-                const FormatedReport = response?.data?.autopool.map((item: any) => ({
+                console.log(response?.data);
+
+                const FormatedReport = response?.data?.autoPoolCreditHistory.map((item: any) => ({
                     ...item,
                     createdAt: formatTimestamp(item.createdAt),
                 }));
@@ -145,10 +146,12 @@ const Report = () => {
                         ? LevelIncomeReportUrl
                         : activeButton === 'Autopool'
                         ? AutoPoolReportUrl
-                        : BonusReportUrl,'',{
-                              page: pageNumber + 1,
-                              pageSize: 10,
-                          }
+                        : BonusReportUrl,
+                    '',
+                    {
+                        page: pageNumber + 1,
+                        pageSize: 10,
+                    }
                 );
 
                 if (response instanceof Error) {
@@ -159,7 +162,7 @@ const Report = () => {
                         createdAt: formatTimestamp(item.createdAt),
                     }));
                     setReports(reports.concat(FormatedReport));
-                     setPageNumber(pageNumber + 1);
+                    setPageNumber(pageNumber + 1);
                 } else {
                     console.error('Error fetching allMembers list. Unexpected status:', response.status);
                 }
@@ -167,19 +170,20 @@ const Report = () => {
                 console.error('Error fetching allMembers list:', error);
             }
             console.log(pageNumber);
-            
         };
         LevelIncomeReport();
     };
+
     // formate date
     const formatTimestamp = (timestamp: string) => {
         const date = new Date(timestamp);
-        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} ${date.toLocaleString('en-US', {
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            hour12: true,
-        })}`;
+        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+        //  ${date.toLocaleString('en-US', {
+        //     hour: 'numeric',
+        //     minute: 'numeric',
+        //     second: 'numeric',
+        //     hour12: true,
+        // })}`;
         return formattedDate;
     };
 
@@ -246,25 +250,33 @@ const Report = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {reports.map((data: any, index: number) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>
-                                            <div className="font-medium text-base">{index + 1}</div>
-                                        </td>
-                                        <td className="font-medium text-base">{data?.createdAt}</td>
+                            {reports?.length > 0 ? (
+                                reports.map((data: any, index: number) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td>
+                                                <div className="font-medium text-base">{index + 1}</div>
+                                            </td>
+                                            <td className="font-medium text-base">{data?.createdAt}</td>
 
-                                        <td>
-                                            <div className="whitespace-nowrap font-medium text-base">{data?.name}</div>
-                                        </td>
-                                        <td className="font-medium text-base">{data?.franchise}</td>
+                                            <td>
+                                                <div className="whitespace-nowrap font-medium text-base">{data?.name}</div>
+                                            </td>
+                                            <td className="font-medium text-base">{data?.franchise}</td>
 
-                                        <td className="font-medium text-base">{data?.percentageCredited}</td>
+                                            <td className="font-medium text-base">{data?.percentageCredited}</td>
 
-                                        <td className="text-center text-success font-medium text-base">{data?.amountCredited}</td>
-                                    </tr>
-                                );
-                            })}
+                                            <td className="text-center text-success font-medium text-base">{data?.amountCredited}</td>
+                                        </tr>
+                                    );
+                                })
+                            ) : (
+                                <tr>
+                                    <td colSpan={7} style={{ textAlign: 'center' }}>
+                                        <span className="align-middle m-auto mb-10">No Member</span>
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                     <InfiniteScroll

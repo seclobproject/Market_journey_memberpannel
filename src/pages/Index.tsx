@@ -1,14 +1,11 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import axios from 'axios';
-import Analytics from './Analytics';
 import { Dialog, Transition } from '@headlessui/react';
 import IconPlayCircle from '../components/Icon/IconPlayCircle';
-import IconX from '../components/Icon/IconX';
-import IconPlus from '../components/Icon/IconPlus';
+
 import IconCreditCard from '../components/Icon/IconCreditCard';
 import { ApiCall, Base_url } from '../Services/Api';
-import { AwardsUrl, getImagesUrl, getProfileUrl, getVideoUrl, liveNewsUrl } from '../utils/EndPoints';
-import Carousel from './Components/Carousel';
+import { AwardsUrl, getImagesUrl, getVideoUrl, liveNewsUrl } from '../utils/EndPoints';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -16,14 +13,11 @@ import 'swiper/css/pagination';
 import { Autoplay, Navigation, Pagination } from 'swiper';
 import IconCaretDown from '../components/Icon/IconCaretDown';
 import { Link, useNavigate } from 'react-router-dom';
-import IconMenuUsers from '../components/Icon/Menu/IconMenuUsers';
 import IconCashBanknotes from '../components/Icon/IconCashBanknotes';
-import IconAirplay from '../components/Icon/IconAirplay';
 import Marquee from 'react-fast-marquee';
 import { useAppDispatch, useAppSelector } from '../store';
 import { userProfileApi } from '../store/UserSlice';
 import RankList from './Components/RankList';
-// import { getTokenWithExpiry } from './Authentication/LoginBoxed';
 
 // interface ProfileDetails {
 //     id: string;
@@ -171,10 +165,11 @@ const Index = () => {
     };
     // ---
 
+    // ----upload pending  det
     const handleUpload = async () => {
         if (selectedFile) {
             try {
-                setLoading(true); // Set loading to true when form submission begins
+                setLoading(true);
 
                 const token: any = sessionStorage.getItem('User');
                 const config = {

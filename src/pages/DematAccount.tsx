@@ -1,10 +1,9 @@
 import { Dialog, Transition } from '@headlessui/react';
 import React, { Fragment, useEffect, useState } from 'react';
 import { ApiCall } from '../Services/Api';
-import { addDematAccounturl, allDematAccountsurl, editDematAccounturl } from '../utils/EndPoints';
+import { addAndEditDematAccounturl, allDematAccountsurl } from '../utils/EndPoints';
 import { Show_Toast } from './Components/Toast';
-import IconTrash from '../components/Icon/IconTrash';
-import IconInfoTriangle from '../components/Icon/IconInfoTriangle';
+
 
 const DematAccount = () => {
     const [allAccounts, setAllAccount] = useState<any>([]);
@@ -18,7 +17,7 @@ const DematAccount = () => {
         email: '',
         address: '',
     });
-    const [id, setId] = useState('');
+    const [AccountId, setAccountId] = useState('');
 
     useEffect(() => {
         getAllAccountList();
@@ -47,9 +46,10 @@ const DematAccount = () => {
     const handleAddDematAccount = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response: any = await ApiCall('post', addDematAccounturl, dematDetails);
+            const response: any = await ApiCall('post', addAndEditDematAccounturl, dematDetails);
             if (response.status === 200) {
                 setAddModal(false);
+                 getAllAccountList();
                 setDematDetails({
                     name: '',
                     phone: '',
@@ -71,12 +71,13 @@ const DematAccount = () => {
     const handleEditDematAccount = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response: any = await ApiCall('post', editDematAccounturl, dematDetails, id);
+            const response: any = await ApiCall('post', addAndEditDematAccounturl, dematDetails, { id: AccountId });
             console.log('====================================');
             console.log(response);
             console.log('====================================');
             if (response.status === 200) {
                 setEditModal(false);
+                getAllAccountList()
                 setDematDetails({
                     name: '',
                     phone: '',
@@ -95,7 +96,7 @@ const DematAccount = () => {
 
     const handleEdit = (id: string) => {
         setEditModal(true);
-        setId(id);
+        setAccountId(id);
     };
     // const handleDelete = (id: string) => {
     //     setDeleteModal(true);

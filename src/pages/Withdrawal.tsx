@@ -11,6 +11,7 @@ import IconUser from '../components/Icon/IconUser';
 const Withdrawal = () => {
     const [requestModal, setRequestModal] = useState(false);
     const [withdrawalHistory, setWithdrawalHistory] = useState<any>();
+    const [walletAmount,setWalletAmount]=useState();
     const [withdrawalRequest, setWithdrawalRequest] = useState({ withdrawAmount: '' });
     const [tdsAmount, setTdsAmount] = useState(0);
     const [totalAmount, setTotalAmount] = useState(0);
@@ -28,7 +29,12 @@ const Withdrawal = () => {
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
-                setWithdrawalHistory(response?.data);
+                setWalletAmount(response?.data?.walletAmount);
+                 const FormatedReport = response?.data?.walletWithdrawHistory.map((item: any) => ({
+                     ...item,
+                     createdAt: formatTimestamp(item.createdAt),
+                 }));
+                 setWithdrawalHistory(FormatedReport);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
             }
@@ -78,6 +84,11 @@ const Withdrawal = () => {
         }
     };
 
+        const formatTimestamp = (timestamp: string) => {
+            const date = new Date(timestamp);
+            const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+            return formattedDate;
+        };
     return (
         <>
             <div className="panel">
@@ -86,7 +97,7 @@ const Withdrawal = () => {
                 </div>
                 <div className="panel lg:h-[100px]  sm:h-auto flex gap-4  items-center justify-around bg-[#00335B] text-white mb-3 max-w-sm">
                     <div className="flex flex-col gap-2">
-                        <h1 className="text-[25px] font-semibold">₹ {withdrawalHistory?.walletAmount}</h1>
+                        <h1 className="text-[25px] font-semibold">₹ {walletAmount}</h1>
                         <h5 className="font-semibold text-md text-warning">Your Balance</h5>
                     </div>
                     <div className="flex h-full justify-between items-center  dark:text-white-light">
@@ -101,18 +112,20 @@ const Withdrawal = () => {
                         <thead>
                             <tr>
                                 <th>Requested Amount</th>
+                                <th>Date</th>
                                 <th>TDS Amount</th>
                                 <th> Total Amount</th>
                                 <th> Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {withdrawalHistory?.walletWithdrawHistory?.map((data: any) => {
+                            {withdrawalHistory?.map((data: any) => {
                                 return (
-                                    <tr key={data?.id}>
+                                    <tr key={data?._id}>
                                         <td>
                                             <div className="whitespace-nowrap">₹ {data?.requestedAmount}</div>
                                         </td>
+                                        <td>{data?.createdAt}</td>
                                         <td>{data?.TDS}</td>
                                         <td>₹ {data?.releasedAmount}</td>
                                         <td>

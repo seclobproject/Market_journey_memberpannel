@@ -23,8 +23,7 @@ export const updateNomineeDetailsurl = '/api/user/add-nominee';
 
 // demat account
 export const allDematAccountsurl = '/api/user/view-demate-accounts';
-export const addDematAccounturl = '/api/user/add-demate-account';
-export const editDematAccounturl=''
+export const addAndEditDematAccounturl = '/api/user/add-demate-account';
 
 // Home
 export const liveNewsUrl = '/api/admin/view-news-details';
@@ -35,7 +34,7 @@ export const getVideoUrl = '/api/admin/view-home-videos';
 export const DirectReportUrl = '/api/user/direct-referal-report';
 export const InDirectReportUrl = '/api/user/indirect-referal-report';
 export const LevelIncomeReportUrl = '/api/user/level-income-report';
-export const AutoPoolReportUrl = ''
+export const AutoPoolReportUrl = '/api/user/autopool-credit-report';
 export const BonusReportUrl = ''
 
 // withdrawal

@@ -12,7 +12,6 @@ const News = () => {
     const showLiveNewes = async () => {
         try {
             const response = await ApiCall('get', liveNewsUrl);
-            console.log(response);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -40,7 +39,6 @@ const News = () => {
         const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} ${date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })}`;
         return formattedDate;
     };
-
     return (
 
         <div>
