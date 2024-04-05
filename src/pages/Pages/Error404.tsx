@@ -6,9 +6,9 @@ import { IRootState } from '../../store';
 
 const Error404 = () => {
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setPageTitle('Error 404'));
-    });
+    // useEffect(() => {
+    //     dispatch(setPageTitle('Error 404'));
+    // });
     const isDark = useSelector((state: IRootState) => state.themeConfig.theme === 'dark' || state.themeConfig.isDarkMode);
 
     return (

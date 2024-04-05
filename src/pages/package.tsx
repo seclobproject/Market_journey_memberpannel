@@ -9,8 +9,6 @@ const Package = () => {
         const fetchPackages = async () => {
             try {
                 const res: any = await ApiCall('get', packagesListUrl);
-                console.log(res);
-
                 setPackagesList(res?.data?.packageData);
             } catch (error) {
                 console.error('Error fetching notifications:', error);
@@ -26,7 +24,7 @@ const Package = () => {
                 <h5 className="font-semibold text-warning text-lg dark:text-white-light">Package</h5>
             </div>
             {packagesList.map((pkg: any) => (
-                <div
+                <div key={pkg?._id}
                     className="max-w-[600px] flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2
                 
                 "

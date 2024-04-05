@@ -64,7 +64,7 @@ const Profile = () => {
         ifscCode: '',
         accountNum: '',
         aadhaarNum: '',
-        pancardNum:'',
+        pancardNum: '',
     });
     const [editUserModal, setEditUserModal] = useState(false);
     const [updateBankModal, setUpdateBankModal] = useState(false);
@@ -75,9 +75,16 @@ const Profile = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(setPageTitle('Profile'));
+        // dispatch(setPageTitle('Profile'));
         dispatch(userProfileApi());
+        setBankDetails(user?.bankDetails);
+        setEditProfileData(user);
+        setNomineeDetails(user?.nomineeDetails);
     }, []);
+
+    useEffect(() => {
+        setBankDetails(user?.bankDetails);
+    }, [bankDetails]);
 
     useEffect(() => {
         if (confirmPassword === editProfleData.password) {
@@ -267,7 +274,7 @@ const Profile = () => {
                     </div>
                     {/* <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5"> */}
                     <div className="flex flex-wrap justify-between">
-                        <div className="panel mb-5 bg-primary w-full lg:max-w-[650px] px-10">
+                        <div className="panel mb-5 bg-primary w-full px-10">
                             <div className="flex items-center justify-between">
                                 <h5 className="font-semibold text-warning text-lg dark:text-white-light">Profile</h5>
                                 <div onClick={() => setEditUserModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">
@@ -328,12 +335,16 @@ const Profile = () => {
                                             <IconPencil className="shrink-0" fill />
                                             Franchise Name : {user.franchiseName}
                                         </li>
+                                        <li className="flex items-center gap-3">
+                                            <IconPencil className="shrink-0" fill />
+                                            Pool Rank: {user.pool}
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="panel mb-5 p-5 bg-primary w-full lg:max-w-[500px]">
+                        <div className="panel mb-5 p-5 bg-[#DDE4EB]  w-full">
                             <div className="flex mb-5 ">
                                 <h5 className="font-semibold text-warning text-lg dark:text-white-light">Bank Details</h5>
                                 <div onClick={() => setUpdateBankModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">
@@ -341,7 +352,7 @@ const Profile = () => {
                                 </div>
                             </div>
                             <div className="mb-5">
-                                <ul className="mt-5 m-auto space-y-4 text-white font-semibold text-base">
+                                <ul className="mt-5 m-auto space-y-4 text-primary font-semibold text-base">
                                     <li>
                                         <div className="flex items-center gap-3 ">
                                             <IconUser className="w-5 h-5 shrink-0" fill />
@@ -368,14 +379,14 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
-            <div className="bg-[#DDE4EB] w-full p-5">
+            <div className="bg-primary w-full p-5">
                 <div className="flex mb-5 ">
                     <h5 className="font-semibold text-warning text-lg dark:text-white-light">Nominee Details</h5>
                     <div onClick={() => setUpdateNomineeModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">
                         <IconPencilPaper />
                     </div>
                 </div>
-                <ul className="mt-5 m-auto space-y-4 text-primary font-semibold text-base">
+                <ul className="mt-5 m-auto space-y-4 text-white font-semibold text-base">
                     <li>
                         <div className="flex items-center gap-3">
                             <IconUser className="w-5 h-5 shrink-0" fill />
@@ -463,7 +474,7 @@ const Profile = () => {
                                                             onChange={(e) => setEditProfileData({ ...editProfleData, name: e.target.value })}
                                                             id="name"
                                                             type="text"
-                                                            value={editProfleData.name}
+                                                            value={editProfleData?.name}
                                                             placeholder="Enter your name"
                                                             className="form-input"
                                                         />
@@ -474,7 +485,7 @@ const Profile = () => {
                                                         <input
                                                             onChange={(e) => setEditProfileData({ ...editProfleData, address: e.target.value })}
                                                             id="address"
-                                                            value={editProfleData.address}
+                                                            value={editProfleData?.address}
                                                             type="text"
                                                             placeholder="Address"
                                                             className="form-input"
@@ -485,7 +496,7 @@ const Profile = () => {
                                                         <input
                                                             onChange={(e) => setEditProfileData({ ...editProfleData, email: e.target.value })}
                                                             id="email"
-                                                            value={editProfleData.email}
+                                                            value={editProfleData?.email}
                                                             type="email"
                                                             placeholder="Email"
                                                             className="form-input"
@@ -497,7 +508,7 @@ const Profile = () => {
                                                             onChange={(e) => setEditProfileData({ ...editProfleData, password: e.target.value })}
                                                             id="newPassword"
                                                             type="text"
-                                                            value={editProfleData.password}
+                                                            value={editProfleData?.password}
                                                             placeholder="Enter new password"
                                                             className="form-input"
                                                         />
@@ -580,7 +591,7 @@ const Profile = () => {
                                                                 onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
                                                                 id="bankname"
                                                                 type="text"
-                                                                value={bankDetails.bankName}
+                                                                value={bankDetails?.bankName}
                                                                 placeholder="Enter bank name"
                                                                 className="form-input"
                                                             />
@@ -591,7 +602,7 @@ const Profile = () => {
                                                                 onChange={(e) => setBankDetails({ ...bankDetails, holderName: e.target.value })}
                                                                 id="holderName"
                                                                 type="text"
-                                                                value={bankDetails.holderName}
+                                                                value={bankDetails?.holderName}
                                                                 placeholder="Enter holder name"
                                                                 className="form-input"
                                                             />
@@ -602,7 +613,7 @@ const Profile = () => {
                                                             <input
                                                                 onChange={(e) => setBankDetails({ ...bankDetails, accountNum: e.target.value })}
                                                                 id="ACNumber"
-                                                                value={bankDetails.accountNum}
+                                                                value={bankDetails?.accountNum}
                                                                 type="text"
                                                                 placeholder="Account number"
                                                                 className="form-input"
@@ -613,7 +624,7 @@ const Profile = () => {
                                                             <input
                                                                 onChange={(e) => setBankDetails({ ...bankDetails, ifscCode: e.target.value })}
                                                                 id="ifsc"
-                                                                value={bankDetails.ifscCode}
+                                                                value={bankDetails?.ifscCode}
                                                                 type="text"
                                                                 placeholder="Enter IfscCode"
                                                                 className="form-input"
@@ -686,7 +697,7 @@ const Profile = () => {
                                                                 onChange={(e) => setNomineeDetails({ ...nomineeDetail, name: e.target.value })}
                                                                 id="nomineeName"
                                                                 type="text"
-                                                                value={nomineeDetail.name}
+                                                                value={nomineeDetail?.name}
                                                                 placeholder="Enter name"
                                                                 className="form-input"
                                                             />
@@ -697,8 +708,19 @@ const Profile = () => {
                                                                 onChange={(e) => setNomineeDetails({ ...nomineeDetail, phone: e.target.value })}
                                                                 id="Phone"
                                                                 type="text"
-                                                                value={nomineeDetail.phone}
+                                                                value={nomineeDetail?.phone}
                                                                 placeholder="Enter Phone"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+                                                        <div className="mr-2">
+                                                            <label htmlFor="bankName">Bank Name</label>
+                                                            <input
+                                                                onChange={(e) => setNomineeDetails({ ...nomineeDetail, bankName: e.target.value })}
+                                                                id="bankName"
+                                                                type="text"
+                                                                value={nomineeDetail?.bankName}
+                                                                placeholder="Enter Bank Name"
                                                                 className="form-input"
                                                             />
                                                         </div>
@@ -708,7 +730,7 @@ const Profile = () => {
                                                             <input
                                                                 onChange={(e) => setNomineeDetails({ ...nomineeDetail, accountNum: e.target.value })}
                                                                 id="ACNumber"
-                                                                value={nomineeDetail.accountNum}
+                                                                value={nomineeDetail?.accountNum}
                                                                 type="text"
                                                                 placeholder="Account number"
                                                                 className="form-input"
@@ -719,7 +741,7 @@ const Profile = () => {
                                                             <input
                                                                 onChange={(e) => setNomineeDetails({ ...nomineeDetail, ifscCode: e.target.value })}
                                                                 id="ifsc"
-                                                                value={nomineeDetail.ifscCode}
+                                                                value={nomineeDetail?.ifscCode}
                                                                 type="text"
                                                                 placeholder="Enter IfscCode"
                                                                 className="form-input"
@@ -730,7 +752,7 @@ const Profile = () => {
                                                             <input
                                                                 onChange={(e) => setNomineeDetails({ ...nomineeDetail, address: e.target.value })}
                                                                 id="address"
-                                                                value={nomineeDetail.address}
+                                                                value={nomineeDetail?.address}
                                                                 type="text"
                                                                 placeholder="Enter Address"
                                                                 className="form-input"
@@ -741,7 +763,7 @@ const Profile = () => {
                                                             <input
                                                                 onChange={(e) => setNomineeDetails({ ...nomineeDetail, aadhaarNum: e.target.value })}
                                                                 id="address"
-                                                                value={nomineeDetail.aadhaarNum}
+                                                                value={nomineeDetail?.aadhaarNum}
                                                                 type="text"
                                                                 placeholder="Enter Aadhaar Number"
                                                                 className="form-input"
@@ -752,7 +774,7 @@ const Profile = () => {
                                                             <input
                                                                 onChange={(e) => setNomineeDetails({ ...nomineeDetail, pancardNum: e.target.value })}
                                                                 id="address"
-                                                                value={nomineeDetail.pancardNum}
+                                                                value={nomineeDetail?.pancardNum}
                                                                 type="text"
                                                                 placeholder="Enter Pancard Number"
                                                                 className="form-input"

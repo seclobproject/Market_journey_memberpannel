@@ -27,8 +27,10 @@ export const addAndEditDematAccounturl = '/api/user/add-demate-account';
 
 // Home
 export const liveNewsUrl = '/api/admin/view-news-details';
+export const viewAutoPoolUrl = '/api/user/get-pool-count-amount';
 export const getImagesUrl = '/api/admin/view-home-images';
 export const getVideoUrl = '/api/admin/view-home-videos';
+
 
 // Reports
 export const DirectReportUrl = '/api/user/direct-referal-report';

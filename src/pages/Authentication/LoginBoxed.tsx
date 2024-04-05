@@ -35,8 +35,8 @@ const LoginBoxed = () => {
                 // Navigate to the dashboard
                 navigate('/', { replace: true });
             } else {
-                setErrorMessage(result?.payload?.response?.data?.message || 'Invalid Email or Password');
-                Show_Toast({ message: errormessage, type: false });
+                setErrorMessage(result?.payload?.response?.data?.message);
+                Show_Toast({ message: errormessage?errormessage:'internal server error', type: false });
             }
         } catch (error: any) {
             console.error('Error occurred during login:', error);

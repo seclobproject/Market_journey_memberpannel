@@ -5,7 +5,7 @@ import IconPlayCircle from '../components/Icon/IconPlayCircle';
 
 import IconCreditCard from '../components/Icon/IconCreditCard';
 import { ApiCall, Base_url } from '../Services/Api';
-import { AwardsUrl, getImagesUrl, getVideoUrl, liveNewsUrl } from '../utils/EndPoints';
+import { AwardsUrl, getImagesUrl, getVideoUrl, liveNewsUrl, viewAutoPoolUrl } from '../utils/EndPoints';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -39,6 +39,7 @@ const Index = () => {
     const [slideVideos, setSlideVideos] = useState<any>([]);
     const [awards, setAwards] = useState<any>([]);
     const [news, setNews] = useState<any>([]);
+    const [autoPool, setAutoPool] = useState<any>([]);
     // const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
     //     name: '',
     //     email: '',
@@ -58,6 +59,7 @@ const Index = () => {
         getVideos();
         showAwards();
         showLiveNewes();
+        getAutopPool()
     }, []);
     useEffect(() => {
         // const token: any = getTokenWithExpiry('User');
@@ -140,6 +142,26 @@ const Index = () => {
             console.error('Error fetching state list:', error);
         }
     };
+
+    //----- get autopool values--------
+    const getAutopPool = async () => {
+        try {
+            const response = await ApiCall('get', viewAutoPoolUrl);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                console.log(response.data);
+                
+                setAutoPool(response?.data?.pool);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    //get news api call
     const showLiveNewes = async () => {
         try {
             const response = await ApiCall('get', liveNewsUrl);
@@ -201,7 +223,7 @@ const Index = () => {
 
     // share referal link
     const shareTitle = 'Check out this awesome link!';
-    const shareUrl = `http://192.168.29.203:5173/auth/boxed-signup/${user?.id}`; // Replace with the actual URL you want to share
+    const shareUrl = `http://192.168.29.152:6003/auth/boxed-signup/${user?.id}`; // Replace with the actual URL you want to share
 
     const handleShare = async () => {
         if (navigator.share) {
@@ -345,7 +367,7 @@ const Index = () => {
                                     return (
                                         <div key={award._id} className="min-h-full min-w-[220px] max-w-[220px] gap-2 w-full p-5 bg-white  flex flex-col items-center shadow-md rounded-[12px]">
                                             <div className="w-20 h-20 ">
-                                                <img className="w-full rounded-full shadow-md" src={`${Base_url}/uploads/${award?.memberImage}`} alt="profile" />
+                                                <img className="w-full rounded-full h-20 shadow-md" src={`${Base_url}/uploads/${award?.memberImage}`} alt="profile" />
                                             </div>
                                             <span className="text-[16px] font-[600]">{award?.memberName}</span>
                                             <span>{award?.achivedDetails}</span>
@@ -370,14 +392,13 @@ const Index = () => {
 
                 <div className="mt-10 lg:mt-16 text-primary ">
                     <div className="flex justify-between">
-                        <h2 className="mb-6 font-bold text-lg">Rank list</h2>
+                        <h2 className="mb-6 font-bold text-lg">Leader Boards</h2>
                     </div>
                     <>
                         <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
-                            <RankList pool={'Pool A'} members={100} amount={100} />
-                            <RankList pool={'Pool B'} members={100} amount={100} />
-                            <RankList pool={'Pool C'} members={100} amount={100} />
-                            <RankList pool={'Pool D'} members={100} amount={100} />
+                            {autoPool?.map((pool: any, index: number) => (
+                                <RankList key={index} pool={String.fromCharCode(65 + index)} members={pool?.count} amount={pool?.amount} />
+                            ))}
                         </div>
                     </>
                 </div>
@@ -422,7 +443,7 @@ const Index = () => {
 
                                             return (
                                                 <SwiperSlide key={item._id}>
-                                                    <img src={`${Base_url}/uploads/${item.videoThambnail}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
+                                                    <img src={`${Base_url}/uploads/${item.videoThambnail}`} className="w-full h-[200px] object-cover rounded-lg" alt="itemImg" />
                                                     <Link to={`${item.videoLink}`} target="_blank">
                                                         <button
                                                             type="button"
@@ -453,10 +474,10 @@ const Index = () => {
                                 })} */}
                                     </Swiper>
                                 </div>
-                                <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
                                     <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
                                 </button>
-                                <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
                                     <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
                                 </button>
                             </>
@@ -497,16 +518,16 @@ const Index = () => {
                                         {slideImages.map((item: any) => {
                                             return (
                                                 <SwiperSlide key={item._id}>
-                                                    <img src={`${Base_url}/uploads/${item?.homeImage}`} className="w-full h-[200px] rounded-lg" alt="itemImg" />
+                                                    <img src={`${Base_url}/uploads/${item?.homeImage}`} className="w-full object-cover h-[200px] rounded-lg" alt="itemImg" />
                                                 </SwiperSlide>
                                             );
                                         })}
                                     </Swiper>
                                 </div>
-                                <button className="swiper-button-prev-ex1 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                <button className="swiper-button-prev-ex1 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
                                     <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
                                 </button>
-                                <button className="swiper-button-next-ex1 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary hover:bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                <button className="swiper-button-next-ex1 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
                                     <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
                                 </button>
                             </>

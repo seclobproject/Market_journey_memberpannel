@@ -6,7 +6,7 @@ import { AutoPoolReportUrl, BonusReportUrl, DirectReportUrl, InDirectReportUrl, 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Report = () => {
-    const [activeButton, setActiveButton] = useState('Direct');
+    const [activeButton, setActiveButton] = useState('directIncome');
     const [reports, setReports] = useState<any>([]);
     const [pageNumber, setPageNumber] = useState(1);
     useEffect(() => {
@@ -16,12 +16,12 @@ const Report = () => {
     //-------- direct income -------------
 
     const DirectReport = async (pageNumber?: number) => {
-        setActiveButton('Direct');
+        setActiveButton('directIncome');
         try {
             const response = await ApiCall('get', DirectReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
-                console.error('Error fetching allMembers list:', response.message);
+                console.error('Error fetching  Direct Icome list:', response.message);
             } else if (response.status === 200) {
                 const FormatedReport = response?.data?.directIncome.map((item: any) => ({
                     ...item,
@@ -29,21 +29,21 @@ const Report = () => {
                 }));
                 setReports(FormatedReport);
             } else {
-                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+                console.error('Error fetching Direct Icome list. Unexpected status:', response.status);
             }
         } catch (error) {
-            console.error('Error fetching allMembers list:', error);
+            console.error('Error fetching Direct Icome list:', error);
         }
     };
 
     // -------InDirect income --------------
     const InDirectReport = async (pageNumber?: number) => {
-        setActiveButton('InDirect');
+        setActiveButton('inDirectIncome');
         try {
             const response = await ApiCall('get', InDirectReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
-                console.error('Error fetching allMembers list:', response.message);
+                console.error('Error fetching InDirect list:', response.message);
             } else if (response.status === 200) {
                 const FormatedReport = response?.data?.inDirectIncome.map((item: any) => ({
                     ...item,
@@ -51,10 +51,10 @@ const Report = () => {
                 }));
                 setReports(FormatedReport);
             } else {
-                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+                console.error('Error fetching InDirect list. Unexpected status:', response.status);
             }
         } catch (error) {
-            console.error('Error fetching allMembers list:', error);
+            console.error('Error fetching InDirect list:', error);
         }
     };
 
@@ -62,12 +62,12 @@ const Report = () => {
 
     const LevelIncomeReport = async (pageNumber?: number) => {
         setPageNumber(1);
-        setActiveButton('LevelIncome');
+        setActiveButton('levelIncome');
         try {
             const response = await ApiCall('get', LevelIncomeReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
-                console.error('Error fetching allMembers list:', response.message);
+                console.error('Error fetching levelIncome list:', response.message);
             } else if (response.status === 200) {
                 const FormatedReport = response?.data?.levelIncome.map((item: any) => ({
                     ...item,
@@ -75,22 +75,22 @@ const Report = () => {
                 }));
                 setReports(FormatedReport);
             } else {
-                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+                console.error('Error fetching levelIncome list. Unexpected status:', response.status);
             }
         } catch (error) {
-            console.error('Error fetching allMembers list:', error);
+            console.error('Error fetching levelIncome list:', error);
         }
     };
     // -------Auto pool report--------------
 
     const AutoPoolReport = async (pageNumber?: number) => {
         setPageNumber(1);
-        setActiveButton('Autopool');
+        setActiveButton('autoPoolCreditHistory');
         try {
             const response = await ApiCall('get', AutoPoolReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
-                console.error('Error fetching allMembers list:', response.message);
+                console.error('Error fetching auto pool list:', response.message);
             } else if (response.status === 200) {
                 console.log(response?.data);
 
@@ -101,10 +101,10 @@ const Report = () => {
                 setReports(FormatedReport);
                 // setPaginationDetails(response?.data?.pagination);
             } else {
-                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+                console.error('Error fetching auto pool list. Unexpected status:', response.status);
             }
         } catch (error) {
-            console.error('Error fetching allMembers list:', error);
+            console.error('Error fetching auto pool list:', error);
         }
     };
     // -------Bonus report--------------
@@ -116,7 +116,7 @@ const Report = () => {
             const response = await ApiCall('get', BonusReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
-                console.error('Error fetching allMembers list:', response.message);
+                console.error('Error fetching bonus list:', response.message);
             } else if (response.status === 200) {
                 const FormatedReport = response?.data?.addBonus.map((item: any) => ({
                     ...item,
@@ -125,10 +125,10 @@ const Report = () => {
                 setReports(FormatedReport);
                 // setPaginationDetails(response?.data?.pagination);
             } else {
-                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+                console.error('Error fetching bonus list. Unexpected status:', response.status);
             }
         } catch (error) {
-            console.error('Error fetching allMembers list:', error);
+            console.error('Error fetching bonus list:', error);
         }
     };
 
@@ -138,13 +138,13 @@ const Report = () => {
             try {
                 const response = await ApiCall(
                     'get',
-                    activeButton === 'Direct'
+                    activeButton === 'directIncome'
                         ? DirectReportUrl
-                        : activeButton === 'InDirect'
+                        : activeButton === 'inDirectIncome'
                         ? InDirectReportUrl
-                        : activeButton === 'LevelIncome'
+                        : activeButton === 'levelIncome'
                         ? LevelIncomeReportUrl
-                        : activeButton === 'Autopool'
+                        : activeButton === 'autoPoolCreditHistory'
                         ? AutoPoolReportUrl
                         : BonusReportUrl,
                     '',
@@ -157,11 +157,12 @@ const Report = () => {
                 if (response instanceof Error) {
                     console.error('Error fetching allMembers list:', response.message);
                 } else if (response.status === 200) {
-                    const FormatedReport = response?.data?.levelIncome.map((item: any) => ({
-                        ...item,
-                        createdAt: formatTimestamp(item.createdAt),
-                    }));
-                    setReports(reports.concat(FormatedReport));
+                    const formattedReport =
+                        response.data?.[activeButton]?.map((item: any) => ({
+                            ...item,
+                            createdAt: formatTimestamp(item.createdAt),
+                        }));
+                    setReports(reports.concat(formattedReport));
                     setPageNumber(pageNumber + 1);
                 } else {
                     console.error('Error fetching allMembers list. Unexpected status:', response.status);
@@ -193,7 +194,7 @@ const Report = () => {
                 <div
                     onClick={() => DirectReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
-                        activeButton === 'Direct' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                        activeButton === 'directIncome' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
                 >
                     Direct
@@ -201,7 +202,7 @@ const Report = () => {
                 <div
                     onClick={() => InDirectReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
-                        activeButton === 'InDirect' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                        activeButton === 'inDirectIncome' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
                 >
                     InDirect
@@ -209,7 +210,7 @@ const Report = () => {
                 <div
                     onClick={() => LevelIncomeReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
-                        activeButton === 'LevelIncome' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                        activeButton === 'levelIncome' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
                 >
                     LevelIncome
@@ -217,7 +218,7 @@ const Report = () => {
                 <div
                     onClick={() => AutoPoolReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
-                        activeButton === 'Autopool' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                        activeButton === 'autoPoolCreditHistory' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
                 >
                     Auto pool
@@ -241,8 +242,8 @@ const Report = () => {
                             <tr>
                                 <th>SIno</th>
                                 <th>Date</th>
-
-                                <th>Name</th>
+                                {activeButton !== 'Autopool' && activeButton !== 'bonus' ? <th>Name</th> : <th>Designation</th>}
+                                {/* <th>Name</th> */}
                                 {activeButton !== 'LevelIncome' && activeButton !== 'Autopool' && activeButton !== 'bonus' ? <th> Franchise</th> : <th></th>}
 
                                 <th> PercentageCredited</th>
@@ -258,7 +259,7 @@ const Report = () => {
                                                 <div className="font-medium text-base">{index + 1}</div>
                                             </td>
                                             <td className="font-medium text-base">{data?.createdAt}</td>
-
+                                            {/* <td className="whitespace-nowrap font-medium text-base">{data?.designation}</td> */}
                                             <td>
                                                 <div className="whitespace-nowrap font-medium text-base">{data?.name}</div>
                                             </td>
@@ -273,7 +274,7 @@ const Report = () => {
                             ) : (
                                 <tr>
                                     <td colSpan={7} style={{ textAlign: 'center' }}>
-                                        <span className="align-middle m-auto mb-10">No Member</span>
+                                        <span className="align-middle m-auto mb-10">No Reports</span>
                                     </td>
                                 </tr>
                             )}

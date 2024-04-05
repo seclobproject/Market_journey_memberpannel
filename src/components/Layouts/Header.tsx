@@ -190,7 +190,7 @@ const Header = () => {
                                                             <div className="group flex items-center px-4 py-2">
                                                                 <div className="grid place-content-center rounded">
                                                                     <div className="w-12 h-12 relative">
-                                                                        <img src="/public/web logo-01.png" alt="img" className="w-14 h-14 rounded-full object-none m-auto" />
+                                                                        <img src="/public/web logo-01.ico" alt="img" className="w-14 h-14 rounded-full object-none m-auto" />
                                                                         {/* <span className="bg-success w-2 h-2 rounded-full block absolute right-[6px] bottom-0"></span> */}
                                                                     </div>
                                                                 </div>

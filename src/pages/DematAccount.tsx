@@ -1,12 +1,17 @@
 import { Dialog, Transition } from '@headlessui/react';
 import React, { Fragment, useEffect, useState } from 'react';
 import { ApiCall } from '../Services/Api';
-import { addAndEditDematAccounturl, allDematAccountsurl } from '../utils/EndPoints';
+import { addAndEditDematAccounturl, allDematAccountsurl, districtlistindropdownUrl, statelistPageUrl, zonallistindropdownUrl } from '../utils/EndPoints';
 import { Show_Toast } from './Components/Toast';
-
 
 const DematAccount = () => {
     const [allAccounts, setAllAccount] = useState<any>([]);
+    const [stateList, setStateList] = useState<any>([]);
+    const [districtList, setDistrictList] = useState([]);
+    const [zonalList, setZonalList] = useState([]);
+    const [selectedStateId, setSelectedStateId] = useState('');
+    const [selectedDistrictId, setSelectedDistrictId] = useState('');
+    // const [selectedZonalId, setSelectedZonalId] = useState('');
     const [addModal, setAddModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
     // const [deleteModal, setDeleteModal] = useState(false);
@@ -15,6 +20,9 @@ const DematAccount = () => {
         phone: '',
         demateUserName: '',
         email: '',
+        state: '',
+        district: '',
+        zonal: '',
         address: '',
     });
     const [AccountId, setAccountId] = useState('');
@@ -22,6 +30,21 @@ const DematAccount = () => {
     useEffect(() => {
         getAllAccountList();
     }, []);
+
+    useEffect(() => {
+        if (addModal === true || editModal === true) {
+            getStateList();
+        }
+    }, [addModal, editModal]);
+
+    useEffect(() => {
+        if (selectedStateId) {
+            getDistrictList();
+        }
+        if (selectedDistrictId) {
+            getZonallist();
+        }
+    }, [selectedStateId, selectedDistrictId]);
 
     //----------- get all demat account ----------
 
@@ -49,12 +72,15 @@ const DematAccount = () => {
             const response: any = await ApiCall('post', addAndEditDematAccounturl, dematDetails);
             if (response.status === 200) {
                 setAddModal(false);
-                 getAllAccountList();
+                getAllAccountList();
                 setDematDetails({
                     name: '',
                     phone: '',
                     demateUserName: '',
                     email: '',
+                    state: '',
+                    district: '',
+                    zonal: '',
                     address: '',
                 });
                 Show_Toast({ message: 'Add Demat Account success', type: true });
@@ -77,12 +103,15 @@ const DematAccount = () => {
             console.log('====================================');
             if (response.status === 200) {
                 setEditModal(false);
-                getAllAccountList()
+                getAllAccountList();
                 setDematDetails({
                     name: '',
                     phone: '',
                     demateUserName: '',
                     email: '',
+                    state: '',
+                    district: '',
+                    zonal: '',
                     address: '',
                 });
                 Show_Toast({ message: 'Edit Demat Account success', type: true });
@@ -90,6 +119,57 @@ const DematAccount = () => {
         } catch (error: any) {
             console.log(error?.response?.data?.message);
             Show_Toast({ message: error?.response?.data?.message, type: false });
+        }
+    };
+
+    //------------------- get all state------------------
+
+    const getStateList = async () => {
+        try {
+            const response = await ApiCall('get', statelistPageUrl);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setStateList(response?.data?.states);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    //-----------list district --------
+    const getDistrictList = async () => {
+        try {
+            const response = await ApiCall('get', `${districtlistindropdownUrl}/${selectedStateId}`);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setDistrictList(response?.data?.districts);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+
+    //-----------list Zonal --------
+    const getZonallist = async () => {
+        try {
+            const response = await ApiCall('get', `${zonallistindropdownUrl}/${selectedDistrictId}`);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setZonalList(response?.data?.zonals);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
         }
     };
     //-------- edit Demat Account end ---------
@@ -102,6 +182,22 @@ const DematAccount = () => {
     //     setDeleteModal(true);
     //     setAccountId(id);
     // };
+
+    // ----------select state and get state id ---------------
+    const stateSelectHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = e.target.value;
+        const selectedState = stateList.find((state: any) => state.stateName === selectedValue);
+
+        if (selectedState) {
+            setDematDetails({
+                ...dematDetails,
+                state: selectedState.stateName,
+                district: '',
+            });
+            setSelectedStateId(selectedState.id);
+        }
+    };
+    //--------------------------------
     return (
         <>
             {/* <div className={`panel ${reports.length >= 10 ? 'min-h-[95vh]' : 'h-full'}`}> */}
@@ -124,6 +220,8 @@ const DematAccount = () => {
                                 <th>Phone</th>
                                 <th>Demat Username</th>
                                 <th> Email</th>
+                                <th> District</th>
+                                <th> zonal</th>
                                 <th> Address</th>
                                 <th> Actions</th>
                             </tr>
@@ -143,6 +241,8 @@ const DematAccount = () => {
                                         <td className="font-medium text-base">{data?.demateUserName}</td>
 
                                         <td className="font-medium text-base">{data?.email}</td>
+                                        <td className="font-medium text-base"></td>
+                                        <td className="font-medium text-base"></td>
 
                                         <td className="text-center font-medium text-base">{data?.address}</td>
                                         <td className="text-center flex gap-5 items-center">
@@ -274,6 +374,77 @@ const DematAccount = () => {
                                                             />
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div className=" w-full">
+                                                <label htmlFor="Email">State</label>
+                                                <div className="relative text-white-dark">
+                                                    <select className="form-input ps-10 placeholder:text-white-dark" onChange={stateSelectHandler} value={dematDetails.state}>
+                                                        <option key="default" value="">
+                                                            Select State
+                                                        </option>
+                                                        {stateList.map((singleState: any, idx: any) => (
+                                                            <option key={idx} value={singleState.stateName}>
+                                                                {singleState.stateName}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div className=" w-full">
+                                                <label htmlFor="district">District</label>
+                                                <div className="relative text-white-dark">
+                                                    <select
+                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                        onChange={(e) => {
+                                                            const selectedValue = e.target.value;
+                                                            const selectedDistrict = districtList.find((dist: any) => dist.name === selectedValue) as any;
+
+                                                            if (selectedDistrict) {
+                                                                setDematDetails((prevDematDetails) => ({
+                                                                    ...prevDematDetails,
+                                                                    district: selectedDistrict?.name,
+                                                                }));
+                                                                setSelectedDistrictId(selectedDistrict?.id);
+                                                            }
+                                                        }}
+                                                        value={dematDetails.district}
+                                                    >
+                                                        <option>Select District </option>
+                                                        {districtList.map((dist: any) => (
+                                                            <option key={dist.id} value={dist.name}>
+                                                                {dist.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div className=" w-full">
+                                                <label htmlFor="zonal">zonal</label>
+                                                <div className="relative text-white-dark">
+                                                    <select
+                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                        onChange={(e) => {
+                                                            const selectedValue = e.target.value;
+                                                            const selectedzonal = zonalList.find((zonal: any) => zonal.name === selectedValue) as any;
+
+                                                            if (selectedzonal) {
+                                                                setDematDetails((prevDematDetails) => ({
+                                                                    ...prevDematDetails,
+                                                                    zonal: selectedzonal?.name,
+                                                                }));
+                                                                // setSelectedZonalId(selectedzonal?.id);
+                                                            }
+                                                        }}
+                                                        value={dematDetails.zonal}
+                                                    >
+                                                        <option>Select zonal </option>
+                                                        {zonalList.map((zonal: any) => (
+                                                            <option key={zonal.id} value={zonal.name}>
+                                                                {zonal.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div className="flex  w-full flex-col lg:flex-row gap-5 lg:flex-wrap">

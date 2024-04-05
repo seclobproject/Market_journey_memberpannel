@@ -133,7 +133,6 @@ const Member = () => {
             } else if (response.status === 200) {
                 // setPreviousMemberData(allMembers);
                 setAllMembers(response?.data?.child1);
-                console.log(response?.data?.child1);
                 
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
@@ -159,9 +158,8 @@ const Member = () => {
         setPageNumber(pageNumber + 1);
         const getLevelMembers = async () => {
             try {
-                const response = await ApiCall('get', getUsers, '', { id: userId, page: pageNumber, pageSize: 2 });
+                const response = await ApiCall('get', getUsers, '', { id: userId, page: pageNumber, pageSize: 10 });
                 // const response = await ApiCall('get', getLevelOneUsers, '', { page: pageNumber, pageSize: 10 });
-                console.log(response);
 
                 if (response instanceof Error) {
                     console.error('Error fetching allMembers list:', response.message);
@@ -433,7 +431,6 @@ const Member = () => {
                     >
                         <option value="default">Select a franchise type</option>
                         {packageList.map((option: any) => {
-                            console.log(option);
                             return <option value={option?._id}>{option?.franchiseName}</option>;
                         })}
                     </select>
