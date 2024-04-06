@@ -24,6 +24,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import IconArrowBackward from '../components/Icon/IconArrowBackward';
 import IconSearch from '../components/Icon/IconSearch';
 import IconXCircle from '../components/Icon/IconXCircle';
+import { useAppDispatch, useAppSelector } from '../store';
+import { getStatesApi } from '../store/LocationSlice';
 
 interface Member {
     name: string;
@@ -50,6 +52,7 @@ const Member = () => {
     const [addModal, setAddModal] = useState(false);
     const [showViewTreeColumn, setShowViewTreeColumn] = useState(true);
     const [allMembers, setAllMembers] = useState<any>([]);
+    const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<string | undefined>();
     // const [previousMemberData, setPreviousMemberData] = useState(null);
     const [addMember, setAddMember] = useState<Member>({
@@ -68,7 +71,7 @@ const Member = () => {
         franchiseName: '',
     });
 
-    const [stateList, setStateList] = useState<any>([]);
+    // const [stateList, setStateList] = useState<any>([]);
     const [districtList, setDistrictList] = useState([]);
     const [zonalList, setZonalList] = useState([]);
     const [panchayathList, setPanchayathList] = useState([]);
@@ -81,12 +84,17 @@ const Member = () => {
     const [totalMembers, setTotalMembers] = useState(0);
     const [search, setSearch] = useState('');
 
+    const { stateList } = useAppSelector((state) => state.location);
+
+    const dispatch = useAppDispatch();
+
     useEffect(() => {
         getMembers();
         getPackagesList();
-        getStateList();
+        dispatch(getStatesApi());
+        // getStateList();
     }, []);
-    
+
     useEffect(() => {
         if (selectedStateId) {
             if (addMember?.franchise === 'District Franchise') {
@@ -124,7 +132,8 @@ const Member = () => {
     //----Get Level members-----
     const getMembers = async (id?: string) => {
         try {
-            const response = await ApiCall('get', getUsers, '', { id: id, page: pageNumber, pageSize: 2 });
+            setLoading(true);
+            const response = await ApiCall('get', getUsers, '', { id: id, page: pageNumber, pageSize: 10 });
 
             // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
 
@@ -133,12 +142,14 @@ const Member = () => {
             } else if (response.status === 200) {
                 // setPreviousMemberData(allMembers);
                 setAllMembers(response?.data?.child1);
-                
+                setLoading(false);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
             }
         } catch (error) {
             console.error('Error fetching allMembers list:', error);
+        } finally {
+            setLoading(false);
         }
     };
     // -----handle back ---------
@@ -177,21 +188,21 @@ const Member = () => {
 
     //------------------- get all state------------------
 
-    const getStateList = async () => {
-        try {
-            const response = await ApiCall('get', statelistPageUrl);
+    // const getStateList = async () => {
+    //     try {
+    //         const response = await ApiCall('get', statelistPageUrl);
 
-            if (response instanceof Error) {
-                console.error('Error fetching state list:', response.message);
-            } else if (response.status === 200) {
-                setStateList(response?.data?.states);
-            } else {
-                console.error('Error fetching state list. Unexpected status:', response.status);
-            }
-        } catch (error) {
-            console.error('Error fetching state list:', error);
-        }
-    };
+    //         if (response instanceof Error) {
+    //             console.error('Error fetching state list:', response.message);
+    //         } else if (response.status === 200) {
+    //             setStateList(response?.data?.states);
+    //         } else {
+    //             console.error('Error fetching state list. Unexpected status:', response.status);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching state list:', error);
+    //     }
+    // };
 
     //-----------list district --------
     const getDistrictList = async () => {
@@ -348,7 +359,7 @@ const Member = () => {
     // ----------select state and get state id ---------------
     const stateSelectHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = e.target.value;
-        const selectedState = stateList.find((state: any) => state.stateName === selectedValue);
+        const selectedState = stateList?.find((state: any) => state.stateName === selectedValue);
 
         if (selectedState) {
             setAddMember({
@@ -385,19 +396,18 @@ const Member = () => {
             <div className="panel">
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
                     <h5 className="font-semibold text-warning text-lg dark:text-white-light">Member</h5>
-                    <div className="sm:ltr:mr-auto sm:rtl:ml-auto">
-                        <form
-                            className={`${search && '!block'} mt-2 sm:mt-0 inset-x-0 sm:translate-y-0 -translate-y-1/2 sm:mx-0  z-10`}
-                            onSubmit={()=>{}}
-                        >
+                    <div className="sm:ltr:mr-auto sm:rtl:ml-auto sm:mt-0 mt-6 sm:mb-0 mb-[-16px]">
+                        <form className={`${search && '!block'} mt-2 sm:mt-0 inset-x-0 sm:translate-y-0 -translate-y-1/2 sm:mx-0  z-10`} onSubmit={() => {}}>
                             <div className="relative">
                                 <input
                                     type="text"
                                     className="form-input ltr:pl-9 rtl:pr-9 ltr:sm:pr-4 rtl:sm:pl-4 ltr:pr-9 rtl:pl-9 peer sm:bg-transparent bg-gray-100 placeholder:tracking-widest"
                                     placeholder="Search..."
-                                    onChange={()=>{(e:any) => {
-                                        setSearch(e.target.value);
-                                    }}}
+                                    onChange={() => {
+                                        (e: any) => {
+                                            setSearch(e.target.value);
+                                        };
+                                    }}
                                 />
                                 <button type="submit" className="absolute w-9 h-9 inset-0 ltr:right-auto rtl:left-auto appearance-none peer-focus:text-primary">
                                     <IconSearch className="mx-auto" />
@@ -414,7 +424,7 @@ const Member = () => {
                     </button>
                 </div>
                 {showViewTreeColumn === false && (
-                    <button className="bg-primary text-white p-2 rounded-lg mr-2" onClick={BackTree}>
+                    <button className="bg-primary text-white p-2 rounded-lg mr-2 mb-4" onClick={BackTree}>
                         <IconArrowBackward />
                     </button>
                 )}
@@ -431,7 +441,11 @@ const Member = () => {
                     >
                         <option value="default">Select a franchise type</option>
                         {packageList.map((option: any) => {
-                            return <option value={option?._id}>{option?.franchiseName}</option>;
+                            return (
+                                <option key={option?._id} value={option?._id}>
+                                    {option?.franchiseName}
+                                </option>
+                            );
                         })}
                     </select>
 
@@ -457,7 +471,7 @@ const Member = () => {
                         onChange={(e) => {
                             setAddMember({ ...addMember, panchayath: e.target.value });
                         }}
-                        className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
+                        className="form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary"
                     >
                         <option>Select panchayath </option>
                         {panchayathList.map((panchayath: any) => (
@@ -484,16 +498,21 @@ const Member = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {allMembers?.length > 0 ? (
-                                (
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={7} style={{ textAlign: 'center' }}>
+                                        <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                                    </td>
+                                </tr>
+                            ) : allMembers?.length > 0 ? (
                                 allMembers.map((data: any) => (
                                     <tr key={data?._id}>
                                         <td className="capitalize">{data?.name}</td>
                                         <td>{data?.email}</td>
                                         <td className="whitespace-nowrap">{data?.phone}</td>
-                                        <td className="capitalize">{data?.sponserName}</td>
-                                        <td>{data?.franchise}</td>
-                                        <td>{data?.franchiseName}</td>
+                                        <td className="capitalize whitespace-nowrap">{data?.sponserName}</td>
+                                        <td className="whitespace-nowrap">{data?.franchise}</td>
+                                        <td className="whitespace-nowrap">{data?.franchiseName}</td>
                                         <td>{data?.packageAmount}</td>
                                         {/* {showViewTreeColumn && ( */}
                                         <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
@@ -512,15 +531,11 @@ const Member = () => {
                                             </button>
                                         </td> */}
                                     </tr>
-                                )))
+                                ))
                             ) : (
                                 <tr>
                                     <td colSpan={7} style={{ textAlign: 'center' }}>
-                                        {allMembers?.length === 0 ? (
-                                            <span className="align-middle m-auto mb-10">No Member</span>
-                                        ) : (
-                                            <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
-                                        )}
+                                        <span className="align-middle m-auto mb-10">No Member</span>
                                     </td>
                                 </tr>
                             )}
@@ -764,7 +779,7 @@ const Member = () => {
                                                                                 <option key="default" value="">
                                                                                     Select State
                                                                                 </option>
-                                                                                {stateList.map((singleState: any, idx: any) => (
+                                                                                {stateList?.map((singleState: any, idx: any) => (
                                                                                     <option key={idx} value={singleState.stateName}>
                                                                                         {singleState.stateName}
                                                                                     </option>

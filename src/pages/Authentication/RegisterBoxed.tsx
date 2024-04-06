@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from '../../store';
+import { IRootState, useAppDispatch, useAppSelector } from '../../store';
 import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
 import { FormEvent, useEffect, useState } from 'react';
 import Dropdown from '../../components/Dropdown';
@@ -12,7 +12,17 @@ import IconMapPin from '../../components/Icon/IconMapPin';
 import IconCashBanknotes from '../../components/Icon/IconCashBanknotes';
 import { ApiCall } from '../../Services/Api';
 import { Show_Toast } from '../Components/Toast';
-import { addReferaUrl, districtlistinNotdropdownUrl, districtlistindropdownUrl, packagesListUrl, panchayathlistindropdownUrl, statelistPageUrl, zonallistinNotdropdownUrl, zonallistindropdownUrl } from '../../utils/EndPoints';
+import {
+    addReferaUrl,
+    districtlistinNotdropdownUrl,
+    districtlistindropdownUrl,
+    packagesListUrl,
+    panchayathlistindropdownUrl,
+    statelistPageUrl,
+    zonallistinNotdropdownUrl,
+    zonallistindropdownUrl,
+} from '../../utils/EndPoints';
+import { getStatesApi } from '../../store/LocationSlice';
 
 interface Member {
     name: string;
@@ -55,7 +65,7 @@ const RegisterBoxed = () => {
         userId: params.id,
         franchiseName: '',
     });
-    const [stateList, setStateList] = useState<any>([]);
+    // const [stateList, setStateList] = useState<any>([]);
     const [districtList, setDistrictList] = useState([]);
     const [zonalList, setZonalList] = useState([]);
     const [panchayathList, setPanchayathList] = useState([]);
@@ -65,15 +75,15 @@ const RegisterBoxed = () => {
     const [selectedZonalId, setSelectedZonalId] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
 
-    const dispatch = useDispatch();
+    const { stateList } = useAppSelector((state) => state.location);
+
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        dispatch(setPageTitle('Register Boxed'));
         getPackagesList();
-        getStateList();
-    }, []);
-    const navigate = useNavigate();
-    console.log(addMember);
+        dispatch(getStatesApi());
+    }, [dispatch]);
 
     useEffect(() => {
         if (selectedStateId) {
@@ -101,21 +111,21 @@ const RegisterBoxed = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
     };
     //---------------------
-    const getStateList = async () => {
-        try {
-            const response = await ApiCall('get', statelistPageUrl);
+    // const getStateList = async () => {
+    //     try {
+    //         const response = await ApiCall('get', statelistPageUrl);
 
-            if (response instanceof Error) {
-                console.error('Error fetching state list:', response.message);
-            } else if (response.status === 200) {
-                setStateList(response?.data?.states);
-            } else {
-                console.error('Error fetching state list. Unexpected status:', response.status);
-            }
-        } catch (error) {
-            console.error('Error fetching state list:', error);
-        }
-    };
+    //         if (response instanceof Error) {
+    //             console.error('Error fetching state list:', response.message);
+    //         } else if (response.status === 200) {
+    //             setStateList(response?.data?.states);
+    //         } else {
+    //             console.error('Error fetching state list. Unexpected status:', response.status);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching state list:', error);
+    //     }
+    // };
     //-----------list district --------
     const getDistrictList = async () => {
         try {
@@ -203,7 +213,6 @@ const RegisterBoxed = () => {
     const getPackagesList = async () => {
         try {
             const response = await ApiCall('get', packagesListUrl);
-            console.log(response);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -245,10 +254,9 @@ const RegisterBoxed = () => {
             } else {
                 Show_Toast({ message: 'Member added failed', type: false });
             }
-        } catch (error:any) {
+        } catch (error: any) {
             console.log(error);
             Show_Toast({ message: error?.response?.data?.message, type: false });
-
 
             // Show_Toast({message:error, type:false});
         }
@@ -419,7 +427,7 @@ const RegisterBoxed = () => {
                                                 >
                                                     <option>Select a franchise type </option>
                                                     {packageOptions.map((option) => (
-                                                        <option key={option.value} value={option.value}>
+                                                        <option key={option.label} value={option.value}>
                                                             {option.label}
                                                         </option>
                                                     ))}
@@ -554,7 +562,7 @@ const RegisterBoxed = () => {
                                 <div className="text-center dark:text-white">
                                     Already have an account ?&nbsp;
                                     <Link to="/auth/boxed-signin" className="uppercase text-primary underline transition hover:text-black dark:hover:text-white">
-                                       LOG IN
+                                        LOG IN
                                     </Link>
                                 </div>
                             </div>

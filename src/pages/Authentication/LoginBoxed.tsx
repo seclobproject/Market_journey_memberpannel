@@ -27,20 +27,18 @@ const LoginBoxed = () => {
             const token = result.payload?.data?.access_token;
 
             if (token) {
-                // Store the token in local storage
                 sessionStorage.setItem('User', token);
-                // setTokenWithExpiry('User',token)
                 sessionStorage.setItem('status', result.payload?.data?.status);
                 Show_Toast({ message: 'Login success', type: true });
-                // Navigate to the dashboard
                 navigate('/', { replace: true });
-            } else {
-                setErrorMessage(result?.payload?.response?.data?.message);
-                Show_Toast({ message: errormessage?errormessage:'internal server error', type: false });
+            } else if (result?.payload) {
+                setErrorMessage(result?.payload);
+                Show_Toast({ message: result?.payload, type: false });
             }
         } catch (error: any) {
             console.error('Error occurred during login:', error);
-            // Show_Toast({ message: 'An error occurred during login', type: false });
+            Show_Toast({ message: 'internal server error', type: false });
+
         }
     };
     return (
@@ -142,7 +140,7 @@ export default LoginBoxed;
 //     const expiry = new Date(item.expiry);
 //     const now = new Date();
 //     if (now.getTime() > expiry.getTime()) {
-//         localStorage.removeItem('User'); 
+//         localStorage.removeItem('User');
 //         return null;
 //     }
 //     return item.value;

@@ -11,10 +11,11 @@ import IconUser from '../components/Icon/IconUser';
 const Withdrawal = () => {
     const [requestModal, setRequestModal] = useState(false);
     const [withdrawalHistory, setWithdrawalHistory] = useState<any>();
-    const [walletAmount,setWalletAmount]=useState();
+    const [walletAmount, setWalletAmount] = useState();
     const [withdrawalRequest, setWithdrawalRequest] = useState({ withdrawAmount: '' });
     const [tdsAmount, setTdsAmount] = useState(0);
     const [totalAmount, setTotalAmount] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         getWithdrawalHistory();
@@ -24,22 +25,26 @@ const Withdrawal = () => {
 
     const getWithdrawalHistory = async () => {
         try {
+            setLoading(true);
             const response = await ApiCall('get', withdrawalHistoryUrl);
 
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
                 setWalletAmount(response?.data?.walletAmount);
-                 const FormatedReport = response?.data?.walletWithdrawHistory.map((item: any) => ({
-                     ...item,
-                     createdAt: formatTimestamp(item.createdAt),
-                 }));
-                 setWithdrawalHistory(FormatedReport);
+                const FormatedReport = response?.data?.walletWithdrawHistory.map((item: any) => ({
+                    ...item,
+                    createdAt: formatTimestamp(item.createdAt),
+                }));
+                setWithdrawalHistory(FormatedReport);
+                setLoading(false);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
             }
         } catch (error) {
             console.error('Error fetching allMembers list:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -75,7 +80,7 @@ const Withdrawal = () => {
                     withdrawAmount: '',
                 });
                 setRequestModal(false);
-                getWithdrawalHistory()
+                getWithdrawalHistory();
                 Show_Toast({ message: 'withdrawal requested', type: true });
             }
         } catch (error: any) {
@@ -84,11 +89,11 @@ const Withdrawal = () => {
         }
     };
 
-        const formatTimestamp = (timestamp: string) => {
-            const date = new Date(timestamp);
-            const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
-            return formattedDate;
-        };
+    const formatTimestamp = (timestamp: string) => {
+        const date = new Date(timestamp);
+        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+        return formattedDate;
+    };
     return (
         <>
             <div className="panel">
@@ -119,8 +124,14 @@ const Withdrawal = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {withdrawalHistory?.map((data: any) => {
-                                return (
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={7} style={{ textAlign: 'center' }}>
+                                        <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                                    </td>
+                                </tr>
+                            ) : withdrawalHistory?.length > 0 ? (
+                                withdrawalHistory?.map((data: any) => (
                                     <tr key={data?._id}>
                                         <td>
                                             <div className="whitespace-nowrap">₹ {data?.requestedAmount}</div>
@@ -138,8 +149,14 @@ const Withdrawal = () => {
                                             </div>
                                         </td>
                                     </tr>
-                                );
-                            })}
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={7} style={{ textAlign: 'center' }}>
+                                        <span className="align-middle m-auto mb-10">No Member</span>
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

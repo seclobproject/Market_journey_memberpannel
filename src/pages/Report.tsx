@@ -9,6 +9,8 @@ const Report = () => {
     const [activeButton, setActiveButton] = useState('directIncome');
     const [reports, setReports] = useState<any>([]);
     const [pageNumber, setPageNumber] = useState(1);
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         DirectReport();
     }, []);
@@ -18,6 +20,7 @@ const Report = () => {
     const DirectReport = async (pageNumber?: number) => {
         setActiveButton('directIncome');
         try {
+            setLoading(true);
             const response = await ApiCall('get', DirectReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
@@ -28,11 +31,14 @@ const Report = () => {
                     createdAt: formatTimestamp(item.createdAt),
                 }));
                 setReports(FormatedReport);
+                setLoading(false);
             } else {
                 console.error('Error fetching Direct Icome list. Unexpected status:', response.status);
             }
         } catch (error) {
             console.error('Error fetching Direct Icome list:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -40,6 +46,7 @@ const Report = () => {
     const InDirectReport = async (pageNumber?: number) => {
         setActiveButton('inDirectIncome');
         try {
+            setLoading(true);
             const response = await ApiCall('get', InDirectReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
@@ -50,11 +57,14 @@ const Report = () => {
                     createdAt: formatTimestamp(item.createdAt),
                 }));
                 setReports(FormatedReport);
+                setLoading(false);
             } else {
                 console.error('Error fetching InDirect list. Unexpected status:', response.status);
             }
         } catch (error) {
             console.error('Error fetching InDirect list:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -64,6 +74,7 @@ const Report = () => {
         setPageNumber(1);
         setActiveButton('levelIncome');
         try {
+            setLoading(true);
             const response = await ApiCall('get', LevelIncomeReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
@@ -74,11 +85,14 @@ const Report = () => {
                     createdAt: formatTimestamp(item.createdAt),
                 }));
                 setReports(FormatedReport);
+                setLoading(false);
             } else {
                 console.error('Error fetching levelIncome list. Unexpected status:', response.status);
             }
         } catch (error) {
             console.error('Error fetching levelIncome list:', error);
+        } finally {
+            setLoading(false);
         }
     };
     // -------Auto pool report--------------
@@ -87,6 +101,7 @@ const Report = () => {
         setPageNumber(1);
         setActiveButton('autoPoolCreditHistory');
         try {
+            setLoading(true);
             const response = await ApiCall('get', AutoPoolReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
@@ -99,12 +114,15 @@ const Report = () => {
                     createdAt: formatTimestamp(item.createdAt),
                 }));
                 setReports(FormatedReport);
+                setLoading(false);
                 // setPaginationDetails(response?.data?.pagination);
             } else {
                 console.error('Error fetching auto pool list. Unexpected status:', response.status);
             }
         } catch (error) {
             console.error('Error fetching auto pool list:', error);
+        } finally {
+            setLoading(false);
         }
     };
     // -------Bonus report--------------
@@ -113,6 +131,7 @@ const Report = () => {
         setPageNumber(1);
         setActiveButton('bonus');
         try {
+            setLoading(true);
             const response = await ApiCall('get', BonusReportUrl, '', { page: pageNumber, pageSize: 10 });
 
             if (response instanceof Error) {
@@ -123,12 +142,15 @@ const Report = () => {
                     createdAt: formatTimestamp(item.createdAt),
                 }));
                 setReports(FormatedReport);
+                setLoading(false);
                 // setPaginationDetails(response?.data?.pagination);
             } else {
                 console.error('Error fetching bonus list. Unexpected status:', response.status);
             }
         } catch (error) {
             console.error('Error fetching bonus list:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -136,6 +158,7 @@ const Report = () => {
     const fetchData = () => {
         const LevelIncomeReport = async () => {
             try {
+                setLoading(true);
                 const response = await ApiCall(
                     'get',
                     activeButton === 'directIncome'
@@ -157,18 +180,20 @@ const Report = () => {
                 if (response instanceof Error) {
                     console.error('Error fetching allMembers list:', response.message);
                 } else if (response.status === 200) {
-                    const formattedReport =
-                        response.data?.[activeButton]?.map((item: any) => ({
-                            ...item,
-                            createdAt: formatTimestamp(item.createdAt),
-                        }));
+                    const formattedReport = response.data?.[activeButton]?.map((item: any) => ({
+                        ...item,
+                        createdAt: formatTimestamp(item.createdAt),
+                    }));
                     setReports(reports.concat(formattedReport));
                     setPageNumber(pageNumber + 1);
+                    setLoading(false);
                 } else {
                     console.error('Error fetching allMembers list. Unexpected status:', response.status);
                 }
             } catch (error) {
                 console.error('Error fetching allMembers list:', error);
+            }finally{
+                setLoading(false);
             }
             console.log(pageNumber);
         };
@@ -178,13 +203,13 @@ const Report = () => {
     // formate date
     const formatTimestamp = (timestamp: string) => {
         const date = new Date(timestamp);
-        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
-        //  ${date.toLocaleString('en-US', {
-        //     hour: 'numeric',
-        //     minute: 'numeric',
-        //     second: 'numeric',
-        //     hour12: true,
-        // })}`;
+        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}
+         ${date.toLocaleString('en-US', {
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: true,
+        })}`;
         return formattedDate;
     };
 
@@ -242,11 +267,15 @@ const Report = () => {
                             <tr>
                                 <th>SIno</th>
                                 <th>Date</th>
-                                {activeButton !== 'Autopool' && activeButton !== 'bonus' ? <th>Name</th> : <th>Designation</th>}
+                                {activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' ? <th>Amount From</th> : <th>Designation</th>}
+                                {activeButton === 'levelIncome' && <th> New Member</th>}
+
                                 {/* <th>Name</th> */}
-                                {activeButton !== 'LevelIncome' && activeButton !== 'Autopool' && activeButton !== 'bonus' ? <th> Franchise</th> : <th></th>}
+                                {activeButton !== 'levelIncome' && activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' ? <th> Franchise</th> : <th></th>}
 
                                 <th> PercentageCredited</th>
+                                {activeButton === 'levelIncome' && <th> Amount</th>}
+
                                 <th> AmountCredited</th>
                             </tr>
                         </thead>
@@ -263,9 +292,11 @@ const Report = () => {
                                             <td>
                                                 <div className="whitespace-nowrap font-medium text-base">{data?.name}</div>
                                             </td>
+                                            {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.newMember}</td>}
                                             <td className="font-medium text-base">{data?.franchise}</td>
 
                                             <td className="font-medium text-base">{data?.percentageCredited}</td>
+                                            {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.Amount}</td>}
 
                                             <td className="text-center text-success font-medium text-base">{data?.amountCredited}</td>
                                         </tr>

@@ -137,6 +137,15 @@ const Header = () => {
 
          fetchNotifications();
      }, []);
+
+     const openModal = () => {
+         setLogoutModal(true);
+         document.body.classList.add('overflow-hidden');
+     };
+     const closeModal = () => {
+         setLogoutModal(false);
+         document.body.classList.remove('overflow-hidden');
+     };
     return (
         <>
             <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
@@ -158,8 +167,6 @@ const Header = () => {
                         </div>
 
                         <div className="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]  ">
-                        
-
                             <div className="dropdown shrink-0 ml-auto">
                                 <Dropdown
                                     offset={[0, 8]}
@@ -203,7 +210,6 @@ const Header = () => {
                                                                         ></h6>
                                                                         <span className="text-xs block font-normal dark:text-gray-500">{notification?.time}</span>
                                                                     </div>
-                                                                
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -259,7 +265,7 @@ const Header = () => {
                                             </Link>
                                         </li>
                                         <li className="border-t border-white-light dark:border-white-light/10">
-                                            <button onClick={() => setLogoutModal(true)} className="text-danger !py-3">
+                                            <button onClick={openModal} className="text-danger !py-3">
                                                 <IconLogout className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 rotate-90 shrink-0" />
                                                 <p>Sign Out</p>
                                             </button>
@@ -272,15 +278,15 @@ const Header = () => {
                 </div>
             </header>
             {logoutModal && (
-                <div className="absolute z-[999] top-0 left-0 w-full h-screen bg-opacity-30 bg-black grid place-items-center ">
-                    <div className="relative z-[999] lg:w-2/6 h-2/5 flex sm:w-3/4 flex-col gap-10 border-2 p-2 rounded-lg items-center justify-center bg-white shadow-lg">
-                        <div onClick={() => setLogoutModal(false)} className="p-1.5 absolute border-2 top-5 right-5 rounded-full text-red-500 cursor-pointer">
+                <div className="fixed z-[999] top-0 left-0 w-full h-screen bg-opacity-30 bg-black grid place-items-center ">
+                    <div className="relative z-[999] lg:w-2/6 h-2/5 flex md:w-3/4 w-[90%]  flex-col gap-10 border-2 p-2 rounded-lg items-center justify-center bg-white shadow-lg">
+                        <div onClick={closeModal} className="p-1.5 absolute border-2 top-5 right-5 rounded-full text-red-500 cursor-pointer">
                             X
                         </div>
                         <h1 className="text-primary text-2xl font-bold">Logout Confirmation</h1>
                         <p className="text-[15px]">Are you sure you want to log out?</p>
                         <div className="flex mt-1 gap-2">
-                            <button onClick={() => setLogoutModal(false)} className="px-10 py-2 rounded bg-primary text-white cursor-pointer border-none text-base font-semibold">
+                            <button onClick={closeModal} className="px-10 py-2 rounded bg-primary text-white cursor-pointer border-none text-base font-semibold">
                                 Cancel
                             </button>
                             <button

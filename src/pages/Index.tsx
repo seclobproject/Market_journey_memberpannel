@@ -150,9 +150,7 @@ const Index = () => {
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
-            } else if (response.status === 200) {
-                console.log(response.data);
-                
+            } else if (response.status === 200) {                
                 setAutoPool(response?.data?.pool);
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);

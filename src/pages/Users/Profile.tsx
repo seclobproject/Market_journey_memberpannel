@@ -21,6 +21,8 @@ import IconNotes from '../../components/Icon/IconNotes';
 import IconCode from '../../components/Icon/IconCode';
 import { Show_Toast } from '../Components/Toast';
 import IconCreditCard from '../../components/Icon/IconCreditCard';
+import IconArchive from '../../components/Icon/IconArchive';
+import IconAward from '../../components/Icon/IconAward';
 // interface ProfileDetails {
 //     name: string;
 //     address: string;
@@ -288,7 +290,7 @@ const Profile = () => {
                                     <p className={user.userStatus === 'approved' ? 'text-green-500' : 'text-warning'}>{user.userStatus}</p>
                                 </div>
                                 <div className="mt-5 flex m-auto space-y-4 flex-wrap  text-white gap-10 font-semibold text-base">
-                                    <ul className="mt-5 m-auto space-y-4 max-w-[280px] ">
+                                    <ul className="mt-5 sm:m-auto space-y-4 max-w-[280px] ">
                                         <li className="flex items-center gap-3">
                                             <IconMail className="w-5 h-5 shrink-0" fill />
                                             Email : {user.email}
@@ -310,7 +312,7 @@ const Profile = () => {
                                             Franchise Name : {user.franchise}
                                         </li> */}
                                     </ul>
-                                    <ul className="mt-5 m-auto space-y-4 ">
+                                    <ul className="mt-5 sm:m-auto space-y-4 ">
                                         <li className="flex items-center gap-3">
                                             <IconCashBanknotes className="shrink-0" fill />
                                             walletAmount : {user.walletAmount}
@@ -336,7 +338,7 @@ const Profile = () => {
                                             Franchise Name : {user.franchiseName}
                                         </li>
                                         <li className="flex items-center gap-3">
-                                            <IconPencil className="shrink-0" fill />
+                                            <IconAward className="shrink-0" fill />
                                             Pool Rank: {user.pool}
                                         </li>
                                     </ul>
@@ -352,11 +354,11 @@ const Profile = () => {
                                 </div>
                             </div>
                             <div className="mb-5">
-                                <ul className="mt-5 m-auto space-y-4 text-primary font-semibold text-base">
+                                <ul className="mt-5  space-y-4 text-primary font-semibold text-base">
                                     <li>
                                         <div className="flex items-center gap-3 ">
                                             <IconUser className="w-5 h-5 shrink-0" fill />
-                                            Account Holder Name :{user?.bankDetails?.holderName}
+                                            Account Holder Name : {user?.bankDetails?.holderName}
                                         </div>
                                     </li>
                                     <li>

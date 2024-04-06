@@ -3,10 +3,12 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { ApiCall } from '../Services/Api';
 import { addAndEditDematAccounturl, allDematAccountsurl, districtlistindropdownUrl, statelistPageUrl, zonallistindropdownUrl } from '../utils/EndPoints';
 import { Show_Toast } from './Components/Toast';
+import { useAppDispatch, useAppSelector } from '../store';
+import { getStatesApi } from '../store/LocationSlice';
 
 const DematAccount = () => {
     const [allAccounts, setAllAccount] = useState<any>([]);
-    const [stateList, setStateList] = useState<any>([]);
+    // const [stateList, setStateList] = useState<any>([]);
     const [districtList, setDistrictList] = useState([]);
     const [zonalList, setZonalList] = useState([]);
     const [selectedStateId, setSelectedStateId] = useState('');
@@ -26,6 +28,11 @@ const DematAccount = () => {
         address: '',
     });
     const [AccountId, setAccountId] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const { stateList } = useAppSelector((state) => state.location);
+
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         getAllAccountList();
@@ -33,7 +40,7 @@ const DematAccount = () => {
 
     useEffect(() => {
         if (addModal === true || editModal === true) {
-            getStateList();
+            dispatch(getStatesApi());
         }
     }, [addModal, editModal]);
 
@@ -50,17 +57,21 @@ const DematAccount = () => {
 
     const getAllAccountList = async () => {
         try {
+            setLoading(true);
             const response = await ApiCall('get', allDematAccountsurl);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 setAllAccount(response?.data?.demateAccounts);
+                setLoading(false);
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
             }
         } catch (error) {
             console.error('Error fetching state list:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -124,21 +135,21 @@ const DematAccount = () => {
 
     //------------------- get all state------------------
 
-    const getStateList = async () => {
-        try {
-            const response = await ApiCall('get', statelistPageUrl);
+    // const getStateList = async () => {
+    //     try {
+    //         const response = await ApiCall('get', statelistPageUrl);
 
-            if (response instanceof Error) {
-                console.error('Error fetching state list:', response.message);
-            } else if (response.status === 200) {
-                setStateList(response?.data?.states);
-            } else {
-                console.error('Error fetching state list. Unexpected status:', response.status);
-            }
-        } catch (error) {
-            console.error('Error fetching state list:', error);
-        }
-    };
+    //         if (response instanceof Error) {
+    //             console.error('Error fetching state list:', response.message);
+    //         } else if (response.status === 200) {
+    //             setStateList(response?.data?.states);
+    //         } else {
+    //             console.error('Error fetching state list. Unexpected status:', response.status);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching state list:', error);
+    //     }
+    // };
     //-----------list district --------
     const getDistrictList = async () => {
         try {
@@ -227,7 +238,13 @@ const DematAccount = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {allAccounts?.length > 0 ? (
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={7} style={{ textAlign: 'center' }}>
+                                        <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                                    </td>
+                                </tr>
+                            ) : allAccounts?.length > 0 ? (
                                 allAccounts.map((data: any, index: number) => (
                                     <tr key={index}>
                                         <td>
@@ -254,11 +271,7 @@ const DematAccount = () => {
                             ) : (
                                 <tr>
                                     <td colSpan={7} style={{ textAlign: 'center' }}>
-                                        {allAccounts?.length === 0 ? (
-                                            <span className="align-middle m-auto mb-10">No Member</span>
-                                        ) : (
-                                            <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
-                                        )}
+                                        <span className="align-middle m-auto mb-10">No Member</span>
                                     </td>
                                 </tr>
                             )}

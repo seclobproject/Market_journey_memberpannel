@@ -1,18 +1,13 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { ApiCall } from '../Services/Api';
-
-export interface Login {
-    email: string;
-    password: string;
-}
 
 export const loginApi = createAsyncThunk<any, any>('auth/loginApi', async (data) => {
     try {
         const result = await ApiCall('post', '/api/user/user-login', data);
         return result;
-    } catch (error) {
+    } catch (error:any) {
         console.error('Error in loginApi:', error);
-        throw error; // Rethrow the error to be handled by the rejection of the promise
+        return error?.response?.data?.message; 
     }
 });
 
