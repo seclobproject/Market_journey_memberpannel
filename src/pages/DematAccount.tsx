@@ -8,15 +8,12 @@ import { getStatesApi } from '../store/LocationSlice';
 
 const DematAccount = () => {
     const [allAccounts, setAllAccount] = useState<any>([]);
-    // const [stateList, setStateList] = useState<any>([]);
     const [districtList, setDistrictList] = useState([]);
     const [zonalList, setZonalList] = useState([]);
     const [selectedStateId, setSelectedStateId] = useState('');
     const [selectedDistrictId, setSelectedDistrictId] = useState('');
-    // const [selectedZonalId, setSelectedZonalId] = useState('');
     const [addModal, setAddModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
-    // const [deleteModal, setDeleteModal] = useState(false);
     const [dematDetails, setDematDetails] = useState({
         name: '',
         phone: '',
@@ -185,9 +182,19 @@ const DematAccount = () => {
     };
     //-------- edit Demat Account end ---------
 
-    const handleEdit = (id: string) => {
+    const handleEdit = (data: any) => {
         setEditModal(true);
-        setAccountId(id);
+        setAccountId(data?._id);
+         setDematDetails({
+             name: data?.name,
+             phone: data?.phone,
+             demateUserName: data?.demateUserName,
+             email: data?.email,
+             state: '',
+             district: '',
+             zonal: '',
+             address: data?.address,
+         });
     };
     // const handleDelete = (id: string) => {
     //     setDeleteModal(true);
@@ -263,7 +270,7 @@ const DematAccount = () => {
 
                                         <td className="text-center font-medium text-base">{data?.address}</td>
                                         <td className="text-center flex gap-5 items-center">
-                                            <i onClick={() => handleEdit(data?._id)} className="fa-solid fa-pen text-blue-600 cursor-pointer"></i>
+                                            <i onClick={() => handleEdit(data)} className="fa-solid fa-pen text-blue-600 cursor-pointer"></i>
                                             {/* <i onClick={() => handleDelete(data?._id)} className="fa-solid fa-trash text-red-500 cursor-pointer"></i> */}
                                         </td>
                                     </tr>
@@ -271,7 +278,7 @@ const DematAccount = () => {
                             ) : (
                                 <tr>
                                     <td colSpan={7} style={{ textAlign: 'center' }}>
-                                        <span className="align-middle m-auto mb-10">No Member</span>
+                                        <span className="align-middle m-auto mb-10">No Accounts</span>
                                     </td>
                                 </tr>
                             )}
@@ -321,7 +328,6 @@ const DematAccount = () => {
                                                                     setDematDetails({ ...dematDetails, name: e.target.value });
                                                                 }}
                                                                 id="Name"
-                                                                // value={withdrawalRequest.withdrawAmount}
                                                                 type="text"
                                                                 required
                                                                 placeholder="Enter Name"
@@ -545,8 +551,9 @@ const DematAccount = () => {
                                                                     setDematDetails({ ...dematDetails, name: e.target.value });
                                                                 }}
                                                                 id="Name"
-                                                                // value={withdrawalRequest.withdrawAmount}
+                                                                value={dematDetails?.name}
                                                                 type="text"
+                                                                required
                                                                 placeholder="Enter Name"
                                                                 className="form-input ps-5 placeholder:text-white-dark"
                                                             />
@@ -565,7 +572,9 @@ const DematAccount = () => {
                                                                     setDematDetails({ ...dematDetails, phone: e.target.value });
                                                                 }}
                                                                 id="phone"
+                                                                value={dematDetails?.phone}
                                                                 type="text"
+                                                                required
                                                                 placeholder="Enter Phone number"
                                                                 className="form-input ps-5 placeholder:text-white-dark"
                                                             />
@@ -583,7 +592,9 @@ const DematAccount = () => {
                                                                     setDematDetails({ ...dematDetails, demateUserName: e.target.value });
                                                                 }}
                                                                 id="username"
+                                                                value={dematDetails?.demateUserName}
                                                                 type="text"
+                                                                required
                                                                 placeholder="Enter your Demat username"
                                                                 className="form-input ps-5 placeholder:text-white-dark"
                                                             />
@@ -601,7 +612,9 @@ const DematAccount = () => {
                                                                     setDematDetails({ ...dematDetails, email: e.target.value });
                                                                 }}
                                                                 id="email"
+                                                                value={dematDetails?.email}
                                                                 type="email"
+                                                                required
                                                                 placeholder="Enter email"
                                                                 className="form-input ps-5 placeholder:text-white-dark"
                                                             />
@@ -619,7 +632,9 @@ const DematAccount = () => {
                                                                     setDematDetails({ ...dematDetails, address: e.target.value });
                                                                 }}
                                                                 id="address"
+                                                                value={dematDetails?.address}
                                                                 type="text"
+                                                                required
                                                                 placeholder="Enter your address"
                                                                 className="form-input ps-5 placeholder:text-white-dark"
                                                             />

@@ -153,7 +153,7 @@ const Withdrawal = () => {
                             ) : (
                                 <tr>
                                     <td colSpan={7} style={{ textAlign: 'center' }}>
-                                        <span className="align-middle m-auto mb-10">No Member</span>
+                                        <span className="align-middle m-auto mb-10">No withdrawal</span>
                                     </td>
                                 </tr>
                             )}

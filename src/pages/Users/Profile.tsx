@@ -303,14 +303,10 @@ const Profile = () => {
                                             <IconMapPin className="shrink-0" fill />
                                             Address : {user.address}
                                         </li>
-                                        {/* <li className="flex items-center gap-3">
-                                            <IconBox className="shrink-0" />
-                                            Franchise Type : {user.franchise}
-                                        </li>
                                         <li className="flex items-center gap-3">
-                                            <IconPencil className="shrink-0" fill />
-                                            Franchise Name : {user.franchise}
-                                        </li> */}
+                                            <IconBox className="shrink-0" />
+                                            User Id : {user.ownSponserId}
+                                        </li>
                                     </ul>
                                     <ul className="mt-5 sm:m-auto space-y-4 ">
                                         <li className="flex items-center gap-3">

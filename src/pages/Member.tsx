@@ -32,6 +32,7 @@ interface Member {
     email: string;
     password: string;
     address: string;
+    dateOfBirth: string;
     phone: string;
     franchise: string;
     packageAmount: string | number;
@@ -55,12 +56,14 @@ const Member = () => {
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<string | undefined>();
     // const [previousMemberData, setPreviousMemberData] = useState(null);
+    const [packageType, setPackageType] = useState('');
     const [addMember, setAddMember] = useState<Member>({
         name: '',
         email: '',
         franchise: '',
         password: '',
         address: '',
+        dateOfBirth: '',
         phone: '',
         packageAmount: '',
         packageAmountGst: '',
@@ -90,7 +93,6 @@ const Member = () => {
 
     useEffect(() => {
         getMembers();
-        getPackagesList();
         dispatch(getStatesApi());
         // getStateList();
     }, []);
@@ -119,9 +121,9 @@ const Member = () => {
         calculateTotalGstAmount();
     }, [addMember.packageAmount]);
 
-    // useEffect(() => {
-
-    // }, [search]);
+    useEffect(() => {
+        getPackagesList();
+    }, [packageType]);
 
     //------ show password-----
     const handleTogglePassword = () => {
@@ -294,7 +296,14 @@ const Member = () => {
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
-                setPackageList(response?.data?.packageData);
+                const filteredPackageList = await response?.data?.packageData.filter((pkg: any) => {
+                    if (packageType === 'Franchise') {
+                        return pkg?.franchiseName !== 'Courses' && pkg?.franchiseName !== 'Signals';
+                    } else {
+                        return pkg?.franchiseName === packageType;
+                    }
+                });
+                setPackageList(filteredPackageList);
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
             }
@@ -308,7 +317,6 @@ const Member = () => {
         e.preventDefault();
         try {
             const response: any = await ApiCall('post', memberaddUrl, addMember);
-            console.log(response.error);
 
             if (response.status === 200) {
                 // setValidated(false);
@@ -318,6 +326,7 @@ const Member = () => {
                     franchise: '',
                     password: '',
                     address: '',
+                    dateOfBirth: '',
                     phone: '',
                     packageAmount: '',
                     packageAmountGst: '',
@@ -351,7 +360,6 @@ const Member = () => {
             const partAmount = Number(addMember?.packageAmount);
             const percentage = partAmount * 0.18;
             const sum = partAmount + percentage;
-            console.log(`Sum: ${sum}`);
             setAddMember({ ...addMember, packageAmountGst: sum });
         }
     };
@@ -371,6 +379,11 @@ const Member = () => {
         }
     };
     //--------------------------------
+
+    //----- set date of birth up to today ---------
+
+    const today = new Date().toISOString().split('T')[0];
+    //-----------------
 
     return (
         <>
@@ -486,6 +499,7 @@ const Member = () => {
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>UserId</th>
                                 <th>Email</th>
                                 <th>Phone</th>
                                 <th>Sponsor Name</th>
@@ -508,6 +522,7 @@ const Member = () => {
                                 allMembers.map((data: any) => (
                                     <tr key={data?._id}>
                                         <td className="capitalize">{data?.name}</td>
+                                        <td>{data?.ownSponserId}</td>
                                         <td>{data?.email}</td>
                                         <td className="whitespace-nowrap">{data?.phone}</td>
                                         <td className="capitalize whitespace-nowrap">{data?.sponserName}</td>
@@ -696,16 +711,49 @@ const Member = () => {
                                                                     </button>
                                                                 </div>
                                                             </div>
+                                                            <div>
+                                                                <label htmlFor="Email">Date Of Birth</label>
+                                                                <div className="relative text-white-dark">
+                                                                    {/* <span className="absolute start-4 top-1/4 -translate-y-1/2">
+                                                    <IconCalendar fill={true} />
+                                                </span> */}
+                                                                    <input
+                                                                        onChange={(e) => setAddMember({ ...addMember, dateOfBirth: e.target.value })}
+                                                                        id="dateOfBirth"
+                                                                        type="date"
+                                                                        required
+                                                                        max={today}
+                                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                                    />
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         <div className="flex flex-col space-y-5 max-w-[350px] w-full">
                                                             <div>
-                                                                <label htmlFor="franchise">Franchise</label>
+                                                                <label htmlFor="franchise">Package Type</label>
+                                                                <div className="relative text-white-dark">
+                                                                    <select
+                                                                        onChange={(e) => {
+                                                                            setPackageType(e.target.value);
+                                                                            setAddMember({ ...addMember, franchise: '' });
+                                                                        }}
+                                                                        value={packageType}
+                                                                        className="form-input ps-10 placeholder:text-white-dark"
+                                                                    >
+                                                                        <option> select Package type </option>
+                                                                        <option value={'Franchise'}> Franchise </option>
+                                                                        <option value={'Courses'}>Courses </option>
+                                                                        <option value={'Signals'}>Signals</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <label htmlFor="package">Package Name</label>
                                                                 <div className="relative text-white-dark">
                                                                     <select
                                                                         onChange={(e) => {
                                                                             const selectedValue = e.target.value;
                                                                             const selectedOption = packageOptions.find((option) => option.value === selectedValue);
-
                                                                             if (selectedOption) {
                                                                                 setAddMember({
                                                                                     ...addMember,
@@ -723,7 +771,7 @@ const Member = () => {
                                                                         value={addMember.franchise}
                                                                         className="form-input ps-10 placeholder:text-white-dark"
                                                                     >
-                                                                        <option>Select a franchise type </option>
+                                                                        <option>Select a Package </option>
                                                                         {packageOptions.map((option) => (
                                                                             <option key={option.value} value={option.value}>
                                                                                 {option.label}
@@ -767,10 +815,8 @@ const Member = () => {
                                                             {(addMember?.franchise === 'District Franchise' ||
                                                                 addMember?.franchise === 'Zonal Franchise' ||
                                                                 addMember?.franchise === 'Mobile Franchise' ||
-                                                                addMember?.franchise === 'Premium calls' ||
-                                                                addMember?.franchise === 'Diamond course' ||
-                                                                addMember?.franchise === 'Platinum course' ||
-                                                                addMember?.franchise === 'Algo course') && (
+                                                                packageType === 'Courses' ||
+                                                                packageType === 'Signals') && (
                                                                 <>
                                                                     <div>
                                                                         <label htmlFor="Email">State</label>
@@ -819,10 +865,8 @@ const Member = () => {
                                                             )}
                                                             {(addMember?.franchise === 'Zonal Franchise' ||
                                                                 addMember?.franchise === 'Mobile Franchise' ||
-                                                                addMember?.franchise === 'Premium calls' ||
-                                                                addMember?.franchise === 'Diamond course' ||
-                                                                addMember?.franchise === 'Platinum course' ||
-                                                                addMember?.franchise === 'Algo course') && (
+                                                                packageType === 'Courses' ||
+                                                                packageType === 'Signals') && (
                                                                 <div>
                                                                     <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'zonal-Franchise-Name' : 'zonal'}</label>
                                                                     <div className="relative text-white-dark">
@@ -852,11 +896,7 @@ const Member = () => {
                                                                     </div>
                                                                 </div>
                                                             )}
-                                                            {(addMember?.franchise === 'Mobile Franchise' ||
-                                                                addMember?.franchise === 'Premium calls' ||
-                                                                addMember?.franchise === 'Diamond course' ||
-                                                                addMember?.franchise === 'Platinum course' ||
-                                                                addMember?.franchise === 'Algo course') && (
+                                                            {(addMember?.franchise === 'Mobile Franchise' || packageType === 'Courses' || packageType === 'Signals') && (
                                                                 <div>
                                                                     <label htmlFor="Email">Panchayath</label>
                                                                     <div className="relative text-white-dark">

@@ -31,7 +31,7 @@ const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
     const [errorSubMenu, setErrorSubMenu] = useState(false);
     const [viewSidebar, setViewSidebar] = useState(false);
-
+    const [franchise, setFranchise] = useState(false);
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
     const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
     const location = useLocation();
@@ -73,6 +73,7 @@ const Sidebar = () => {
             setViewSidebar(true);
             console.log(viewSidebar);
         }
+
     };
 
     useEffect(() => {
