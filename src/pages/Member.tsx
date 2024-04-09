@@ -26,6 +26,7 @@ import IconSearch from '../components/Icon/IconSearch';
 import IconXCircle from '../components/Icon/IconXCircle';
 import { useAppDispatch, useAppSelector } from '../store';
 import { getStatesApi } from '../store/LocationSlice';
+import IconDownload from '../components/Icon/IconDownload';
 
 interface Member {
     name: string;
@@ -35,6 +36,7 @@ interface Member {
     dateOfBirth: string;
     phone: string;
     franchise: string;
+    packageType:string;
     packageAmount: string | number;
     packageAmountGst: string | number;
     state: string;
@@ -56,7 +58,7 @@ const Member = () => {
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<string | undefined>();
     // const [previousMemberData, setPreviousMemberData] = useState(null);
-    const [packageType, setPackageType] = useState('');
+    // const [packageType, setPackageType] = useState('');
     const [addMember, setAddMember] = useState<Member>({
         name: '',
         email: '',
@@ -65,6 +67,7 @@ const Member = () => {
         address: '',
         dateOfBirth: '',
         phone: '',
+        packageType:'',
         packageAmount: '',
         packageAmountGst: '',
         state: '',
@@ -123,7 +126,7 @@ const Member = () => {
 
     useEffect(() => {
         getPackagesList();
-    }, [packageType]);
+    }, [addMember?.packageType]);
 
     //------ show password-----
     const handleTogglePassword = () => {
@@ -297,10 +300,10 @@ const Member = () => {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 const filteredPackageList = await response?.data?.packageData.filter((pkg: any) => {
-                    if (packageType === 'Franchise') {
+                    if (addMember?.packageType === 'Franchise') {
                         return pkg?.franchiseName !== 'Courses' && pkg?.franchiseName !== 'Signals';
                     } else {
-                        return pkg?.franchiseName === packageType;
+                        return pkg?.franchiseName === addMember?.packageType;
                     }
                 });
                 setPackageList(filteredPackageList);
@@ -328,6 +331,7 @@ const Member = () => {
                     address: '',
                     dateOfBirth: '',
                     phone: '',
+                    packageType:'',
                     packageAmount: '',
                     packageAmountGst: '',
                     state: '',
@@ -733,11 +737,12 @@ const Member = () => {
                                                                 <label htmlFor="franchise">Package Type</label>
                                                                 <div className="relative text-white-dark">
                                                                     <select
-                                                                        onChange={(e) => {
-                                                                            setPackageType(e.target.value);
-                                                                            setAddMember({ ...addMember, franchise: '' });
-                                                                        }}
-                                                                        value={packageType}
+                                                                        onChange={
+                                                                            (e) => setAddMember({ ...addMember, packageType: e.target.value, franchise: '' })
+
+                                                                            // setPackageType(e.target.value)
+                                                                        }
+                                                                        value={addMember?.packageType}
                                                                         className="form-input ps-10 placeholder:text-white-dark"
                                                                     >
                                                                         <option> select Package type </option>
@@ -745,6 +750,9 @@ const Member = () => {
                                                                         <option value={'Courses'}>Courses </option>
                                                                         <option value={'Signals'}>Signals</option>
                                                                     </select>
+                                                                    <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                        <IconA fill={true} />
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                             <div>
@@ -815,8 +823,8 @@ const Member = () => {
                                                             {(addMember?.franchise === 'District Franchise' ||
                                                                 addMember?.franchise === 'Zonal Franchise' ||
                                                                 addMember?.franchise === 'Mobile Franchise' ||
-                                                                packageType === 'Courses' ||
-                                                                packageType === 'Signals') && (
+                                                                addMember?.packageType === 'Courses' ||
+                                                                addMember?.packageType === 'Signals') && (
                                                                 <>
                                                                     <div>
                                                                         <label htmlFor="Email">State</label>
@@ -865,8 +873,8 @@ const Member = () => {
                                                             )}
                                                             {(addMember?.franchise === 'Zonal Franchise' ||
                                                                 addMember?.franchise === 'Mobile Franchise' ||
-                                                                packageType === 'Courses' ||
-                                                                packageType === 'Signals') && (
+                                                                addMember?.packageType === 'Courses' ||
+                                                                addMember?.packageType === 'Signals') && (
                                                                 <div>
                                                                     <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'zonal-Franchise-Name' : 'zonal'}</label>
                                                                     <div className="relative text-white-dark">
@@ -896,7 +904,7 @@ const Member = () => {
                                                                     </div>
                                                                 </div>
                                                             )}
-                                                            {(addMember?.franchise === 'Mobile Franchise' || packageType === 'Courses' || packageType === 'Signals') && (
+                                                            {(addMember?.franchise === 'Mobile Franchise' || addMember?.packageType === 'Courses' || addMember?.packageType === 'Signals') && (
                                                                 <div>
                                                                     <label htmlFor="Email">Panchayath</label>
                                                                     <div className="relative text-white-dark">

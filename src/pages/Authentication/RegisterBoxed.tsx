@@ -33,6 +33,7 @@ interface Member {
     dateOfBirth: string;
     phone: string;
     franchise: string;
+    packageType: string;
     packageAmount: string | number;
     packageAmountGst: string | number;
     state: string;
@@ -61,6 +62,7 @@ const RegisterBoxed = () => {
         address: '',
         dateOfBirth: '',
         phone: '',
+        packageType: '',
         packageAmount: '',
         packageAmountGst: '',
         state: '',
@@ -79,7 +81,7 @@ const RegisterBoxed = () => {
     const [selectedDistrictId, setSelectedDistrictId] = useState('');
     const [selectedZonalId, setSelectedZonalId] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [packageType, setPackageType] = useState('');
+    // const [packageType, setPackageType] = useState('');
 
     const { stateList } = useAppSelector((state) => state.location);
 
@@ -96,7 +98,7 @@ const RegisterBoxed = () => {
 
     useEffect(() => {
         getPackagesList();
-    }, [packageType]);
+    }, [addMember?.packageType]);
 
     useEffect(() => {
         if (selectedStateId) {
@@ -231,10 +233,10 @@ const RegisterBoxed = () => {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 const filteredPackageList = await response?.data?.packageData.filter((pkg: any) => {
-                    if (packageType === 'Franchise') {
+                    if (addMember?.packageType === 'Franchise') {
                         return pkg?.franchiseName !== 'Courses' && pkg?.franchiseName !== 'Signals';
                     } else {
-                        return pkg?.franchiseName === packageType;
+                        return pkg?.franchiseName === addMember?.packageType;
                     }
                 });
                 console.log(filteredPackageList);
@@ -263,6 +265,7 @@ const RegisterBoxed = () => {
                     address: '',
                     dateOfBirth: '',
                     phone: '',
+                    packageType: '',
                     packageAmount: '',
                     packageAmountGst: '',
                     state: '',
@@ -464,23 +467,18 @@ const RegisterBoxed = () => {
                                             <label htmlFor="franchise">Package Type</label>
                                             <div className="relative text-white-dark">
                                                 <select
-                                                    onChange={(e) => {
-                                                        setPackageType(e.target.value);
-                                                    }}
-                                                    value={packageType}
+                                                    onChange={
+                                                        (e) => setAddMember({ ...addMember, packageType: e.target.value, franchise: '' })
+
+                                                        // setPackageType(e.target.value)
+                                                    }
+                                                    value={addMember?.packageType}
                                                     className="form-input ps-10 placeholder:text-white-dark"
                                                 >
-                                                    <option key={1}> select Package type </option>
-                                                    <option key={2} value={'Franchise'}>
-                                                        {' '}
-                                                        Franchise{' '}
-                                                    </option>
-                                                    <option key={3} value={'Courses'}>
-                                                        Courses{' '}
-                                                    </option>
-                                                    <option key={4} value={'Signals'}>
-                                                        Signals
-                                                    </option>
+                                                    <option> select Package type </option>
+                                                    <option value={'Franchise'}> Franchise </option>
+                                                    <option value={'Courses'}>Courses </option>
+                                                    <option value={'Signals'}>Signals</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -552,8 +550,8 @@ const RegisterBoxed = () => {
                                         {(addMember?.franchise === 'District Franchise' ||
                                             addMember?.franchise === 'Zonal Franchise' ||
                                             addMember?.franchise === 'Mobile Franchise' ||
-                                            packageType === 'Courses' ||
-                                            packageType === 'Signals') && (
+                                            addMember?.packageType === 'Courses' ||
+                                            addMember?.packageType === 'Signals') && (
                                             <>
                                                 <div>
                                                     <label htmlFor="Email">State</label>
@@ -603,7 +601,10 @@ const RegisterBoxed = () => {
                                                 </div>
                                             </>
                                         )}
-                                        {(addMember?.franchise === 'Zonal Franchise' || addMember?.franchise === 'Mobile Franchise' || packageType === 'Courses' || packageType === 'Signals') && (
+                                        {(addMember?.franchise === 'Zonal Franchise' ||
+                                            addMember?.franchise === 'Mobile Franchise' ||
+                                            addMember?.packageType === 'Courses' ||
+                                            addMember?.packageType === 'Signals') && (
                                             <div>
                                                 <label htmlFor="zonal">{addMember?.franchise === 'Zonal Franchise' ? 'Zonal Franchise Name' : 'Zonal'}</label>
                                                 <div className="relative text-white-dark">
@@ -634,7 +635,7 @@ const RegisterBoxed = () => {
                                                 </div>
                                             </div>
                                         )}
-                                        {(addMember?.franchise === 'Mobile Franchise' || packageType === 'Courses' || packageType === 'Signals') && (
+                                        {(addMember?.franchise === 'Mobile Franchise' || addMember?.packageType === 'Courses' || addMember?.packageType === 'Signals') && (
                                             <div>
                                                 <label htmlFor="Email">Panchayath</label>
                                                 <div className="relative text-white-dark">

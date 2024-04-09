@@ -24,10 +24,10 @@ const LoginBoxed = () => {
     const submitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            setLoading(true)
+            setLoading(true);
             const result: any = await dispatch(loginApi(userDetails));
             const token = result.payload?.data?.access_token;
-console.log(result);
+            console.log(result);
 
             if (token) {
                 sessionStorage.setItem('User', token);
@@ -42,9 +42,7 @@ console.log(result);
         } catch (error: any) {
             console.error('Error occurred during login:', error);
             Show_Toast({ message: 'internal server error', type: false });
-
-        }
-        finally{
+        } finally {
             setLoading(false);
         }
     };
@@ -109,7 +107,7 @@ console.log(result);
                                 {errormessage && <p className="text-center text-red-700">{errormessage}</p>}
 
                                 <button type="submit" className="btn bg-primary text-white !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                    {loading?'loading...': 'Log In'}
+                                    {loading ? 'loading...' : 'Log In'}
                                 </button>
                             </form>
                             <div className="relative my-7 text-center md:mb-9"></div>
