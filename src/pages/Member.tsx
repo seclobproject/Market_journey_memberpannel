@@ -750,9 +750,9 @@ const Member = () => {
                                                                         <option value={'Courses'}>Courses </option>
                                                                         <option value={'Signals'}>Signals</option>
                                                                     </select>
-                                                                    <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                                                        <IconA fill={true} />
-                                                                    </span>
+                                                                    {/* <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                        <Icon fill={true} />
+                                                                    </span> */}
                                                                 </div>
                                                             </div>
                                                             <div>
