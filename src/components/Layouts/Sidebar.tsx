@@ -19,12 +19,19 @@ import IconDollarSignCircle from '../Icon/IconDollarSignCircle';
 import IconDollarSign from '../Icon/IconDollarSign';
 import IconCashBanknotes from '../Icon/IconCashBanknotes';
 import IconBox from '../Icon/IconBox';
+import IconShoppingBag from '../Icon/IconShoppingBag';
+import IconChatNotification from '../Icon/IconChatNotification';
+import IconBell from '../Icon/IconBell';
+import IconUser from '../Icon/IconUser';
+import IconAward from '../Icon/IconAward';
+import IconPaperclip from '../Icon/IconPaperclip';
+import IconPencilPaper from '../Icon/IconPencilPaper';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
     const [errorSubMenu, setErrorSubMenu] = useState(false);
     const [viewSidebar, setViewSidebar] = useState(false);
-    
+    const [franchise, setFranchise] = useState(false);
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
     const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
     const location = useLocation();
@@ -61,11 +68,12 @@ const Sidebar = () => {
     }, [location]);
 
     const fetchStatus = async () => {
-        const userStatus = await localStorage.getItem('status');
+        const userStatus = await sessionStorage.getItem('status');
         if (userStatus === 'readyToApprove') {
             setViewSidebar(true);
             console.log(viewSidebar);
         }
+
     };
 
     useEffect(() => {
@@ -79,8 +87,7 @@ const Sidebar = () => {
                 <div className="bg-white dark:bg-black h-full">
                     <div className="flex justify-between items-center px-4 py-3">
                         <NavLink to="/" className="main-logo flex items-center shrink-0">
-                            <img className="w-8 ml-[5px] flex-none" src="/assets/images/logo.svg" alt="logo" />
-                            <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light">{t('VRISTO')}</span>
+                            <img className=" text-2xl w-[140px] ml-[5px] flex-none " src="/public/marketlogo.png" alt="logo" />
                         </NavLink>
 
                         <button
@@ -115,11 +122,28 @@ const Sidebar = () => {
                                     <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/package" className="group">
                                             <div className="flex items-center">
-                                                <IconBox className="group-hover:!text-primary shrink-0" />
+                                                <IconBox fill className="group-hover:!text-primary shrink-0" />
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Package')}</span>
                                             </div>
                                         </NavLink>
                                     </li>
+
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/pages/withdrawal" className="group">
+                                            <div className="flex items-center">
+                                                <IconCashBanknotes className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Withdrawal')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    {/* <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/pages/recenttransaction" className="group">
+                                            <div className="flex items-center">
+                                                <IconShoppingBag className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Recent Transaction')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li> */}
                                     <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/report" className="group">
                                             <div className="flex items-center">
@@ -128,19 +152,52 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
-                                        <NavLink to="/pages/wallet" className="group">
+                                    {/* <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/pages/awards" className="group">
                                             <div className="flex items-center">
-                                                <IconDollarSignCircle className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Wallet')}</span>
+                                                <IconAward className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Awards')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li> */}
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/pages/subscription" className="group">
+                                            <div className="flex items-center">
+                                                <IconAward className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Subscriptions')}</span>
                                             </div>
                                         </NavLink>
                                     </li>
                                     <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
-                                        <NavLink to="/pages/withdrawal" className="group">
+                                        <NavLink to="/pages/notifications" className="group">
                                             <div className="flex items-center">
-                                                <IconCashBanknotes className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Withdrawel')}</span>
+                                                <IconBell className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Notification')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/pages/news" className="group">
+                                            <div className="flex items-center">
+                                                <IconMenuNotes className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Latest News')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/pages/demataccount" className="group">
+                                            <div className="flex items-center">
+                                                <i className="fa-solid fa-building-columns text-gray-400 group-hover:!text-primary shrink-0"></i>
+                                                {/* <Ico fill className="group-hover:!text-primary shrink-0" /> */}
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Demat account')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                        <NavLink to="/users/profile" className="group">
+                                            <div className="flex items-center">
+                                                <IconUser fill className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Profile')}</span>
                                             </div>
                                         </NavLink>
                                     </li>

@@ -1,0 +1,246 @@
+import { Dialog, Transition } from '@headlessui/react';
+import axios from 'axios';
+import React, { Fragment, useState } from 'react';
+import { Base_url } from '../Services/Api';
+import { useAppSelector } from '../store';
+
+const Subscriptions = () => {
+    const [subscriptionModal, setSubscriptionModal] = useState(false);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [transactionNumber, setTransacrionNumber] = useState('');
+    const [showSelectDocumentMessage, setShowSelectDocumentMessage] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+      const { user } = useAppSelector((state) => state.user);
+
+    const handleUpload = async () => {
+        if (selectedFile) {
+            try {
+                setLoading(true); // Set loading to true when form submission begins
+
+                const token: any = sessionStorage.getItem('User');
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'content-type': 'multipart/form-data',
+                    },
+                };
+                const formData = new FormData();
+                formData.append('transactionNumber', transactionNumber);
+                formData.append('screenshot', selectedFile, selectedFile?.name);
+
+                const response = await axios.post(`${Base_url}/api/user/user-verification`, formData, config);
+                console.log(response);
+                setSelectedFile(null);
+                sessionStorage.setItem('status', response?.data?.updatedUser?.userStatus);
+                setSubscriptionModal(false);
+                setShowSelectDocumentMessage(false);
+            } catch (error) {
+                console.error('Upload failed:', error);
+            } finally {
+                setLoading(false); // Set loading to false when form submission completes (success or failure)
+            }
+        } else {
+            setShowSelectDocumentMessage(true);
+        }
+    };
+   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+       const file = event.target.files?.[0];
+       setSelectedFile(file || null);
+   };
+    return (
+        <>
+            <div>
+                <div className="panel min-h-[200px] max-w-md sm:h-auto flex  rounded-[14px] justify-between bg-[#00335B] text-white relative">
+                    <div className="flex flex-col gap-5 z-10">
+                        <div className=" dark:text-white-light">
+                            <h5 className=" text-md ">
+                                <span className="text-4xl font-bold">10</span> day left
+                            </h5>
+                        </div>
+                        <p className="text-left sm:text-left max-w-[230px]">Your monthly subscription plan has 10 days to renew Subscription is 0 Please upload the screenshot</p>
+                        <button onClick={() => setSubscriptionModal(true)} type="button" className="text-white hover:text-white bg-warning z-10 font-bold rounded-lg border-warning p-2 mr-auto border ">
+                            Subscription Package
+                        </button>
+                    </div>
+                    <img className="absolute right-0 top-0 h-[95%] z-0" src="/public/assets/images/subscription.png" alt="" />
+                </div>
+
+                <div className="mt-4 flex flex-col gap-2 ">
+                    <h1 className="text-xl font-semibold mt-5">Transaction History</h1>
+                    <div className="w-full h-[1.8px] bg-warning mb-2"></div>
+                    <div className="w-full flex justify-between min-h-[100px] bg-[#DDE4EB] rounded-3xl p-4">
+                        <div className="flex gap-4">
+                            <svg className="w-[40px] h-[68px]" width="23" height="12" viewBox="0 0 23 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M5.49425 1.45386C5.19017 1.45386 4.94368 1.2071 4.94368 0.90271C4.94368 0.598322 5.19017 0.351562 5.49425 0.351562H9.89885C10.507 0.351562 11 0.845076 11 1.45386V5.86303C11 6.16743 10.7535 6.41418 10.4494 6.41418C10.1453 6.41418 9.89885 6.16743 9.89885 5.86303V2.22184L0.93989 11.1901C0.72488 11.4054 0.376272 11.4054 0.161262 11.1901C-0.053754 10.9749 -0.053754 10.6259 0.161262 10.4107L9.10878 1.45386H5.49425Z"
+                                    fill="#09FF30"
+                                />
+                                <path
+                                    d="M17.1479 10.2405C17.4514 10.2204 17.7136 10.4503 17.7338 10.754C17.754 11.0577 17.5243 11.3203 17.2209 11.3404L12.826 11.6321C12.2192 11.6723 11.6946 11.2125 11.6543 10.6051L11.3623 6.20561C11.3421 5.90188 11.5718 5.63935 11.8752 5.61921C12.1786 5.59907 12.4409 5.82896 12.461 6.13269L12.7022 9.76589L21.0476 0.224009C21.2479 -0.00497913 21.5957 -0.0280638 21.8245 0.172448C22.0533 0.373016 22.0764 0.721182 21.8761 0.950226L13.5413 10.4799L17.1479 10.2405Z"
+                                    fill="#09FF30"
+                                />
+                            </svg>
+
+                            <div className="flex flex-col">
+                                <h4 className="text-primary font-semibold text-lg">Name</h4>
+                                <h6 className="text-primary">first level</h6>
+                                <span className="text-primary">20-07-2024</span>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <h3 className="text-primary font-bold text-lg">₹56788</h3>
+                            <span
+                                className="text-white bg-green-500 px-2 py-1 rounded-[10px]
+              {status === 'accepted' ? 'bg-green-500' : status === 'rejected' ? 'bg-red' : 'bg-yellow'}"
+                            >
+                                Accepted
+                            </span>
+                        </div>
+                    </div>
+                    <div className="w-full flex justify-between min-h-[100px] bg-[#DDE4EB] rounded-3xl p-4">
+                        <div className="flex gap-4">
+                            <svg className="w-[40px] h-[68px]" width="23" height="12" viewBox="0 0 23 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M5.49425 1.45386C5.19017 1.45386 4.94368 1.2071 4.94368 0.90271C4.94368 0.598322 5.19017 0.351562 5.49425 0.351562H9.89885C10.507 0.351562 11 0.845076 11 1.45386V5.86303C11 6.16743 10.7535 6.41418 10.4494 6.41418C10.1453 6.41418 9.89885 6.16743 9.89885 5.86303V2.22184L0.93989 11.1901C0.72488 11.4054 0.376272 11.4054 0.161262 11.1901C-0.053754 10.9749 -0.053754 10.6259 0.161262 10.4107L9.10878 1.45386H5.49425Z"
+                                    fill="#FFA500"
+                                />
+                                <path
+                                    d="M17.1479 10.2405C17.4514 10.2204 17.7136 10.4503 17.7338 10.754C17.754 11.0577 17.5243 11.3203 17.2209 11.3404L12.826 11.6321C12.2192 11.6723 11.6946 11.2125 11.6543 10.6051L11.3623 6.20561C11.3421 5.90188 11.5718 5.63935 11.8752 5.61921C12.1786 5.59907 12.4409 5.82896 12.461 6.13269L12.7022 9.76589L21.0476 0.224009C21.2479 -0.00497913 21.5957 -0.0280638 21.8245 0.172448C22.0533 0.373016 22.0764 0.721182 21.8761 0.950226L13.5413 10.4799L17.1479 10.2405Z"
+                                    fill="#FFA500"
+                                />
+                            </svg>
+                            <div className="flex flex-col">
+                                <h4 className="text-primary font-semibold text-lg">Name</h4>
+                                <h6 className="text-primary">first level</h6>
+                                <span className="text-primary">20-07-2024</span>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <h3 className="text-primary font-bold text-lg">₹56788</h3>
+                            <span
+                                className="text-white bg-yellow-500 px-2 py-1 rounded-[10px]
+              {status === 'accepted' ? 'bg-green-500' : status === 'rejected' ? 'bg-red' : 'bg-yellow'}"
+                            >
+                                Pending
+                            </span>
+                        </div>
+                    </div>
+                    <div className="w-full flex justify-between min-h-[100px] bg-[#DDE4EB] rounded-3xl p-4">
+                        <div className="flex gap-4">
+                            <svg className="w-[40px] h-[68px]" width="23" height="12" viewBox="0 0 23 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M5.49425 1.45386C5.19017 1.45386 4.94368 1.2071 4.94368 0.90271C4.94368 0.598322 5.19017 0.351562 5.49425 0.351562H9.89885C10.507 0.351562 11 0.845076 11 1.45386V5.86303C11 6.16743 10.7535 6.41418 10.4494 6.41418C10.1453 6.41418 9.89885 6.16743 9.89885 5.86303V2.22184L0.93989 11.1901C0.72488 11.4054 0.376272 11.4054 0.161262 11.1901C-0.053754 10.9749 -0.053754 10.6259 0.161262 10.4107L9.10878 1.45386H5.49425Z"
+                                    fill="#FF0000"
+                                />
+                                <path
+                                    d="M17.1479 10.2405C17.4514 10.2204 17.7136 10.4503 17.7338 10.754C17.754 11.0577 17.5243 11.3203 17.2209 11.3404L12.826 11.6321C12.2192 11.6723 11.6946 11.2125 11.6543 10.6051L11.3623 6.20561C11.3421 5.90188 11.5718 5.63935 11.8752 5.61921C12.1786 5.59907 12.4409 5.82896 12.461 6.13269L12.7022 9.76589L21.0476 0.224009C21.2479 -0.00497913 21.5957 -0.0280638 21.8245 0.172448C22.0533 0.373016 22.0764 0.721182 21.8761 0.950226L13.5413 10.4799L17.1479 10.2405Z"
+                                    fill="#FF0000"
+                                />
+                            </svg>
+                            <div className="flex flex-col">
+                                <h4 className="text-primary font-semibold text-lg">Name</h4>
+                                <h6 className="text-primary">first level</h6>
+                                <span className="text-primary">20-07-2024</span>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <h3 className="text-primary font-bold text-lg">₹56788</h3>
+                            <span
+                                className="text-white bg-red-500 px-2 py-1 rounded-[10px]
+              {status === 'accepted' ? 'bg-green-500' : status === 'rejected' ? 'bg-red' : 'bg-yellow'}"
+                            >
+                                Regected
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <Transition appear show={subscriptionModal} as={Fragment}>
+                <Dialog
+                    as="div"
+                    open={subscriptionModal}
+                    onClose={() => {
+                        setSubscriptionModal(false);
+                    }}
+                >
+                    <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+                        <div className="fixed inset-0" />
+                    </Transition.Child>
+                    <div id="register_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
+                        <div className="flex items-start justify-center min-h-screen px-4">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95"
+                                enterTo="opacity-100 scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100"
+                                leaveTo="opacity-0 scale-95"
+                            >
+                                <Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-[500px] my-8 text-black dark:text-white-dark">
+                                    <div className="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
+                                        <h5 className="text-warning">Request Withdrawal</h5>
+                                        <button type="button" onClick={() => setSubscriptionModal(false)} className="text-white-dark hover:text-dark text-[28px] p-2">
+                                            ×
+                                        </button>
+                                    </div>
+                                    <div className="p-5">
+                                        <div className="flex flex-col">
+                                            <div>
+                                                <h3 className="text-primary font-semibold">Package Amount</h3>
+                                                <h1 className="text-2xl text-primary font-bold mb-4">₹{user?.tempPackageAmount}</h1>
+                                                <label htmlFor="transactionId" className="text-[14px] text-primary">
+                                                    Your Transaction Id{' '}
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="transactionId"
+                                                    className="w-full border border-solid border-primary p-2 rounded-md outline-primary"
+                                                    onChange={(e) => setTransacrionNumber(e.target.value)}
+                                                />
+                                                <label htmlFor="transactionId" className="mt-3 text-[14px] text-primary">
+                                                    Your payment screenshot
+                                                </label>
+                                                <label htmlFor="imageUpload2" className="btn btn-outline-primary text-sm p-2 text-primary">
+                                                    Select Document
+                                                    <input type="file" id="imageUpload2" className="hidden" onChange={handleImageUpload} accept="image/*" />
+                                                </label>
+                                                {selectedFile && (
+                                                    <div className="flex items-center mt-2">
+                                                        <p className="text-sm text-danger mt-2 mr-2">File selected: {selectedFile?.name}</p>
+                                                        <button type="button" onClick={() => setSelectedFile(null)} className="text-primary hover:danger-gray-300">
+                                                            &#10005;
+                                                        </button>
+                                                    </div>
+                                                )}
+                                                {showSelectDocumentMessage && (
+                                                    <div className="flex items-center mt-2">
+                                                        <p className="text-sm text-danger mt-2 mr-2">Select a document</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-end items-center mt-4">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    handleUpload();
+                                                }}
+                                                className="btn btn-primary text-sm ltr:ml-2 rtl:mr-2 p-2"
+                                            >
+                                                {loading ? 'Saving...' : 'Save'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
+        </>
+    );
+};
+
+export default Subscriptions;

@@ -1,40 +1,239 @@
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from '../../store';
-import Dropdown from '../../components/Dropdown';
+import { useAppDispatch, useAppSelector } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+
 import IconPencilPaper from '../../components/Icon/IconPencilPaper';
-import IconCoffee from '../../components/Icon/IconCoffee';
-import IconCalendar from '../../components/Icon/IconCalendar';
+
 import IconMapPin from '../../components/Icon/IconMapPin';
 import IconMail from '../../components/Icon/IconMail';
-import IconPhone from '../../components/Icon/IconPhone';
-import IconTwitter from '../../components/Icon/IconTwitter';
-import IconDribbble from '../../components/Icon/IconDribbble';
-import IconGithub from '../../components/Icon/IconGithub';
-import IconShoppingBag from '../../components/Icon/IconShoppingBag';
-import IconTag from '../../components/Icon/IconTag';
+
+import { ApiCall } from '../../Services/Api';
+import { editProfileUrl, updateBankDetailsurl, updateNomineeDetailsurl } from '../../utils/EndPoints';
+import IconCashBanknotes from '../../components/Icon/IconCashBanknotes';
+import IconBox from '../../components/Icon/IconBox';
+import IconPencil from '../../components/Icon/IconPencil';
+import IconPhoneCall from '../../components/Icon/IconPhoneCall';
+import { userProfileApi } from '../../store/UserSlice';
+import IconUser from '../../components/Icon/IconUser';
+import IconNotes from '../../components/Icon/IconNotes';
+import IconCode from '../../components/Icon/IconCode';
+import { Show_Toast } from '../Components/Toast';
 import IconCreditCard from '../../components/Icon/IconCreditCard';
-import IconClock from '../../components/Icon/IconClock';
-import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
-import ChangePassword from '../Components/ChangePassword';
+import IconArchive from '../../components/Icon/IconArchive';
+import IconAward from '../../components/Icon/IconAward';
+// interface ProfileDetails {
+//     name: string;
+//     address: string;
+//     phone: string;
+//     email: string;
+//     franchise: string;
+//     franchiseN: string;
+//     userStatus: string;
+//     walletAmount: string;
+// }
 
 const Profile = () => {
-    const [modal, setModal] = useState(false);
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setPageTitle('Profile'));
+    // const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
+    //     name: '',
+    //     address: '',
+    //     phone: '',
+    //     email: '',
+    //     franchise: '',
+    //     franchiseN: '',
+    //     userStatus: '',
+    //     walletAmount: '',
+    // });
+    const [editProfleData, setEditProfileData] = useState({
+        name: '',
+        address: '',
+        phone: '',
+        email: '',
+        password: '',
     });
+    const [bankDetails, setBankDetails] = useState({
+        holderName: '',
+        accountNum: '',
+        bankName: '',
+        ifscCode: '',
+    });
+    const [nomineeDetail, setNomineeDetails] = useState({
+        name: '',
+        phone: '',
+        address: '',
+        bankName: '',
+        ifscCode: '',
+        accountNum: '',
+        aadhaarNum: '',
+        pancardNum: '',
+    });
+    const [editUserModal, setEditUserModal] = useState(false);
+    const [updateBankModal, setUpdateBankModal] = useState(false);
+    const [updateNomineeModal, setUpdateNomineeModal] = useState(false);
+    const [confirmPassword, setConfirmPasswod] = useState('');
+    const [errorMessage, setErrorMessage] = useState(false);
+    const { user } = useAppSelector((state) => state.user);
+    const dispatch = useAppDispatch();
 
-    const changeModal = () => {
-        setModal(!modal);
+    useEffect(() => {
+        // dispatch(setPageTitle('Profile'));
+        dispatch(userProfileApi());
+        setBankDetails(user?.bankDetails);
+        setEditProfileData(user);
+        setNomineeDetails(user?.nomineeDetails);
+    }, []);
+
+    useEffect(() => {
+        setBankDetails(user?.bankDetails);
+    }, [bankDetails]);
+
+    useEffect(() => {
+        if (confirmPassword === editProfleData.password) {
+            setErrorMessage(false);
+        } else {
+            setErrorMessage(true);
+        }
+    }, [confirmPassword]);
+
+    //----------Get user profile -----------
+
+    // const getProfile = async () => {
+    //     try {
+    //         const response = await ApiCall('get', getProfileUrl);
+    //         console.log(response);
+
+    //         if (response instanceof Error) {
+    //             console.error('Error fetching state list:', response.message);
+    //         } else if (response.status === 200) {
+    //             setProfileDetails(response?.data);
+    //         } else {
+    //             console.error('Error fetching state list. Unexpected status:', response.status);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching state list:', error);
+    //     }
+    // };
+    //--------------------------------
+
+    // ---------- Edit profile --------------
+    const editProfile = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (editProfleData.password === confirmPassword) {
+        } else {
+            setErrorMessage(true);
+        }
+        if (editProfleData.name || editProfleData.address || editProfleData.phone || editProfleData.email || editProfleData.password) {
+            try {
+                const response = await ApiCall('post', editProfileUrl, editProfleData);
+                console.log(response);
+
+                if (response instanceof Error) {
+                    console.error('Error fetching state list:', response.message);
+                } else if (response.status === 200) {
+                    // setProfileDetails(response?.data);
+                    dispatch(userProfileApi());
+                    setEditUserModal(false);
+                    setEditProfileData({
+                        name: '',
+                        address: '',
+                        phone: '',
+                        email: '',
+                        password: '',
+                    });
+                    setConfirmPasswod('');
+                } else {
+                    console.error('Error fetching state list. Unexpected status:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching state list:', error);
+            }
+        } else {
+            console.log('please enter profile details');
+        }
     };
 
-    const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
+    // ----------update the bank details ----------------
+
+    const handleBankDetails = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (bankDetails.holderName || bankDetails.accountNum || bankDetails.bankName || bankDetails.ifscCode) {
+            try {
+                const response = await ApiCall('post', updateBankDetailsurl, bankDetails);
+                console.log(response);
+
+                if (response instanceof Error) {
+                    console.error('Error fetching state list:', response.message);
+                } else if (response.status === 200) {
+                    setBankDetails(response?.data);
+                    setUpdateBankModal(false);
+                    dispatch(userProfileApi());
+                    setBankDetails({
+                        holderName: '',
+                        accountNum: '',
+                        bankName: '',
+                        ifscCode: '',
+                    });
+                } else {
+                    console.error('Error fetching state list. Unexpected status:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching state list:', error);
+            }
+        } else {
+            console.log('please enter bank details');
+        }
+    };
+    // ----------update Nominee details ----------------
+
+    const handleNomineeDetails = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (
+            nomineeDetail.name ||
+            nomineeDetail.phone ||
+            nomineeDetail.address ||
+            nomineeDetail.bankName ||
+            nomineeDetail.ifscCode ||
+            nomineeDetail.accountNum ||
+            nomineeDetail.aadhaarNum ||
+            nomineeDetail.pancardNum
+        ) {
+            try {
+                const response = await ApiCall('post', updateNomineeDetailsurl, nomineeDetail);
+                console.log(response);
+
+                if (response instanceof Error) {
+                    console.error('Error fetching state list:', response.message);
+                } else if (response.status === 200) {
+                    setNomineeDetails(response?.data);
+                    setUpdateNomineeModal(false);
+                    dispatch(userProfileApi());
+                    setNomineeDetails({
+                        name: '',
+                        phone: '',
+                        address: '',
+                        bankName: '',
+                        ifscCode: '',
+                        accountNum: '',
+                        aadhaarNum: '',
+                        pancardNum: '',
+                    });
+                } else {
+                    console.error('Error fetching state list. Unexpected status:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching state list:', error);
+            }
+        } else {
+            console.log('please enter bank details');
+        }
+    };
+    // ---------------------------------
+
     return (
-        <div>
-            <ul className="flex space-x-2 rtl:space-x-reverse">
+        <>
+            <div>
+                {/* <ul className="flex space-x-2 rtl:space-x-reverse">
                 <li>
                     <Link to="#" className="text-primary hover:underline">
                         Users
@@ -43,364 +242,560 @@ const Profile = () => {
                 <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
                     <span>Profile</span>
                 </li>
-            </ul>
-            <p onClick={changeModal}>ChangePassword</p>
-            <ChangePassword changeModal={changeModal} modal={modal} />
-            <div className="pt-5">
-                <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5">
-                    <div className="panel">
-                        <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Profile</h5>
-                            <Link to="/users/user-account-settings" className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
-                                <IconPencilPaper />
-                            </Link>
-                        </div>
-                        <div className="mb-5">
-                            <div className="flex flex-col justify-center items-center">
-                                <img src="/assets/images/profile-34.jpeg" alt="img" className="w-24 h-24 rounded-full object-cover  mb-5" />
-                                <p className="font-semibold text-primary text-xl">Jimmy Turner</p>
+            </ul> */}
+                <div className="pt-5">
+                    <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
+                        <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#DDE4EB] text-white ">
+                            <div className="flex h-full justify-between items-center  dark:text-white-light">
+                                <IconCashBanknotes className="w-10 h-10 text-warning" />
                             </div>
-                            <ul className="mt-5 flex flex-col max-w-[160px] m-auto space-y-4 font-semibold text-white-dark">
-                                <li className="flex items-center gap-2">
-                                    <IconCoffee className="shrink-0" />
-                                    Web Developer
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <IconCalendar className="shrink-0" />
-                                    Jan 20, 1989
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <IconMapPin className="shrink-0" />
-                                    New York, USA
-                                </li>
-                                <li>
-                                    <button className="flex items-center gap-2">
-                                        <IconMail className="w-5 h-5 shrink-0" />
-                                        <span className="text-primary truncate">jimmy@gmail.com</span>
-                                    </button>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <IconPhone />
-                                    <span className="whitespace-nowrap" dir="ltr">
-                                        +1 (530) 555-12121
-                                    </span>
-                                </li>
-                            </ul>
-                            <ul className="mt-7 flex items-center justify-center gap-2">
-                                <li>
-                                    <button className="btn btn-info flex items-center justify-center rounded-full w-10 h-10 p-0">
-                                        <IconTwitter className="w-5 h-5" />
-                                    </button>
-                                </li>
-                                <li>
-                                    <button className="btn btn-danger flex items-center justify-center rounded-full w-10 h-10 p-0">
-                                        <IconDribbble />
-                                    </button>
-                                </li>
-                                <li>
-                                    <button className="btn btn-dark flex items-center justify-center rounded-full w-10 h-10 p-0">
-                                        <IconGithub />
-                                    </button>
-                                </li>
-                            </ul>
+                            <div className="flex flex-col gap-2">
+                                <h1 className="text-[25px] font-semibold text-primary">₹{user?.directIncome}</h1>
+                                <h5 className="font-semibold text-md text-warning">DirectIncome</h5>
+                            </div>
                         </div>
-                    </div>
-                    <div className="panel lg:col-span-2 xl:col-span-3">
-                        <div className="mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Task</h5>
+                        <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#DDE4EB] text-white">
+                            <div className="flex h-full justify-between items-center  dark:text-white-light">
+                                <IconCashBanknotes className="w-10 h-10 text-warning" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <h1 className="text-[25px] font-semibold text-primary">₹{user?.inDirectIncome}</h1>
+                                <h5 className="font-semibold text-md text-warning">InDirectIncome</h5>
+                            </div>
                         </div>
-                        <div className="mb-5">
-                            <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
-                                <table className="whitespace-nowrap">
-                                    <thead>
-                                        <tr>
-                                            <th>Projects</th>
-                                            <th>Progress</th>
-                                            <th>Task Done</th>
-                                            <th className="text-center">Time</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="dark:text-white-dark">
-                                        <tr>
-                                            <td>Figma Design</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-danger rounded-full w-[29.56%]"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-danger">29.56%</td>
-                                            <td className="text-center">2 mins ago</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Vue Migration</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-info rounded-full w-1/2"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-success">50%</td>
-                                            <td className="text-center">4 hrs ago</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Flutter App</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-warning rounded-full  w-[39%]"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-danger">39%</td>
-                                            <td className="text-center">a min ago</td>
-                                        </tr>
-                                        <tr>
-                                            <td>API Integration</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-success rounded-full  w-[78.03%]"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-success">78.03%</td>
-                                            <td className="text-center">2 weeks ago</td>
-                                        </tr>
 
-                                        <tr>
-                                            <td>Blog Update</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-secondary  rounded-full  w-full"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-success">100%</td>
-                                            <td className="text-center">18 hrs ago</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Landing Page</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-danger rounded-full  w-[19.15%]"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-danger">19.15%</td>
-                                            <td className="text-center">5 days ago</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Shopify Dev</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-primary rounded-full w-[60.55%]"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-success">60.55%</td>
-                                            <td className="text-center">8 days ago</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#DDE4EB] text-white">
+                            <div className="flex h-full justify-between items-center  dark:text-white-light">
+                                <IconCreditCard className="w-10 h-10 text-warning" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <h1 className="text-[25px] font-semibold text-primary">₹{user?.totalLevelIncome}</h1>
+                                <h5 className="font-semibold text-md text-warning">LevelIncome</h5>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div className="panel">
-                        <div className="mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Summary</h5>
-                        </div>
-                        <div className="space-y-4">
-                            <div className="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
-                                <div className="flex items-center justify-between p-4 py-2">
-                                    <div className="grid place-content-center w-9 h-9 rounded-md bg-secondary-light dark:bg-secondary text-secondary dark:text-secondary-light">
-                                        <IconShoppingBag />
-                                    </div>
-                                    <div className="ltr:ml-4 rtl:mr-4 flex items-start justify-between flex-auto font-semibold">
-                                        <h6 className="text-white-dark text-[13px] dark:text-white-dark">
-                                            Income
-                                            <span className="block text-base text-[#515365] dark:text-white-light">$92,600</span>
-                                        </h6>
-                                        <p className="ltr:ml-auto rtl:mr-auto text-secondary">90%</p>
-                                    </div>
+                    {/* <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5"> */}
+                    <div className="flex flex-wrap justify-between">
+                        <div className="panel mb-5 bg-primary w-full px-10">
+                            <div className="flex items-center justify-between">
+                                <h5 className="font-semibold text-warning text-lg dark:text-white-light">Profile</h5>
+                                <div onClick={() => setEditUserModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">
+                                    <IconPencilPaper />
                                 </div>
                             </div>
-                            <div className="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
-                                <div className="flex items-center justify-between p-4 py-2">
-                                    <div className="grid place-content-center w-9 h-9 rounded-md bg-info-light dark:bg-info text-info dark:text-info-light">
-                                        <IconTag />
-                                    </div>
-                                    <div className="ltr:ml-4 rtl:mr-4 flex items-start justify-between flex-auto font-semibold">
-                                        <h6 className="text-white-dark text-[13px] dark:text-white-dark">
-                                            Profit
-                                            <span className="block text-base text-[#515365] dark:text-white-light">$37,515</span>
-                                        </h6>
-                                        <p className="ltr:ml-auto rtl:mr-auto text-info">65%</p>
-                                    </div>
+                            <div className="mb-5">
+                                <div className="flex flex-col justify-center items-center py-2">
+                                    <img src="/assets/images/userProfile.jpg" alt="img" className="w-24 h-24 rounded-full object-cover mb-5" />
+                                    <p className="font-semibold text-white text-xl">{user.name}</p>
+                                    <p className={user.userStatus === 'approved' ? 'text-green-500' : 'text-warning'}>{user.userStatus}</p>
+                                </div>
+                                <div className="mt-5 flex m-auto space-y-4 flex-wrap  text-white gap-10 font-semibold text-base">
+                                    <ul className="mt-5 sm:m-auto space-y-4 max-w-[280px] ">
+                                        <li className="flex items-center gap-3">
+                                            <IconMail className="w-5 h-5 shrink-0" fill />
+                                            Email : {user.email}
+                                        </li>
+                                        <li className="flex items-center gap-2 ">
+                                            <IconPhoneCall fill />
+                                            Phone : {user.phone}
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <IconMapPin className="shrink-0" fill />
+                                            Address : {user.address}
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <IconBox className="shrink-0" />
+                                            User Id : {user.ownSponserId}
+                                        </li>
+                                    </ul>
+                                    <ul className="mt-5 sm:m-auto space-y-4 ">
+                                        <li className="flex items-center gap-3">
+                                            <IconCashBanknotes className="shrink-0" fill />
+                                            walletAmount : {user.walletAmount}
+                                        </li>
+                                        {/* <li className="flex items-center gap-3">
+                                            <IconCashBanknotes className="shrink-0" fill />
+                                            directIncome : {user.directIncome}
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <IconCashBanknotes className="shrink-0" fill />
+                                            inDirectIncome : {user.inDirectIncome}
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <IconCashBanknotes className="shrink-0" fill />
+                                            totalLevelIncome : {user.totalLevelIncome}
+                                        </li> */}
+                                        <li className="flex items-center gap-3">
+                                            <IconBox className="shrink-0" />
+                                            Franchise Type : {user.franchise}
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <IconPencil className="shrink-0" fill />
+                                            Franchise Name : {user.franchiseName}
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <IconAward className="shrink-0" fill />
+                                            Pool Rank: {user.pool}
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                            <div className="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
-                                <div className="flex items-center justify-between p-4 py-2">
-                                    <div className="grid place-content-center w-9 h-9 rounded-md bg-warning-light dark:bg-warning text-warning dark:text-warning-light">
-                                        <IconCreditCard />
-                                    </div>
-                                    <div className="ltr:ml-4 rtl:mr-4 flex items-start justify-between flex-auto font-semibold">
-                                        <h6 className="text-white-dark text-[13px] dark:text-white-dark">
-                                            Expenses
-                                            <span className="block text-base text-[#515365] dark:text-white-light">$55,085</span>
-                                        </h6>
-                                        <p className="ltr:ml-auto rtl:mr-auto text-warning">80%</p>
-                                    </div>
+                        </div>
+
+                        <div className="panel mb-5 p-5 bg-[#DDE4EB]  w-full">
+                            <div className="flex mb-5 ">
+                                <h5 className="font-semibold text-warning text-lg dark:text-white-light">Bank Details</h5>
+                                <div onClick={() => setUpdateBankModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">
+                                    <IconPencilPaper />
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="panel">
-                        <div className="flex items-center justify-between mb-10">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Pro Plan</h5>
-                            <button className="btn btn-primary">Renew Now</button>
-                        </div>
-                        <div className="group">
-                            <ul className="list-inside list-disc text-white-dark font-semibold mb-7 space-y-2">
-                                <li>10,000 Monthly Visitors</li>
-                                <li>Unlimited Reports</li>
-                                <li>2 Years Data Storage</li>
-                            </ul>
-                            <div className="flex items-center justify-between mb-4 font-semibold">
-                                <p className="flex items-center rounded-full bg-dark px-2 py-1 text-xs text-white-light font-semibold">
-                                    <IconClock className="w-3 h-3 ltr:mr-1 rtl:ml-1" />5 Days Left
-                                </p>
-                                <p className="text-info">$25 / month</p>
-                            </div>
-                            <div className="rounded-full h-2.5 p-0.5 bg-dark-light overflow-hidden mb-5 dark:bg-dark-light/10">
-                                <div className="bg-gradient-to-r from-[#f67062] to-[#fc5296] w-full h-full rounded-full relative" style={{ width: '65%' }}></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="panel">
-                        <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Payment History</h5>
-                        </div>
-                        <div>
-                            <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-                                <div className="flex items-center justify-between py-2">
-                                    <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-                                        March
-                                        <span className="block text-white-dark dark:text-white-light">Pro Membership</span>
-                                    </h6>
-                                    <div className="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-                                        <p className="font-semibold">90%</p>
-                                        <div className="dropdown ltr:ml-4 rtl:mr-4">
-                                            <Dropdown
-                                                offset={[0, 5]}
-                                                placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                                btnClassName="hover:text-primary"
-                                                button={<IconHorizontalDots className="opacity-80 hover:opacity-100" />}
-                                            >
-                                                <ul className="!min-w-[150px]">
-                                                    <li>
-                                                        <button type="button">View Invoice</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Download Invoice</button>
-                                                    </li>
-                                                </ul>
-                                            </Dropdown>
+                            <div className="mb-5">
+                                <ul className="mt-5  space-y-4 text-primary font-semibold text-base">
+                                    <li>
+                                        <div className="flex items-center gap-3 ">
+                                            <IconUser className="w-5 h-5 shrink-0" fill />
+                                            Account Holder Name : {user?.bankDetails?.holderName}
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-                                <div className="flex items-center justify-between py-2">
-                                    <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-                                        February
-                                        <span className="block text-white-dark dark:text-white-light">Pro Membership</span>
-                                    </h6>
-                                    <div className="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-                                        <p className="font-semibold">90%</p>
-                                        <div className="dropdown ltr:ml-4 rtl:mr-4">
-                                            <Dropdown offset={[0, 5]} placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`} button={<IconHorizontalDots className="opacity-80 hover:opacity-100" />}>
-                                                <ul className="!min-w-[150px]">
-                                                    <li>
-                                                        <button type="button">View Invoice</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Download Invoice</button>
-                                                    </li>
-                                                </ul>
-                                            </Dropdown>
+                                    </li>
+                                    <li>
+                                        <div className="flex items-center gap-3">
+                                            <IconNotes className="w-5 h-5 shrink-0" fill />
+                                            Bank Name : {user?.bankDetails?.bankName}
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="flex items-center justify-between py-2">
-                                    <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-                                        January
-                                        <span className="block text-white-dark dark:text-white-light">Pro Membership</span>
-                                    </h6>
-                                    <div className="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-                                        <p className="font-semibold">90%</p>
-                                        <div className="dropdown ltr:ml-4 rtl:mr-4">
-                                            <Dropdown offset={[0, 5]} placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`} button={<IconHorizontalDots className="opacity-80 hover:opacity-100" />}>
-                                                <ul className="!min-w-[150px]">
-                                                    <li>
-                                                        <button type="button">View Invoice</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Download Invoice</button>
-                                                    </li>
-                                                </ul>
-                                            </Dropdown>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="panel">
-                        <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Card Details</h5>
-                        </div>
-                        <div>
-                            <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-                                <div className="flex items-center justify-between py-2">
-                                    <div className="flex-none">
-                                        <img src="/assets/images/card-americanexpress.svg" alt="img" />
-                                    </div>
-                                    <div className="flex items-center justify-between flex-auto ltr:ml-4 rtl:mr-4">
-                                        <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-                                            American Express
-                                            <span className="block text-white-dark dark:text-white-light">Expires on 12/2025</span>
-                                        </h6>
-                                        <span className="badge bg-success ltr:ml-auto rtl:mr-auto">Primary</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-                                <div className="flex items-center justify-between py-2">
-                                    <div className="flex-none">
-                                        <img src="/assets/images/card-mastercard.svg" alt="img" />
-                                    </div>
-                                    <div className="flex items-center justify-between flex-auto ltr:ml-4 rtl:mr-4">
-                                        <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-                                            Mastercard
-                                            <span className="block text-white-dark dark:text-white-light">Expires on 03/2025</span>
-                                        </h6>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="flex items-center justify-between py-2">
-                                    <div className="flex-none">
-                                        <img src="/assets/images/card-visa.svg" alt="img" />
-                                    </div>
-                                    <div className="flex items-center justify-between flex-auto ltr:ml-4 rtl:mr-4">
-                                        <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-                                            Visa
-                                            <span className="block text-white-dark dark:text-white-light">Expires on 10/2025</span>
-                                        </h6>
-                                    </div>
-                                </div>
+                                    </li>
+                                    <li className="flex items-center gap-3">
+                                        <IconPencilPaper fill />
+                                        Account Number : {user?.bankDetails?.accountNum}
+                                    </li>
+                                    <li className="flex items-center gap-3">
+                                        <IconCode className="shrink-0" fill />
+                                        IFSC code : {user?.bankDetails?.ifscCode}
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <div className="bg-primary w-full p-5">
+                <div className="flex mb-5 ">
+                    <h5 className="font-semibold text-warning text-lg dark:text-white-light">Nominee Details</h5>
+                    <div onClick={() => setUpdateNomineeModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">
+                        <IconPencilPaper />
+                    </div>
+                </div>
+                <ul className="mt-5 m-auto space-y-4 text-white font-semibold text-base">
+                    <li>
+                        <div className="flex items-center gap-3">
+                            <IconUser className="w-5 h-5 shrink-0" fill />
+                            Name : {user?.nomineeDetails?.name}
+                        </div>
+                    </li>
+                    <li>
+                        <div className="flex items-center gap-3">
+                            <IconPhoneCall fill />
+                            Phone : {user?.nomineeDetails?.phone}
+                        </div>
+                    </li>
+                    <li className="flex items-center gap-3">
+                        <IconPencilPaper fill />
+                        Address : {user?.nomineeDetails?.address}
+                    </li>
+                    <li className="flex items-center gap-3">
+                        <IconNotes className="w-5 h-5 shrink-0" fill />
+                        Bank Name : {user?.nomineeDetails?.bankName}
+                    </li>
+                    <li className="flex items-center gap-3">
+                        <IconPencilPaper fill />
+                        Account Number : {user?.nomineeDetails?.accountNum}
+                    </li>
+                    <li className="flex items-center gap-3">
+                        <IconCode className="shrink-0" fill />
+                        IFSC Code : {user?.nomineeDetails?.ifscCode}
+                    </li>
+                    <li className="flex items-center gap-3">
+                        <IconCreditCard className="shrink-0" fill />
+                        Aadhaar Number : {user?.nomineeDetails?.aadhaarNum}
+                    </li>
+                    <li className="flex items-center gap-3">
+                        <IconCreditCard className="shrink-0" fill />
+                        Pancard Number : {user?.nomineeDetails?.pancardNum}
+                    </li>
+                </ul>
+            </div>
+
+            {/* edit user profile modal */}
+            <div>
+                <Transition appear show={editUserModal} as={Fragment}>
+                    <Dialog
+                        as="div"
+                        open={editUserModal}
+                        onClose={() => {
+                            setEditUserModal(false);
+                        }}
+                    >
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0" />
+                        </Transition.Child>
+                        <div id="register_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
+                            <div className="flex items-start justify-center min-h-screen px-4">
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0 scale-95"
+                                    enterTo="opacity-100 scale-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100 scale-100"
+                                    leaveTo="opacity-0 scale-95"
+                                >
+                                    <Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-[500px] my-8 text-black dark:text-white-dark">
+                                        <div className="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
+                                            <h5 className="text-warning">Update Profile</h5>
+                                            <button type="button" onClick={() => setEditUserModal(false)} className="text-white-dark hover:text-dark text-[28px] p-2">
+                                                ×
+                                            </button>
+                                        </div>
+                                        <div className="p-5">
+                                            <form onSubmit={editProfile} className="  rounded-md p-4 mb-5 bg-white dark:bg-black w-full  md:max-w-[486px] ">
+                                                <div className="flex flex-col  gap-2">
+                                                    <div className="">
+                                                        <label htmlFor="name">Full Name</label>
+                                                        <input
+                                                            onChange={(e) => setEditProfileData({ ...editProfleData, name: e.target.value })}
+                                                            id="name"
+                                                            type="text"
+                                                            value={editProfleData?.name}
+                                                            placeholder="Enter your name"
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+
+                                                    <div className="">
+                                                        <label htmlFor="address">Address</label>
+                                                        <input
+                                                            onChange={(e) => setEditProfileData({ ...editProfleData, address: e.target.value })}
+                                                            id="address"
+                                                            value={editProfleData?.address}
+                                                            type="text"
+                                                            placeholder="Address"
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+                                                    <div className="">
+                                                        <label htmlFor="email">Email</label>
+                                                        <input
+                                                            onChange={(e) => setEditProfileData({ ...editProfleData, email: e.target.value })}
+                                                            id="email"
+                                                            value={editProfleData?.email}
+                                                            type="email"
+                                                            placeholder="Email"
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+                                                    <div className="">
+                                                        <label htmlFor="newPassword">New Password</label>
+                                                        <input
+                                                            onChange={(e) => setEditProfileData({ ...editProfleData, password: e.target.value })}
+                                                            id="newPassword"
+                                                            type="text"
+                                                            value={editProfleData?.password}
+                                                            placeholder="Enter new password"
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+                                                    <div className="">
+                                                        <label htmlFor="confirmPassword">Confirm Password</label>
+                                                        <input
+                                                            onChange={(e) => setConfirmPasswod(e.target.value)}
+                                                            id="confirmPassword"
+                                                            type="text"
+                                                            value={confirmPassword}
+                                                            placeholder="Enter confirm Password"
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+                                                    {errorMessage && <p className="text-red-600">Passwords do not match.</p>}
+                                                    <div className="sm:col-span-2 mt-3">
+                                                        <button type="submit" className="btn btn-primary border-none">
+                                                            Save
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </Dialog.Panel>
+                                </Transition.Child>
+                            </div>
+                        </div>
+                    </Dialog>
+                </Transition>
+            </div>
+            {/* edit user profile end */}
+
+            {/* update bank details */}
+            <div>
+                <Transition appear show={updateBankModal} as={Fragment}>
+                    <Dialog
+                        as="div"
+                        open={updateBankModal}
+                        onClose={() => {
+                            setUpdateBankModal(false);
+                        }}
+                    >
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0" />
+                        </Transition.Child>
+                        <div id="register_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
+                            <div className="flex items-start justify-center min-h-screen px-4">
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0 scale-95"
+                                    enterTo="opacity-100 scale-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100 scale-100"
+                                    leaveTo="opacity-0 scale-95"
+                                >
+                                    <Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-[500px] my-8 text-black dark:text-white-dark">
+                                        <div className="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
+                                            <h5 className="text-warning">Update Bank Details</h5>
+                                            <button type="button" onClick={() => setUpdateBankModal(false)} className="text-white-dark hover:text-dark text-[28px] p-2">
+                                                ×
+                                            </button>
+                                        </div>
+                                        <div className="p-5">
+                                            <form onSubmit={handleBankDetails} className=" dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black w-full  md:max-w-[486px]">
+                                                <div className="flex flex-col">
+                                                    <div className="flex flex-col gap-5">
+                                                        <div className="mr-2">
+                                                            <label htmlFor="bankname">Bank Name</label>
+                                                            <input
+                                                                onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
+                                                                id="bankname"
+                                                                type="text"
+                                                                value={bankDetails?.bankName}
+                                                                placeholder="Enter bank name"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+                                                        <div className="mr-2">
+                                                            <label htmlFor="holderName">Account holder name</label>
+                                                            <input
+                                                                onChange={(e) => setBankDetails({ ...bankDetails, holderName: e.target.value })}
+                                                                id="holderName"
+                                                                type="text"
+                                                                value={bankDetails?.holderName}
+                                                                placeholder="Enter holder name"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+
+                                                        <div className="mr-2">
+                                                            <label htmlFor="ACNumber">Account Number</label>
+                                                            <input
+                                                                onChange={(e) => setBankDetails({ ...bankDetails, accountNum: e.target.value })}
+                                                                id="ACNumber"
+                                                                value={bankDetails?.accountNum}
+                                                                type="text"
+                                                                placeholder="Account number"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+                                                        <div className="mr-2">
+                                                            <label htmlFor="ifsc">IFSC code</label>
+                                                            <input
+                                                                onChange={(e) => setBankDetails({ ...bankDetails, ifscCode: e.target.value })}
+                                                                id="ifsc"
+                                                                value={bankDetails?.ifscCode}
+                                                                type="text"
+                                                                placeholder="Enter IfscCode"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+
+                                                        <div className="sm:col-span-2 mt-3">
+                                                            <button type="submit" className="btn btn-primary border-none">
+                                                                Save
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </Dialog.Panel>
+                                </Transition.Child>
+                            </div>
+                        </div>
+                    </Dialog>
+                </Transition>
+            </div>
+
+            {/* update nominee details */}
+            <div>
+                <Transition appear show={updateNomineeModal} as={Fragment}>
+                    <Dialog
+                        as="div"
+                        open={updateNomineeModal}
+                        onClose={() => {
+                            setUpdateNomineeModal(false);
+                        }}
+                    >
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0" />
+                        </Transition.Child>
+                        <div id="register_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
+                            <div className="flex items-start justify-center min-h-screen px-4">
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0 scale-95"
+                                    enterTo="opacity-100 scale-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100 scale-100"
+                                    leaveTo="opacity-0 scale-95"
+                                >
+                                    <Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-[500px] my-8 text-black dark:text-white-dark">
+                                        <div className="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
+                                            <h5 className="text-warning">Update Nominee Details</h5>
+                                            <button type="button" onClick={() => setUpdateNomineeModal(false)} className="text-white-dark hover:text-dark text-[28px] p-2">
+                                                ×
+                                            </button>
+                                        </div>
+                                        <div className="p-5">
+                                            <form onSubmit={handleNomineeDetails} className=" dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black w-full  md:max-w-[486px]">
+                                                <div className="flex flex-col">
+                                                    <div className="flex flex-col gap-5">
+                                                        <div className="mr-2">
+                                                            <label htmlFor="nomineeName">Name</label>
+                                                            <input
+                                                                onChange={(e) => setNomineeDetails({ ...nomineeDetail, name: e.target.value })}
+                                                                id="nomineeName"
+                                                                type="text"
+                                                                value={nomineeDetail?.name}
+                                                                placeholder="Enter name"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+                                                        <div className="mr-2">
+                                                            <label htmlFor="Phone">Phone</label>
+                                                            <input
+                                                                onChange={(e) => setNomineeDetails({ ...nomineeDetail, phone: e.target.value })}
+                                                                id="Phone"
+                                                                type="text"
+                                                                value={nomineeDetail?.phone}
+                                                                placeholder="Enter Phone"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+                                                        <div className="mr-2">
+                                                            <label htmlFor="bankName">Bank Name</label>
+                                                            <input
+                                                                onChange={(e) => setNomineeDetails({ ...nomineeDetail, bankName: e.target.value })}
+                                                                id="bankName"
+                                                                type="text"
+                                                                value={nomineeDetail?.bankName}
+                                                                placeholder="Enter Bank Name"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+
+                                                        <div className="mr-2">
+                                                            <label htmlFor="ACNumber">Account Number</label>
+                                                            <input
+                                                                onChange={(e) => setNomineeDetails({ ...nomineeDetail, accountNum: e.target.value })}
+                                                                id="ACNumber"
+                                                                value={nomineeDetail?.accountNum}
+                                                                type="text"
+                                                                placeholder="Account number"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+                                                        <div className="mr-2">
+                                                            <label htmlFor="ifsc">IFSC code</label>
+                                                            <input
+                                                                onChange={(e) => setNomineeDetails({ ...nomineeDetail, ifscCode: e.target.value })}
+                                                                id="ifsc"
+                                                                value={nomineeDetail?.ifscCode}
+                                                                type="text"
+                                                                placeholder="Enter IfscCode"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+                                                        <div className="mr-2">
+                                                            <label htmlFor="address">Address</label>
+                                                            <input
+                                                                onChange={(e) => setNomineeDetails({ ...nomineeDetail, address: e.target.value })}
+                                                                id="address"
+                                                                value={nomineeDetail?.address}
+                                                                type="text"
+                                                                placeholder="Enter Address"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+                                                        <div className="mr-2">
+                                                            <label htmlFor="aadhaarNum">Aadhaar Number</label>
+                                                            <input
+                                                                onChange={(e) => setNomineeDetails({ ...nomineeDetail, aadhaarNum: e.target.value })}
+                                                                id="address"
+                                                                value={nomineeDetail?.aadhaarNum}
+                                                                type="text"
+                                                                placeholder="Enter Aadhaar Number"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+                                                        <div className="mr-2">
+                                                            <label htmlFor="pancardNum">PanCard Number</label>
+                                                            <input
+                                                                onChange={(e) => setNomineeDetails({ ...nomineeDetail, pancardNum: e.target.value })}
+                                                                id="address"
+                                                                value={nomineeDetail?.pancardNum}
+                                                                type="text"
+                                                                placeholder="Enter Pancard Number"
+                                                                className="form-input"
+                                                            />
+                                                        </div>
+
+                                                        <div className="sm:col-span-2 mt-3">
+                                                            <button type="submit" className="btn btn-primary border-none">
+                                                                Save
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </Dialog.Panel>
+                                </Transition.Child>
+                            </div>
+                        </div>
+                    </Dialog>
+                </Transition>
+            </div>
+        </>
     );
 };
 

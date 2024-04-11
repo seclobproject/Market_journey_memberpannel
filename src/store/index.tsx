@@ -2,10 +2,14 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import themeConfigSlice from './themeConfigSlice';
 import AuthSlice from './AuthSlice';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import UserSlice from './UserSlice';
+import LocationSlice from './LocationSlice';
 
 const rootReducer = combineReducers({
     themeConfig: themeConfigSlice,
     auth:AuthSlice,
+    user:UserSlice,
+    location:LocationSlice
 });
 
 const store = configureStore({

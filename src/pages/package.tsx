@@ -1,61 +1,66 @@
-import React from 'react';
-import Tippy from '@tippyjs/react';
-import IconTrashLines from '../components/Icon/IconTrashLines';
-const tableData = [
-    {
-        name: 'John Doe',
-        office: 'London',
-        sale: 120,
-    },
-    {
-        name: 'Shaun Park',
-        office: 'New York',
-        sale: 400,
-    },
-    {
-        name: 'Alma Clarke',
-        office: 'Amazon',
-        sale: 310,
-    },
-    {
-        name: 'Vincent Carpenter',
-        office: 'Canada',
-        sale: 100,
-    },
-];
-const Member = () => {
+import React, { useEffect, useState } from 'react';
+import { ApiCall } from '../Services/Api';
+import { packagesListUrl } from '../utils/EndPoints';
+
+const Package = () => {
+    const [packagesList, setPackagesList] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchPackages = async () => {
+            try {
+                setLoading(true);
+                const response = await ApiCall('get', packagesListUrl);
+
+                if (response instanceof Error) {
+                    console.error('Error fetching state list:', response.message);
+                } else if (response.status === 200) {
+                    setPackagesList(response?.data?.packageData);
+                    setLoading(false);
+                    
+                } else {
+                    console.error('Error fetching state list. Unexpected status:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPackages();
+    }, []);
+
     return (
         <div className="panel">
             <div className="flex items-center justify-between mb-5">
-                <h5 className="font-semibold text-lg dark:text-white-light">Package</h5>
+                <h5 className="font-semibold text-warning text-lg dark:text-white-light">Package</h5>
             </div>
-            <div className="table-responsive mb-5">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Package Name </th>
-                            <th>Franchise </th>
-                            <th> Amount </th>
-                      
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tableData.map((data) => {
-                            return (
-                                <tr key={data.name}>
-                                    <td>
-                                        <div className="whitespace-nowrap">{data.name}</div>
-                                    </td>
-                                    <td>{data.office}</td>
-                                    <td>{data.sale}</td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
+            {loading ? (
+                <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+            ) : (
+                packagesList.map((pkg: any) => (
+                    <div
+                        key={pkg?._id}
+                        className="max-w-[600px] flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2
+                
+                "
+                    >
+                        <div className="flex gap-4">
+                            <div className="flex flex-col gap-2">
+                                <h4 className="text-white  text-base">Franchise</h4>
+                                <h6 className="text-warning font-semibold ">{pkg?.packageName} </h6>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <h3 className="text-white  text-base">Package Amount</h3>
+                            <span className="text-warning text-right font-semiboldy">₹ {pkg?.packageAmount}</span>
+                        </div>
+                    </div>
+                ))
+            )}
         </div>
     );
 };
 
-export default Member;
+export default Package;
