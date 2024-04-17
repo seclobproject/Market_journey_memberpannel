@@ -58,6 +58,7 @@ const Profile = () => {
         bankName: '',
         ifscCode: '',
     });
+
     const [nomineeDetail, setNomineeDetails] = useState({
         name: '',
         phone: '',
@@ -74,8 +75,6 @@ const Profile = () => {
     const [confirmPassword, setConfirmPasswod] = useState('');
     const [errorMessage, setErrorMessage] = useState(false);
     const { user } = useAppSelector((state) => state.user);
-    const dispatch = useAppDispatch();
-
     useEffect(() => {
         // dispatch(setPageTitle('Profile'));
         dispatch(userProfileApi());
@@ -84,9 +83,13 @@ const Profile = () => {
         setNomineeDetails(user?.nomineeDetails);
     }, []);
 
+    const dispatch = useAppDispatch();
+
     useEffect(() => {
         setBankDetails(user?.bankDetails);
-    }, [bankDetails]);
+        setNomineeDetails(user?.nomineeDetails);
+        setEditProfileData(user);
+    }, [user]);
 
     useEffect(() => {
         if (confirmPassword === editProfleData.password) {

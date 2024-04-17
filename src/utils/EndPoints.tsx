@@ -37,7 +37,7 @@ export const DirectReportUrl = '/api/user/direct-referal-report';
 export const InDirectReportUrl = '/api/user/indirect-referal-report';
 export const LevelIncomeReportUrl = '/api/user/level-income-report';
 export const AutoPoolReportUrl = '/api/user/autopool-credit-report';
-export const BonusReportUrl = ''
+export const BonusReportUrl = '/api/user/view-credit-bonus-report';
 
 // withdrawal
 export const withdrawalRequestUrl = '/api/user/withdraw-wallet';
