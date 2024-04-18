@@ -48,7 +48,7 @@ const Package = () => {
                     >
                         <div className="flex gap-4">
                             <div className="flex flex-col gap-2">
-                                <h4 className="text-white  text-base">Franchise</h4>
+                                <h4 className="text-white  text-base">Package Type</h4>
                                 <h6 className="text-warning font-semibold ">{pkg?.packageName} </h6>
                             </div>
                         </div>
