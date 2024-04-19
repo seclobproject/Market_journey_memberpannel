@@ -49,10 +49,12 @@ const Index = () => {
     //     id: '',
     // });
     const [loading, setLoading] = useState(false);
+    const [userView, setUserView] = useState(false);
     const { user } = useAppSelector((state) => state.user);
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    
     useEffect(() => {
         dispatch(userProfileApi());
         getImages();
@@ -61,15 +63,20 @@ const Index = () => {
         showLiveNewes();
         getAutopPool();
     }, []);
+
     useEffect(() => {
-        // const token: any = getTokenWithExpiry('User');
         const token = sessionStorage.getItem('User');
         const status = sessionStorage.getItem('status');
+        const userPackageType = sessionStorage.getItem('packageType');
+        setUpdatedStatus(status);
         if (!token) {
             navigate('/auth/boxed-signin');
         }
         if (status === 'pending') {
             setPendingModal(true);
+        }
+        if (userPackageType === 'Franchise') {
+            setUserView(true);
         }
     });
 
@@ -248,8 +255,8 @@ const Index = () => {
         <>
             <div>
                 {(updateStatus === 'readyToApprove' || updateStatus === 'pending') && (
-                    <div className="bg-yellow-400 p-2 text-center max-w-[150px] text-white font-bold mb-2 rounded-md">
-                        <h4>wait for Admin Confirmation {updateStatus}</h4>
+                    <div className="bg-warning p-2 text-center text-white font-bold mb-2 rounded-md">
+                        <h4>Please wait for admin confirmation, your status is pending.</h4>
                     </div>
                 )}
                 {news.length !== 0 && (
@@ -266,55 +273,59 @@ const Index = () => {
                         </div>
                     </>
                 )}
-
-                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
-                    <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
-                        <div className="flex h-full justify-between items-center  dark:text-white-light">
-                            <IconCashBanknotes className="w-10 h-10 text-warning" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <h1 className="text-[25px] font-semibold">₹{user?.directIncome}</h1>
-                            <h5 className="font-semibold text-md text-warning">DirectIncome</h5>
-                        </div>
-                    </div>
-                    <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
-                        <div className="flex h-full justify-between items-center  dark:text-white-light">
-                            <IconCashBanknotes className="w-10 h-10 text-warning" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <h1 className="text-[25px] font-semibold">₹{user?.inDirectIncome}</h1>
-                            <h5 className="font-semibold text-md text-warning">InDirectIncome</h5>
-                        </div>
-                    </div>
-
-                    <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
-                        <div className="flex h-full justify-between items-center  dark:text-white-light">
-                            <IconCreditCard className="w-10 h-10 text-warning" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <h1 className="text-[25px] font-semibold">₹{user?.totalLevelIncome}</h1>
-                            <h5 className="font-semibold text-md text-warning">LevelIncome</h5>
-                        </div>
-                    </div>
-                </div>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                    <div
-                        className="panel overflow-hidden before:bg-primary before:absolute before:-right-44 before:top-0 before:bottom-0 before:m-auto before:rounded-full before:w-96 before:h-96 grid grid-cols-1 content-between "
-                        style={{ background: 'linear-gradient(0deg, #00c6fb -227%, #132239)' }}
-                    >
-                        <div className="flex relative items-start justify-between text-white-light mb-16 z-[7]">
-                            <h5 className="font-semibold  text-lg">Total Balance</h5>
-                            <img className="absolute right-2 top-2 sm:w-[80px] w-auto" src="/public/assets/images/total_wallet.svg" alt="rupee" />
-                        </div>
-                        <div className="flex items-center justify-between z-10">
-                            <div className="flex items-center justify-between">
-                                <div className="relative text-2xl font-semibold text-white whitespace-nowrap">₹ {user?.walletAmount}</div>
+                {userView && (
+                    <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
+                        <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                            <div className="flex h-full justify-between items-center  dark:text-white-light">
+                                <IconCashBanknotes className="w-10 h-10 text-warning" />
                             </div>
-                            {/* <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] z-10">
+                            <div className="flex flex-col gap-2">
+                                <h1 className="text-[25px] font-semibold">₹{user?.directIncome}</h1>
+                                <h5 className="font-semibold text-md text-warning">DirectIncome</h5>
+                            </div>
+                        </div>
+                        <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                            <div className="flex h-full justify-between items-center  dark:text-white-light">
+                                <IconCashBanknotes className="w-10 h-10 text-warning" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <h1 className="text-[25px] font-semibold">₹{user?.inDirectIncome}</h1>
+                                <h5 className="font-semibold text-md text-warning">InDirectIncome</h5>
+                            </div>
+                        </div>
+
+                        <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                            <div className="flex h-full justify-between items-center  dark:text-white-light">
+                                <IconCreditCard className="w-10 h-10 text-warning" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <h1 className="text-[25px] font-semibold">₹{user?.totalLevelIncome}</h1>
+                                <h5 className="font-semibold text-md text-warning">LevelIncome</h5>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    {userView && (
+                        <div
+                            className="panel overflow-hidden before:bg-primary before:absolute before:-right-44 before:top-0 before:bottom-0 before:m-auto before:rounded-full before:w-96 before:h-96 grid grid-cols-1 content-between "
+                            style={{ background: 'linear-gradient(0deg, #00c6fb -227%, #132239)' }}
+                        >
+                            <div className="flex relative items-start justify-between text-white-light mb-16 z-[7]">
+                                <h5 className="font-semibold  text-lg">Total Balance</h5>
+                                <img className="absolute right-2 top-2 sm:w-[80px] w-auto" src="/public/assets/images/total_wallet.svg" alt="rupee" />
+                            </div>
+                            <div className="flex items-center justify-between z-10">
+                                <div className="flex items-center justify-between">
+                                    <div className="relative text-2xl font-semibold text-white whitespace-nowrap">₹ {user?.walletAmount}</div>
+                                </div>
+                                {/* <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] z-10">
                                 Upgrade
                             </button> */}
+                            </div>
                         </div>
-                    </div>
+                    )}
                     <div className="panel sm:h-auto flex flex-col justify-between bg-[#00335B] text-white">
                         <div className="flex justify-between dark:text-white-light mb-5">
                             <h5 className="font-semibold text-lg ">Refer Now</h5>
@@ -380,7 +391,7 @@ const Index = () => {
                                 <div className="w-20 h-20 "></div>
                                 <span className="text-[16px] font-[600]"></span>
                                 <span></span>
-                            </div>
+                            </div> 
                         </>
                     )}
                 </div>
@@ -424,7 +435,7 @@ const Index = () => {
                                             loop={true}
                                             breakpoints={{
                                                 1024: {
-                                                    slidesPerView: slideImages.length >= 3 ? 3 : slideImages.length == 2 ? 2 : 1,
+                                                    slidesPerView: slideImages.length == 1 ? 1 : slideImages.length == 2 ? 2 : 3,
                                                     spaceBetween: 30,
                                                 },
                                                 768: {
@@ -504,7 +515,7 @@ const Index = () => {
                                             loop={true}
                                             breakpoints={{
                                                 1024: {
-                                                    slidesPerView: slideImages.length >= 3 ? 3 : slideImages.length == 2 ? 2 : 1,
+                                                    slidesPerView: slideImages.length == 1 ? 1 : slideImages.length == 2 ? 2 : 3,
                                                     spaceBetween: 30,
                                                 },
                                                 768: {

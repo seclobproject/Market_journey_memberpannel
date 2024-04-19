@@ -38,7 +38,7 @@ const Package = () => {
             </div>
             {loading ? (
                 <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
-            ) : (
+            ) : packagesList.length > 0 ? (
                 packagesList.map((pkg: any) => (
                     <div
                         key={pkg?._id}
@@ -58,6 +58,8 @@ const Package = () => {
                         </div>
                     </div>
                 ))
+            ) : (
+                <span className="align-middle m-auto mb-10">No Packages</span>
             )}
         </div>
     );

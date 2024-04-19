@@ -31,6 +31,7 @@ const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
     const [errorSubMenu, setErrorSubMenu] = useState(false);
     const [viewSidebar, setViewSidebar] = useState(false);
+    const [userView, setUserView] = useState(false);
     const [franchise, setFranchise] = useState(false);
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
     const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
@@ -67,18 +68,30 @@ const Sidebar = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location]);
 
-    const fetchStatus = async () => {
-        const userStatus = await sessionStorage.getItem('status');
+    // const fetchStatus = () => {
+    //     const userStatus = sessionStorage.getItem('status');
+    //     const userPackageType =  sessionStorage.getItem('packageType');
+    //     if (userStatus === 'readyToApprove') {
+    //         setViewSidebar(true);
+    //         console.log(viewSidebar)
+    //     }
+    //      if(userPackageType !== 'Franchise') {
+    //         setUserView(true);
+    //     }
+    // };
+ 
+    useEffect(() => {
+        const userStatus = sessionStorage.getItem('status');
+        const userPackageType = sessionStorage.getItem('packageType');
         if (userStatus === 'readyToApprove') {
             setViewSidebar(true);
             console.log(viewSidebar);
         }
+        if (userPackageType === 'Courses' || userPackageType === 'Signals') {
+            setUserView(true);
+        }
+    });
 
-    };
-
-    useEffect(() => {
-        fetchStatus();
-    }, []);
     return (
         <div className={` ${semidark ? 'dark' : ''}`}>
             <nav
@@ -111,7 +124,7 @@ const Sidebar = () => {
                                         </NavLink>
                                     </li>
 
-                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                    <li className={`${viewSidebar || userView ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/member" className="group">
                                             <div className="flex items-center">
                                                 <IconMenuUsers className="group-hover:!text-primary shrink-0" />
@@ -119,7 +132,7 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                    <li className="nav-item">
                                         <NavLink to="/pages/package" className="group">
                                             <div className="flex items-center">
                                                 <IconBox fill className="group-hover:!text-primary shrink-0" />
@@ -128,7 +141,7 @@ const Sidebar = () => {
                                         </NavLink>
                                     </li>
 
-                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                    <li className={`${viewSidebar || userView ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/withdrawal" className="group">
                                             <div className="flex items-center">
                                                 <IconCashBanknotes className="group-hover:!text-primary shrink-0" />
@@ -144,7 +157,7 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li> */}
-                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                    <li className={`${viewSidebar || userView ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/report" className="group">
                                             <div className="flex items-center">
                                                 <IconMenuPages className="group-hover:!text-primary shrink-0" />
@@ -176,7 +189,7 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                    <li className="nav-item">
                                         <NavLink to="/pages/news" className="group">
                                             <div className="flex items-center">
                                                 <IconMenuNotes className="group-hover:!text-primary shrink-0" />
@@ -184,7 +197,7 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                    <li className={`${viewSidebar || userView ? 'hidden' : 'nav-item'}`}>
                                         <NavLink to="/pages/demataccount" className="group">
                                             <div className="flex items-center">
                                                 <i className="fa-solid fa-building-columns text-gray-400 group-hover:!text-primary shrink-0"></i>
@@ -193,7 +206,7 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className={`${viewSidebar ? 'hidden' : 'nav-item'}`}>
+                                    <li className="nav-item">
                                         <NavLink to="/users/profile" className="group">
                                             <div className="flex items-center">
                                                 <IconUser fill className="group-hover:!text-primary shrink-0" />

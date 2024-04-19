@@ -293,6 +293,7 @@ const Header = () => {
                                 onClick={() => {
                                     sessionStorage.removeItem('User');
                                     sessionStorage.removeItem('status');
+                                    sessionStorage.removeItem('packageType');
                                     setLogoutModal(false);
                                     navigate('/auth/boxed-signin', { replace: true });
                                 }}

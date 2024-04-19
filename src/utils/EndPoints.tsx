@@ -47,4 +47,4 @@ export const withdrawalHistoryUrl = '/api/user/wallet-withdraw-report';
 export const AwardsUrl = '/api/admin/view-award-details';
 
 // Alert
-export const AlertUrl = '/api/admin/view-alert-details';
+export const AlertUrl = '/api/user/view-user-alerts';
