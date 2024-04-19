@@ -54,7 +54,7 @@ const Index = () => {
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    
+
     useEffect(() => {
         dispatch(userProfileApi());
         getImages();
@@ -228,7 +228,7 @@ const Index = () => {
 
     // share referal link
     const shareTitle = 'Check out this awesome link!';
-    const shareUrl = `http://192.168.29.152:6003/auth/boxed-signup/${user?.id}`; // Replace with the actual URL you want to share
+    const shareUrl = `http://localhost:5173/auth/boxed-signup/${user?.id}`; // Replace with the actual URL you want to share
 
     const handleShare = async () => {
         if (navigator.share) {
