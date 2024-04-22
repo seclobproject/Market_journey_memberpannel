@@ -102,33 +102,33 @@ const DematAccount = () => {
 
     //----- edit Demat Account -------
 
-    const handleEditDematAccount = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const response: any = await ApiCall('post', addAndEditDematAccounturl, dematDetails, { id: AccountId });
-            console.log('====================================');
-            console.log(response);
-            console.log('====================================');
-            if (response.status === 200) {
-                setEditModal(false);
-                getAllAccountList();
-                setDematDetails({
-                    name: '',
-                    phone: '',
-                    demateUserName: '',
-                    email: '',
-                    state: '',
-                    district: '',
-                    zonal: '',
-                    address: '',
-                });
-                Show_Toast({ message: 'Edit Demat Account success', type: true });
-            }
-        } catch (error: any) {
-            console.log(error?.response?.data?.message);
-            Show_Toast({ message: error?.response?.data?.message, type: false });
-        }
-    };
+    // const handleEditDematAccount = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     try {
+    //         const response: any = await ApiCall('post', addAndEditDematAccounturl, dematDetails, { id: AccountId });
+    //         console.log('====================================');
+    //         console.log(response);
+    //         console.log('====================================');
+    //         if (response.status === 200) {
+    //             setEditModal(false);
+    //             getAllAccountList();
+    //             setDematDetails({
+    //                 name: '',
+    //                 phone: '',
+    //                 demateUserName: '',
+    //                 email: '',
+    //                 state: '',
+    //                 district: '',
+    //                 zonal: '',
+    //                 address: '',
+    //             });
+    //             Show_Toast({ message: 'Edit Demat Account success', type: true });
+    //         }
+    //     } catch (error: any) {
+    //         console.log(error?.response?.data?.message);
+    //         Show_Toast({ message: error?.response?.data?.message, type: false });
+    //     }
+    // };
 
     //------------------- get all state------------------
 
@@ -241,7 +241,7 @@ const DematAccount = () => {
                                 <th> District</th>
                                 <th> zonal</th>
                                 <th> Address</th>
-                                <th> Actions</th>
+                                {/* <th> Actions</th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -269,10 +269,9 @@ const DematAccount = () => {
                                         <td className="font-medium text-base"></td>
 
                                         <td className="text-center font-medium text-base">{data?.address}</td>
-                                        <td className="text-center flex gap-5 items-center">
+                                        {/* <td className="text-center flex gap-5 items-center">
                                             <i onClick={() => handleEdit(data)} className="fa-solid fa-pen text-blue-600 cursor-pointer"></i>
-                                            {/* <i onClick={() => handleDelete(data?._id)} className="fa-solid fa-trash text-red-500 cursor-pointer"></i> */}
-                                        </td>
+                                        </td> */}
                                     </tr>
                                 ))
                             ) : (
@@ -510,7 +509,7 @@ const DematAccount = () => {
                     </div>
                 </Dialog>
             </Transition>
-            <Transition appear show={editModal} as={Fragment}>
+            {/* <Transition appear show={editModal} as={Fragment}>
                 <Dialog
                     as="div"
                     open={editModal}
@@ -557,7 +556,7 @@ const DematAccount = () => {
                                                                 placeholder="Enter Name"
                                                                 className="form-input ps-5 placeholder:text-white-dark"
                                                             />
-                                                            <span className="absolute start-4 top-1/2 -translate-y-1/2">{/* <IconUser fill={true} /> */}</span>
+                                                            <span className="absolute start-4 top-1/2 -translate-y-1/2"></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -666,8 +665,7 @@ const DematAccount = () => {
                         </div>
                     </div>
                 </Dialog>
-            </Transition>
-            {/*   */}
+            </Transition> */}
         </>
     );
 };

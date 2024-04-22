@@ -27,6 +27,10 @@ import IconXCircle from '../components/Icon/IconXCircle';
 import { useAppDispatch, useAppSelector } from '../store';
 import { getStatesApi } from '../store/LocationSlice';
 import IconDownload from '../components/Icon/IconDownload';
+import IconArrowWaveLeftUp from '../components/Icon/IconArrowWaveLeftUp';
+import IconArrowForward from '../components/Icon/IconArrowForward';
+import IconDroplet from '../components/Icon/IconDroplet';
+import { userProfileApi } from '../store/UserSlice';
 
 interface Member {
     name: string;
@@ -36,7 +40,7 @@ interface Member {
     dateOfBirth: string;
     phone: string;
     franchise: string;
-    packageType:string;
+    packageType: string;
     packageAmount: string | number;
     packageAmountGst: string | number;
     state: string;
@@ -55,6 +59,7 @@ const Member = () => {
     const [addModal, setAddModal] = useState(false);
     const [showViewTreeColumn, setShowViewTreeColumn] = useState(true);
     const [allMembers, setAllMembers] = useState<any>([]);
+    const [filterMembers, setFilterMembers] = useState<any>([]);
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<string | undefined>();
     // const [previousMemberData, setPreviousMemberData] = useState(null);
@@ -67,7 +72,7 @@ const Member = () => {
         address: '',
         dateOfBirth: '',
         phone: '',
-        packageType:'',
+        packageType: '',
         packageAmount: '',
         packageAmountGst: '',
         state: '',
@@ -87,17 +92,20 @@ const Member = () => {
     const [selectedZonalId, setSelectedZonalId] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
-    const [totalMembers, setTotalMembers] = useState(0);
+    const [filterPackageType, setFilterPackageType] = useState('');
     const [search, setSearch] = useState('');
 
     const { stateList } = useAppSelector((state) => state.location);
+    const { user } = useAppSelector((state) => state.user);
+
+console.log(user,'user');
 
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        getMembers();
+        getMembers(); 
         dispatch(getStatesApi());
-        // getStateList();
+         dispatch(userProfileApi());
     }, []);
 
     useEffect(() => {
@@ -147,6 +155,7 @@ const Member = () => {
             } else if (response.status === 200) {
                 // setPreviousMemberData(allMembers);
                 setAllMembers(response?.data?.child1);
+                setFilterMembers(response?.data?.child1);
                 setLoading(false);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
@@ -157,11 +166,23 @@ const Member = () => {
             setLoading(false);
         }
     };
+
+    // fiter members
+    const filterWithPackagetype = (type: string) => {
+        if (type === 'All') {
+            setFilterMembers(allMembers);
+        } else {
+            const filterMembers = allMembers.filter((member: any) => member?.packageType === type);
+            setFilterMembers(filterMembers);
+        }
+    };
+
     // -----handle back ---------
     const BackTree = () => {
         getMembers();
         setShowViewTreeColumn(true);
     };
+
     //------ Remove the tree column from the table  -------
     const handleViewTreeClick = (id?: string) => {
         setUserId(id);
@@ -171,16 +192,16 @@ const Member = () => {
 
     // pagination in member data
     const fetchData = () => {
-        setPageNumber(pageNumber + 1);
         const getLevelMembers = async () => {
             try {
-                const response = await ApiCall('get', getUsers, '', { id: userId, page: pageNumber, pageSize: 10 });
+                const response = await ApiCall('get', getUsers, '', { id: userId, page: pageNumber + 1, pageSize: 10 });
                 // const response = await ApiCall('get', getLevelOneUsers, '', { page: pageNumber, pageSize: 10 });
 
                 if (response instanceof Error) {
                     console.error('Error fetching allMembers list:', response.message);
                 } else if (response.status === 200) {
                     setAllMembers(allMembers.concat(response?.data?.child1));
+                    setPageNumber(pageNumber + 1);
                 } else {
                     console.error('Error fetching allMembers list. Unexpected status:', response.status);
                 }
@@ -331,7 +352,7 @@ const Member = () => {
                     address: '',
                     dateOfBirth: '',
                     phone: '',
-                    packageType:'',
+                    packageType: '',
                     packageAmount: '',
                     packageAmountGst: '',
                     state: '',
@@ -449,24 +470,18 @@ const Member = () => {
                 {/* fiter options start */}
                 <div className="flex flex-wrap gap-2">
                     <select
-                        onChange={(e) => {
-                            const selectedValue = e.target.value;
-                            setSelectedDistrictId(selectedValue);
-                        }}
-                        // value={e.target.value}
+                        onChange={(e) => filterWithPackagetype(e.target.value)}
+                        value={filterPackageType}
                         className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
                     >
-                        <option value="default">Select a franchise type</option>
-                        {packageList.map((option: any) => {
-                            return (
-                                <option key={option?._id} value={option?._id}>
-                                    {option?.franchiseName}
-                                </option>
-                            );
-                        })}
+                        <option> select Package type </option>
+                        <option value={'All'}>All </option>
+                        <option value={'Franchise'}>Franchise </option>
+                        <option value={'Courses'}>Courses </option>
+                        <option value={'Signals'}>Signals</option>
                     </select>
-
-                    <select
+                    {user?.franchise ==='District Franchise' &&(
+<select
                         className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
                         onChange={(e) => {
                             const selectedValue = e.target.value;
@@ -484,6 +499,8 @@ const Member = () => {
                             </option>
                         ))}
                     </select>
+                    )
+                }
                     <select
                         onChange={(e) => {
                             setAddMember({ ...addMember, panchayath: e.target.value });
@@ -502,6 +519,7 @@ const Member = () => {
                     <table>
                         <thead>
                             <tr>
+                                <th>SINo</th>
                                 <th>Name</th>
                                 <th>UserId</th>
                                 <th>Email</th>
@@ -522,9 +540,10 @@ const Member = () => {
                                         <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
                                     </td>
                                 </tr>
-                            ) : allMembers?.length > 0 ? (
-                                allMembers.map((data: any) => (
+                            ) : filterMembers?.length > 0 ? (
+                                filterMembers.map((data: any, index: number) => (
                                     <tr key={data?._id}>
+                                        <td>{index + 1}</td>
                                         <td className="capitalize">{data?.name}</td>
                                         <td>{data?.ownSponserId}</td>
                                         <td>{data?.email}</td>
@@ -750,9 +769,9 @@ const Member = () => {
                                                                         <option value={'Courses'}>Courses </option>
                                                                         <option value={'Signals'}>Signals</option>
                                                                     </select>
-                                                                    {/* <span className="absolute start-4 top-1/2 -translate-y-1/2">
-                                                                        <Icon fill={true} />
-                                                                    </span> */}
+                                                                    <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                        <IconDownload />
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                             <div>
@@ -786,6 +805,9 @@ const Member = () => {
                                                                             </option>
                                                                         ))}
                                                                     </select>
+                                                                    <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                        <IconDownload />
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                             <div>
@@ -839,6 +861,9 @@ const Member = () => {
                                                                                     </option>
                                                                                 ))}
                                                                             </select>
+                                                                            <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                                <IconDownload />
+                                                                            </span>
                                                                         </div>
                                                                     </div>
                                                                     <div>
@@ -867,6 +892,9 @@ const Member = () => {
                                                                                     </option>
                                                                                 ))}
                                                                             </select>
+                                                                            <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                                <IconDownload />
+                                                                            </span>
                                                                         </div>
                                                                     </div>
                                                                 </>
@@ -901,6 +929,9 @@ const Member = () => {
                                                                                 </option>
                                                                             ))}
                                                                         </select>
+                                                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                            <IconDownload />
+                                                                        </span>
                                                                     </div>
                                                                 </div>
                                                             )}
@@ -919,6 +950,9 @@ const Member = () => {
                                                                                 <option key={panchayath.id}>{panchayath.name}</option>
                                                                             ))}
                                                                         </select>
+                                                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                                            <IconDownload />
+                                                                        </span>
                                                                     </div>
                                                                 </div>
                                                             )}
