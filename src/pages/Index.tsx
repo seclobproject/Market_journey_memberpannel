@@ -49,27 +49,34 @@ const Index = () => {
     //     id: '',
     // });
     const [loading, setLoading] = useState(false);
+    const [userView, setUserView] = useState(false);
     const { user } = useAppSelector((state) => state.user);
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+
     useEffect(() => {
         dispatch(userProfileApi());
         getImages();
         getVideos();
         showAwards();
         showLiveNewes();
-        getAutopPool()
+        getAutopPool();
     }, []);
+
     useEffect(() => {
-        // const token: any = getTokenWithExpiry('User');
         const token = sessionStorage.getItem('User');
         const status = sessionStorage.getItem('status');
+        const userPackageType = sessionStorage.getItem('packageType');
+        setUpdatedStatus(status);
         if (!token) {
             navigate('/auth/boxed-signin');
         }
         if (status === 'pending') {
             setPendingModal(true);
+        }
+        if (userPackageType === 'Franchise') {
+            setUserView(true);
         }
     });
 
@@ -150,7 +157,7 @@ const Index = () => {
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
-            } else if (response.status === 200) {                
+            } else if (response.status === 200) {
                 setAutoPool(response?.data?.pool);
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
@@ -221,7 +228,7 @@ const Index = () => {
 
     // share referal link
     const shareTitle = 'Check out this awesome link!';
-    const shareUrl = `http://192.168.29.152:6003/auth/boxed-signup/${user?.id}`; // Replace with the actual URL you want to share
+    const shareUrl = `https://admin.marketjourney.in/auth/boxed-signup/${user?.id}`; 
 
     const handleShare = async () => {
         if (navigator.share) {
@@ -248,8 +255,8 @@ const Index = () => {
         <>
             <div>
                 {(updateStatus === 'readyToApprove' || updateStatus === 'pending') && (
-                    <div className="bg-yellow-400 p-2 text-center max-w-[150px] text-white font-bold mb-2 rounded-md">
-                        <h4>wait for Admin Confirmation {updateStatus}</h4>
+                    <div className="bg-warning p-2 text-center text-white font-bold mb-2 rounded-md">
+                        <h4>Please wait for admin confirmation, your status is pending.</h4>
                     </div>
                 )}
                 {news.length !== 0 && (
@@ -266,55 +273,59 @@ const Index = () => {
                         </div>
                     </>
                 )}
-
-                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
-                    <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
-                        <div className="flex h-full justify-between items-center  dark:text-white-light">
-                            <IconCashBanknotes className="w-10 h-10 text-warning" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <h1 className="text-[25px] font-semibold">₹{user?.directIncome}</h1>
-                            <h5 className="font-semibold text-md text-warning">DirectIncome</h5>
-                        </div>
-                    </div>
-                    <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
-                        <div className="flex h-full justify-between items-center  dark:text-white-light">
-                            <IconCashBanknotes className="w-10 h-10 text-warning" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <h1 className="text-[25px] font-semibold">₹{user?.inDirectIncome}</h1>
-                            <h5 className="font-semibold text-md text-warning">InDirectIncome</h5>
-                        </div>
-                    </div>
-
-                    <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
-                        <div className="flex h-full justify-between items-center  dark:text-white-light">
-                            <IconCreditCard className="w-10 h-10 text-warning" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <h1 className="text-[25px] font-semibold">₹{user?.totalLevelIncome}</h1>
-                            <h5 className="font-semibold text-md text-warning">LevelIncome</h5>
-                        </div>
-                    </div>
-                </div>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                    <div
-                        className="panel overflow-hidden before:bg-primary before:absolute before:-right-44 before:top-0 before:bottom-0 before:m-auto before:rounded-full before:w-96 before:h-96 grid grid-cols-1 content-between "
-                        style={{ background: 'linear-gradient(0deg, #00c6fb -227%, #132239)' }}
-                    >
-                        <div className="flex relative items-start justify-between text-white-light mb-16 z-[7]">
-                            <h5 className="font-semibold  text-lg">Total Balance</h5>
-                            <img className="absolute right-2 top-2 sm:w-[80px] w-auto" src="/public/assets/images/total_wallet.svg" alt="rupee" />
-                        </div>
-                        <div className="flex items-center justify-between z-10">
-                            <div className="flex items-center justify-between">
-                                <div className="relative text-2xl font-semibold text-white whitespace-nowrap">₹ {user?.walletAmount}</div>
+                {userView && (
+                    <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
+                        <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                            <div className="flex h-full justify-between items-center  dark:text-white-light">
+                                <IconCashBanknotes className="w-10 h-10 text-warning" />
                             </div>
-                            {/* <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] z-10">
+                            <div className="flex flex-col gap-2">
+                                <h1 className="text-[25px] font-semibold">₹{user?.directIncome}</h1>
+                                <h5 className="font-semibold text-md text-warning">DirectIncome</h5>
+                            </div>
+                        </div>
+                        <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                            <div className="flex h-full justify-between items-center  dark:text-white-light">
+                                <IconCashBanknotes className="w-10 h-10 text-warning" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <h1 className="text-[25px] font-semibold">₹{user?.inDirectIncome}</h1>
+                                <h5 className="font-semibold text-md text-warning">InDirectIncome</h5>
+                            </div>
+                        </div>
+
+                        <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                            <div className="flex h-full justify-between items-center  dark:text-white-light">
+                                <IconCreditCard className="w-10 h-10 text-warning" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <h1 className="text-[25px] font-semibold">₹{user?.totalLevelIncome}</h1>
+                                <h5 className="font-semibold text-md text-warning">LevelIncome</h5>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    {userView && (
+                        <div
+                            className="panel overflow-hidden before:bg-primary before:absolute before:-right-44 before:top-0 before:bottom-0 before:m-auto before:rounded-full before:w-96 before:h-96 grid grid-cols-1 content-between "
+                            style={{ background: 'linear-gradient(0deg, #00c6fb -227%, #132239)' }}
+                        >
+                            <div className="flex relative items-start justify-between text-white-light mb-16 z-[7]">
+                                <h5 className="font-semibold  text-lg">Total Balance</h5>
+                                <img className="absolute right-2 top-2 sm:w-[80px] w-auto" src="/public/assets/images/total_wallet.svg" alt="rupee" />
+                            </div>
+                            <div className="flex items-center justify-between z-10">
+                                <div className="flex items-center justify-between">
+                                    <div className="relative text-2xl font-semibold text-white whitespace-nowrap">₹ {user?.walletAmount}</div>
+                                </div>
+                                {/* <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] z-10">
                                 Upgrade
                             </button> */}
+                            </div>
                         </div>
-                    </div>
+                    )}
                     <div className="panel sm:h-auto flex flex-col justify-between bg-[#00335B] text-white">
                         <div className="flex justify-between dark:text-white-light mb-5">
                             <h5 className="font-semibold text-lg ">Refer Now</h5>
@@ -380,7 +391,7 @@ const Index = () => {
                                 <div className="w-20 h-20 "></div>
                                 <span className="text-[16px] font-[600]"></span>
                                 <span></span>
-                            </div>
+                            </div> 
                         </>
                     )}
                 </div>
@@ -404,58 +415,59 @@ const Index = () => {
 
                 {/*----Start Flash Feed------  */}
                 <div className="mt-10 lg:mt-16 text-primary ">
-                    <h2 className="mb-6 font-bold text-lg">FLASH FEED</h2>
+                    {slideVideos.length > 0 && <h2 className="mb-6 font-bold text-lg">FLASH FEED</h2>}
 
                     <div className="swiper mt-10" id="slider2">
-                        {slideVideos.length > 0 ? (
-                            <>
-                                <div className="swiper-wrapper">
-                                    <Swiper
-                                        modules={[Navigation, Pagination, Autoplay]}
-                                        navigation={{
-                                            nextEl: '.swiper-button-next-ex2',
-                                            prevEl: '.swiper-button-prev-ex2',
-                                        }}
-                                        // pagination={{
-                                        //     clickable: true,
-                                        // }}
-                                        autoplay={{ delay: 4000 }}
-                                        loop={true}
-                                        breakpoints={{
-                                            1024: {
-                                                slidesPerView: 3,
-                                                spaceBetween: 30,
-                                            },
-                                            768: {
-                                                slidesPerView: 2,
-                                                spaceBetween: 40,
-                                            },
-                                            320: {
-                                                slidesPerView: 1,
-                                                spaceBetween: 20,
-                                            },
-                                        }}
-                                    >
-                                        {slideVideos.map((item: any) => {
-                                            // console.log(${Base_url}/uploads/${item.videoThambnail});
+                        {
+                            slideVideos.length > 0 && (
+                                <>
+                                    <div className="swiper-wrapper">
+                                        <Swiper
+                                            modules={[Navigation, Pagination, Autoplay]}
+                                            navigation={{
+                                                nextEl: '.swiper-button-next-ex2',
+                                                prevEl: '.swiper-button-prev-ex2',
+                                            }}
+                                            // pagination={{
+                                            //     clickable: true,
+                                            // }}
+                                            autoplay={{ delay: 4000 }}
+                                            loop={true}
+                                            breakpoints={{
+                                                1024: {
+                                                    slidesPerView: slideImages.length == 1 ? 1 : slideImages.length == 2 ? 2 : 3,
+                                                    spaceBetween: 30,
+                                                },
+                                                768: {
+                                                    slidesPerView: slideImages.length == 2 ? 2 : 1,
+                                                    spaceBetween: 40,
+                                                },
+                                                320: {
+                                                    slidesPerView: 1,
+                                                    spaceBetween: 20,
+                                                },
+                                            }}
+                                        >
+                                            {slideVideos.map((item: any) => {
+                                                // console.log(${Base_url}/uploads/${item.videoThambnail});
 
-                                            return (
-                                                <SwiperSlide key={item._id}>
-                                                    <img src={`${Base_url}/uploads/${item.videoThambnail}`} className="w-full h-[200px] object-cover rounded-lg" alt="itemImg" />
-                                                    <Link to={`${item.videoLink}`} target="_blank">
-                                                        <button
-                                                            type="button"
-                                                            className="absolute left-1/2 top-1/3 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/3 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
-                                                        >
-                                                            <IconPlayCircle className="h-[62px] w-[62px] " fill={true} />
-                                                        </button>
-                                                    </Link>
-                                                    <p className="font-semibold text-[14px]">{item.videoTitle}</p>
-                                                </SwiperSlide>
-                                            );
-                                        })}
+                                                return (
+                                                    <SwiperSlide key={item._id}>
+                                                        <img src={`${Base_url}/uploads/${item.videoThambnail}`} className="w-full h-[200px] object-cover rounded-lg" alt="itemImg" />
+                                                        <Link to={`${item.videoLink}`} target="_blank">
+                                                            <button
+                                                                type="button"
+                                                                className="absolute left-1/2 top-1/3 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/3 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
+                                                            >
+                                                                <IconPlayCircle className="h-[62px] w-[62px] " fill={true} />
+                                                            </button>
+                                                        </Link>
+                                                        <p className="font-semibold text-[14px]">{item.videoTitle}</p>
+                                                    </SwiperSlide>
+                                                );
+                                            })}
 
-                                        {/* {items.map((item:any) => {
+                                            {/* {items.map((item:any) => {
                                     return (
                                         <SwiperSlide key={i}>
                                             <img src={`/public/assets/images/carousel2.jpeg`} className="w-full rounded-lg" alt="itemImg" />
@@ -470,68 +482,73 @@ const Index = () => {
                                         </SwiperSlide>
                                     );
                                 })} */}
-                                    </Swiper>
-                                </div>
-                                <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
-                                    <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
-                                </button>
-                                <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
-                                    <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
-                                </button>
-                            </>
-                        ) : (
-                            <div className="max-w-[350px] h-[200px] rounded-lg bg-gray-200" />
-                        )}
+                                        </Swiper>
+                                    </div>
+                                    <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                        <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
+                                    </button>
+                                    <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                        <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
+                                    </button>
+                                </>
+                            )
+                            // ) : (
+                            //     <div className="max-w-[350px] h-[200px] rounded-lg bg-gray-200" />
+                            // )
+                        }
                     </div>
                     <div className="swiper mt-20" id="slider1">
-                        {slideImages.length > 0 ? (
-                            <>
-                                <div className="swiper-wrapper">
-                                    <Swiper
-                                        modules={[Navigation, Pagination, Autoplay]}
-                                        navigation={{
-                                            nextEl: '.swiper-button-next-ex1',
-                                            prevEl: '.swiper-button-prev-ex1',
-                                        }}
-                                        // pagination={{
-                                        //     clickable: true,
-                                        // }}
-                                        autoplay={{ delay: 3000 }}
-                                        loop={true}
-                                        breakpoints={{
-                                            1024: {
-                                                slidesPerView: 3,
-                                                spaceBetween: 30,
-                                            },
-                                            768: {
-                                                slidesPerView: 2,
-                                                spaceBetween: 40,
-                                            },
-                                            320: {
-                                                slidesPerView: 1,
-                                                spaceBetween: 20,
-                                            },
-                                        }}
-                                    >
-                                        {slideImages.map((item: any) => {
-                                            return (
-                                                <SwiperSlide key={item._id}>
-                                                    <img src={`${Base_url}/uploads/${item?.homeImage}`} className="w-full object-cover h-[200px] rounded-lg" alt="itemImg" />
-                                                </SwiperSlide>
-                                            );
-                                        })}
-                                    </Swiper>
-                                </div>
-                                <button className="swiper-button-prev-ex1 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
-                                    <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
-                                </button>
-                                <button className="swiper-button-next-ex1 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
-                                    <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
-                                </button>
-                            </>
-                        ) : (
-                            <div className="max-w-[350px] h-[200px] rounded-lg bg-gray-200" />
-                        )}
+                        {
+                            slideImages.length > 0 && (
+                                <>
+                                    <div className="swiper-wrapper">
+                                        <Swiper
+                                            modules={[Navigation, Pagination, Autoplay]}
+                                            navigation={{
+                                                nextEl: '.swiper-button-next-ex1',
+                                                prevEl: '.swiper-button-prev-ex1',
+                                            }}
+                                            // pagination={{
+                                            //     clickable: true,
+                                            // }}
+                                            autoplay={{ delay: 3000 }}
+                                            loop={true}
+                                            breakpoints={{
+                                                1024: {
+                                                    slidesPerView: slideImages.length == 1 ? 1 : slideImages.length == 2 ? 2 : 3,
+                                                    spaceBetween: 30,
+                                                },
+                                                768: {
+                                                    slidesPerView: slideImages.length == 2 ? 2 : 1,
+                                                    spaceBetween: 40,
+                                                },
+                                                320: {
+                                                    slidesPerView: 1,
+                                                    spaceBetween: 20,
+                                                },
+                                            }}
+                                        >
+                                            {slideImages.map((item: any) => {
+                                                return (
+                                                    <SwiperSlide key={item._id}>
+                                                        <img src={`${Base_url}/uploads/${item?.homeImage}`} className="w-full object-cover h-[200px] rounded-lg" alt="itemImg" />
+                                                    </SwiperSlide>
+                                                );
+                                            })}
+                                        </Swiper>
+                                    </div>
+                                    <button className="swiper-button-prev-ex1 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                        <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
+                                    </button>
+                                    <button className="swiper-button-next-ex1 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                        <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
+                                    </button>
+                                </>
+                            )
+                            // ) : (
+                            //     <div className="max-w-[350px] h-[200px] rounded-lg bg-gray-200" />
+                            // )
+                        }
                     </div>
 
                     {/* <Transition appear show={modal} as={Fragment}>

@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { Show_Toast } from '../pages/Components/Toast';
+// import { Show_Toast } from '../pages/Components/Toast';
 
-export const Base_url = 'http://192.168.29.152:6003';
-// export const Base_url = 'https://marketjourney.in';
+// export const Base_url = 'http://192.168.29.152:6003';
+// export const Base_url = 'http://192.168.29.77:6003';
+export const Base_url = 'https://admin.marketjourney.in';
 
 interface ApiCallResponse {
     status?: number;
@@ -31,9 +32,9 @@ export const ApiCall = async (method: string, endPoint: string, data?: any, para
         };
     } catch (error: any) {
         console.error(error.response ? error.response.data.message : 'Internal Server Error');
-        if (!error.response) {
-            Show_Toast({ message: 'Internal Server Error', type: false });
-        }
+        // if (!error.response) {
+        //     Show_Toast({ message: 'Internal Server Error', type: false });
+        // }
         throw error;
     }
 };

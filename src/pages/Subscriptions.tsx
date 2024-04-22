@@ -180,7 +180,7 @@ const Subscriptions = () => {
                             >
                                 <Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-[500px] my-8 text-black dark:text-white-dark">
                                     <div className="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
-                                        <h5 className="text-warning">Request Withdrawal</h5>
+                                        <h5 className="text-warning">Subscription</h5>
                                         <button type="button" onClick={() => setSubscriptionModal(false)} className="text-white-dark hover:text-dark text-[28px] p-2">
                                             ×
                                         </button>

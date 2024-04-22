@@ -137,7 +137,9 @@ const Report = () => {
             if (response instanceof Error) {
                 console.error('Error fetching bonus list:', response.message);
             } else if (response.status === 200) {
-                const FormatedReport = response?.data?.addBonus.map((item: any) => ({
+                console.log(response);
+
+                const FormatedReport = response?.data?.creditBonusHistory.map((item: any) => ({
                     ...item,
                     createdAt: formatTimestamp(item.createdAt),
                 }));
@@ -192,7 +194,7 @@ const Report = () => {
                 }
             } catch (error) {
                 console.error('Error fetching allMembers list:', error);
-            }finally{
+            } finally {
                 setLoading(false);
             }
             console.log(pageNumber);
@@ -205,11 +207,11 @@ const Report = () => {
         const date = new Date(timestamp);
         const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}
          ${date.toLocaleString('en-US', {
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            hour12: true,
-        })}`;
+             hour: 'numeric',
+             minute: 'numeric',
+             second: 'numeric',
+             hour12: true,
+         })}`;
         return formattedDate;
     };
 
@@ -267,16 +269,16 @@ const Report = () => {
                             <tr>
                                 <th>SIno</th>
                                 <th>Date</th>
-                                {activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' ? <th>Amount From</th> : <th>Designation</th>}
+                                {activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' ? <th>Amount From</th> : activeButton !== 'bonus' && <th>Designation</th>}
                                 {activeButton === 'levelIncome' && <th> New Member</th>}
 
                                 {/* <th>Name</th> */}
-                                {activeButton !== 'levelIncome' && activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' ? <th> Franchise</th> : <th></th>}
+                                {activeButton !== 'levelIncome' && activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' && <th> Franchise</th>}
 
-                                <th> PercentageCredited</th>
+                                {activeButton !== 'bonus' && <th> PercentageCredited</th>}
                                 {activeButton === 'levelIncome' && <th> Amount</th>}
 
-                                <th> AmountCredited</th>
+                                {activeButton === 'bonus' ? <th>Bonus Amount</th> : <th> Amount Credited</th>}
                             </tr>
                         </thead>
                         <tbody>
@@ -285,20 +287,22 @@ const Report = () => {
                                     return (
                                         <tr key={index}>
                                             <td>
-                                                <div className="font-medium text-base">{index + 1}</div>
+                                                <div className=" font-medium text-base">{index + 1}</div>
                                             </td>
                                             <td className="font-medium text-base">{data?.createdAt}</td>
                                             {/* <td className="whitespace-nowrap font-medium text-base">{data?.designation}</td> */}
-                                            <td>
-                                                <div className="whitespace-nowrap font-medium text-base">{data?.name}</div>
-                                            </td>
+                                            {activeButton !== 'bonus' && (
+                                                <td>
+                                                    <div className="whitespace-nowrap font-medium text-base">{data?.name}</div>
+                                                </td>
+                                            )}
                                             {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.newMember}</td>}
-                                            <td className="font-medium text-base">{data?.franchise}</td>
+                                            {(activeButton !== 'bonus' && activeButton !== 'levelIncome') && <td className="font-medium text-base">{data?.franchise}</td>}
 
-                                            <td className="font-medium text-base">{data?.percentageCredited}</td>
+                                            {activeButton !== 'bonus' && <td className="font-medium text-base">{data?.percentageCredited}</td>}
                                             {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.Amount}</td>}
 
-                                            <td className="text-center text-success font-medium text-base">{data?.amountCredited}</td>
+                                            <td className="text-center text-success font-medium text-base">{activeButton !== 'bonus' ? data?.amountCredited : data?.bonusAmount}</td>
                                         </tr>
                                     );
                                 })

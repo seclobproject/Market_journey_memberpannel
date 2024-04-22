@@ -58,6 +58,7 @@ const Profile = () => {
         bankName: '',
         ifscCode: '',
     });
+
     const [nomineeDetail, setNomineeDetails] = useState({
         name: '',
         phone: '',
@@ -73,20 +74,27 @@ const Profile = () => {
     const [updateNomineeModal, setUpdateNomineeModal] = useState(false);
     const [confirmPassword, setConfirmPasswod] = useState('');
     const [errorMessage, setErrorMessage] = useState(false);
+    const [userView, setUserView] = useState(false);
     const { user } = useAppSelector((state) => state.user);
-    const dispatch = useAppDispatch();
-
     useEffect(() => {
         // dispatch(setPageTitle('Profile'));
+        const userPackageType =  sessionStorage.getItem('packageType');
         dispatch(userProfileApi());
         setBankDetails(user?.bankDetails);
         setEditProfileData(user);
         setNomineeDetails(user?.nomineeDetails);
+          if (userPackageType === 'Franchise') {
+              setUserView(true);
+          }
     }, []);
+
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         setBankDetails(user?.bankDetails);
-    }, [bankDetails]);
+        setNomineeDetails(user?.nomineeDetails);
+        setEditProfileData(user);
+    }, [user]);
 
     useEffect(() => {
         if (confirmPassword === editProfleData.password) {
@@ -244,36 +252,38 @@ const Profile = () => {
                 </li>
             </ul> */}
                 <div className="pt-5">
-                    <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
-                        <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#DDE4EB] text-white ">
-                            <div className="flex h-full justify-between items-center  dark:text-white-light">
-                                <IconCashBanknotes className="w-10 h-10 text-warning" />
+                    {userView && (
+                        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
+                            <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#DDE4EB] text-white ">
+                                <div className="flex h-full justify-between items-center  dark:text-white-light">
+                                    <IconCashBanknotes className="w-10 h-10 text-warning" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <h1 className="text-[25px] font-semibold text-primary">₹{user?.directIncome}</h1>
+                                    <h5 className="font-semibold text-md text-warning">DirectIncome</h5>
+                                </div>
                             </div>
-                            <div className="flex flex-col gap-2">
-                                <h1 className="text-[25px] font-semibold text-primary">₹{user?.directIncome}</h1>
-                                <h5 className="font-semibold text-md text-warning">DirectIncome</h5>
+                            <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#DDE4EB] text-white">
+                                <div className="flex h-full justify-between items-center  dark:text-white-light">
+                                    <IconCashBanknotes className="w-10 h-10 text-warning" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <h1 className="text-[25px] font-semibold text-primary">₹{user?.inDirectIncome}</h1>
+                                    <h5 className="font-semibold text-md text-warning">InDirectIncome</h5>
+                                </div>
                             </div>
-                        </div>
-                        <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#DDE4EB] text-white">
-                            <div className="flex h-full justify-between items-center  dark:text-white-light">
-                                <IconCashBanknotes className="w-10 h-10 text-warning" />
-                            </div>
-                            <div className="flex flex-col gap-2">
-                                <h1 className="text-[25px] font-semibold text-primary">₹{user?.inDirectIncome}</h1>
-                                <h5 className="font-semibold text-md text-warning">InDirectIncome</h5>
-                            </div>
-                        </div>
 
-                        <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#DDE4EB] text-white">
-                            <div className="flex h-full justify-between items-center  dark:text-white-light">
-                                <IconCreditCard className="w-10 h-10 text-warning" />
-                            </div>
-                            <div className="flex flex-col gap-2">
-                                <h1 className="text-[25px] font-semibold text-primary">₹{user?.totalLevelIncome}</h1>
-                                <h5 className="font-semibold text-md text-warning">LevelIncome</h5>
+                            <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#DDE4EB] text-white">
+                                <div className="flex h-full justify-between items-center  dark:text-white-light">
+                                    <IconCreditCard className="w-10 h-10 text-warning" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <h1 className="text-[25px] font-semibold text-primary">₹{user?.totalLevelIncome}</h1>
+                                    <h5 className="font-semibold text-md text-warning">LevelIncome</h5>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                     {/* <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5"> */}
                     <div className="flex flex-wrap justify-between">
                         <div className="panel mb-5 bg-primary w-full px-10">
@@ -309,10 +319,12 @@ const Profile = () => {
                                         </li>
                                     </ul>
                                     <ul className="mt-5 sm:m-auto space-y-4 ">
-                                        <li className="flex items-center gap-3">
-                                            <IconCashBanknotes className="shrink-0" fill />
-                                            walletAmount : {user.walletAmount}
-                                        </li>
+                                        {userView && (
+                                            <li className="flex items-center gap-3">
+                                                <IconCashBanknotes className="shrink-0" fill />
+                                                walletAmount : {user.walletAmount}
+                                            </li>
+                                        )}
                                         {/* <li className="flex items-center gap-3">
                                             <IconCashBanknotes className="shrink-0" fill />
                                             directIncome : {user.directIncome}
@@ -341,89 +353,91 @@ const Profile = () => {
                                 </div>
                             </div>
                         </div>
-
-                        <div className="panel mb-5 p-5 bg-[#DDE4EB]  w-full">
-                            <div className="flex mb-5 ">
-                                <h5 className="font-semibold text-warning text-lg dark:text-white-light">Bank Details</h5>
-                                <div onClick={() => setUpdateBankModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">
-                                    <IconPencilPaper />
+                        {userView && (
+                            <div className="panel mb-5 p-5 bg-[#DDE4EB]  w-full">
+                                <div className="flex mb-5 ">
+                                    <h5 className="font-semibold text-warning text-lg dark:text-white-light">Bank Details</h5>
+                                    <div onClick={() => setUpdateBankModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">
+                                        <IconPencilPaper />
+                                    </div>
+                                </div>
+                                <div className="mb-5">
+                                    <ul className="mt-5  space-y-4 text-primary font-semibold text-base">
+                                        <li>
+                                            <div className="flex items-center gap-3 ">
+                                                <IconUser className="w-5 h-5 shrink-0" fill />
+                                                Account Holder Name : {user?.bankDetails?.holderName}
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div className="flex items-center gap-3">
+                                                <IconNotes className="w-5 h-5 shrink-0" fill />
+                                                Bank Name : {user?.bankDetails?.bankName}
+                                            </div>
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <IconPencilPaper fill />
+                                            Account Number : {user?.bankDetails?.accountNum}
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <IconCode className="shrink-0" fill />
+                                            IFSC code : {user?.bankDetails?.ifscCode}
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                            <div className="mb-5">
-                                <ul className="mt-5  space-y-4 text-primary font-semibold text-base">
-                                    <li>
-                                        <div className="flex items-center gap-3 ">
-                                            <IconUser className="w-5 h-5 shrink-0" fill />
-                                            Account Holder Name : {user?.bankDetails?.holderName}
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div className="flex items-center gap-3">
-                                            <IconNotes className="w-5 h-5 shrink-0" fill />
-                                            Bank Name : {user?.bankDetails?.bankName}
-                                        </div>
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <IconPencilPaper fill />
-                                        Account Number : {user?.bankDetails?.accountNum}
-                                    </li>
-                                    <li className="flex items-center gap-3">
-                                        <IconCode className="shrink-0" fill />
-                                        IFSC code : {user?.bankDetails?.ifscCode}
-                                    </li>
-                                </ul>
+                        )}
+                    </div>
+                </div>
+            </div>
+            {userView && (
+                <div className="bg-primary w-full p-5">
+                    <div className="flex mb-5 ">
+                        <h5 className="font-semibold text-warning text-lg dark:text-white-light">Nominee Details</h5>
+                        <div onClick={() => setUpdateNomineeModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">
+                            <IconPencilPaper />
+                        </div>
+                    </div>
+                    <ul className="mt-5 m-auto space-y-4 text-white font-semibold text-base">
+                        <li>
+                            <div className="flex items-center gap-3">
+                                <IconUser className="w-5 h-5 shrink-0" fill />
+                                Name : {user?.nomineeDetails?.name}
                             </div>
-                        </div>
-                    </div>
+                        </li>
+                        <li>
+                            <div className="flex items-center gap-3">
+                                <IconPhoneCall fill />
+                                Phone : {user?.nomineeDetails?.phone}
+                            </div>
+                        </li>
+                        <li className="flex items-center gap-3">
+                            <IconPencilPaper fill />
+                            Address : {user?.nomineeDetails?.address}
+                        </li>
+                        <li className="flex items-center gap-3">
+                            <IconNotes className="w-5 h-5 shrink-0" fill />
+                            Bank Name : {user?.nomineeDetails?.bankName}
+                        </li>
+                        <li className="flex items-center gap-3">
+                            <IconPencilPaper fill />
+                            Account Number : {user?.nomineeDetails?.accountNum}
+                        </li>
+                        <li className="flex items-center gap-3">
+                            <IconCode className="shrink-0" fill />
+                            IFSC Code : {user?.nomineeDetails?.ifscCode}
+                        </li>
+                        <li className="flex items-center gap-3">
+                            <IconCreditCard className="shrink-0" fill />
+                            Aadhaar Number : {user?.nomineeDetails?.aadhaarNum}
+                        </li>
+                        <li className="flex items-center gap-3">
+                            <IconCreditCard className="shrink-0" fill />
+                            Pancard Number : {user?.nomineeDetails?.pancardNum}
+                        </li>
+                    </ul>
                 </div>
-            </div>
-            <div className="bg-primary w-full p-5">
-                <div className="flex mb-5 ">
-                    <h5 className="font-semibold text-warning text-lg dark:text-white-light">Nominee Details</h5>
-                    <div onClick={() => setUpdateNomineeModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">
-                        <IconPencilPaper />
-                    </div>
-                </div>
-                <ul className="mt-5 m-auto space-y-4 text-white font-semibold text-base">
-                    <li>
-                        <div className="flex items-center gap-3">
-                            <IconUser className="w-5 h-5 shrink-0" fill />
-                            Name : {user?.nomineeDetails?.name}
-                        </div>
-                    </li>
-                    <li>
-                        <div className="flex items-center gap-3">
-                            <IconPhoneCall fill />
-                            Phone : {user?.nomineeDetails?.phone}
-                        </div>
-                    </li>
-                    <li className="flex items-center gap-3">
-                        <IconPencilPaper fill />
-                        Address : {user?.nomineeDetails?.address}
-                    </li>
-                    <li className="flex items-center gap-3">
-                        <IconNotes className="w-5 h-5 shrink-0" fill />
-                        Bank Name : {user?.nomineeDetails?.bankName}
-                    </li>
-                    <li className="flex items-center gap-3">
-                        <IconPencilPaper fill />
-                        Account Number : {user?.nomineeDetails?.accountNum}
-                    </li>
-                    <li className="flex items-center gap-3">
-                        <IconCode className="shrink-0" fill />
-                        IFSC Code : {user?.nomineeDetails?.ifscCode}
-                    </li>
-                    <li className="flex items-center gap-3">
-                        <IconCreditCard className="shrink-0" fill />
-                        Aadhaar Number : {user?.nomineeDetails?.aadhaarNum}
-                    </li>
-                    <li className="flex items-center gap-3">
-                        <IconCreditCard className="shrink-0" fill />
-                        Pancard Number : {user?.nomineeDetails?.pancardNum}
-                    </li>
-                </ul>
-            </div>
-
+            )}
             {/* edit user profile modal */}
             <div>
                 <Transition appear show={editUserModal} as={Fragment}>

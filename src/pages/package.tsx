@@ -38,7 +38,7 @@ const Package = () => {
             </div>
             {loading ? (
                 <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
-            ) : (
+            ) : packagesList.length > 0 ? (
                 packagesList.map((pkg: any) => (
                     <div
                         key={pkg?._id}
@@ -48,7 +48,7 @@ const Package = () => {
                     >
                         <div className="flex gap-4">
                             <div className="flex flex-col gap-2">
-                                <h4 className="text-white  text-base">Franchise</h4>
+                                <h4 className="text-white  text-base">Package Type</h4>
                                 <h6 className="text-warning font-semibold ">{pkg?.packageName} </h6>
                             </div>
                         </div>
@@ -58,6 +58,8 @@ const Package = () => {
                         </div>
                     </div>
                 ))
+            ) : (
+                <span className="align-middle m-auto mb-10">No Packages</span>
             )}
         </div>
     );
