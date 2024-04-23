@@ -63,7 +63,7 @@ const Subscriptions = () => {
                             Subscription Package
                         </button>
                     </div>
-                    <img className="absolute right-0 top-0 h-[95%] z-0" src="/public/assets/images/subscription.png" alt="" />
+                    <img className="absolute right-0 top-0 h-[95%] z-0" src="/assets/images/subscription.png" alt="" />
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2 ">

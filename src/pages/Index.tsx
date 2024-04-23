@@ -228,7 +228,7 @@ const Index = () => {
 
     // share referal link
     const shareTitle = 'Check out this awesome link!';
-    const shareUrl = `https://admin.marketjourney.in/auth/boxed-signup/${user?.id}`; 
+    const shareUrl = `https://admin.marketjourney.in/auth/boxed-signup/${user?.id}`;
 
     const handleShare = async () => {
         if (navigator.share) {
@@ -314,7 +314,7 @@ const Index = () => {
                         >
                             <div className="flex relative items-start justify-between text-white-light mb-16 z-[7]">
                                 <h5 className="font-semibold  text-lg">Total Balance</h5>
-                                <img className="absolute right-2 top-2 sm:w-[80px] w-auto" src="/public/assets/images/total_wallet.svg" alt="rupee" />
+                                <img className="absolute right-2 top-2 sm:w-[80px] w-auto" src="/assets/images/total_wallet.svg" alt="rupee" />
                             </div>
                             <div className="flex items-center justify-between z-10">
                                 <div className="flex items-center justify-between">
@@ -331,7 +331,7 @@ const Index = () => {
                             <h5 className="font-semibold text-lg ">Refer Now</h5>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-7">
-                            <img className="w-[117px] h-[72px]" src="/public/assets/images/referal_img.png" alt="" />
+                            <img className="w-[117px] h-[72px]" src="/assets/images/referal_img.png" alt="" />
                             <div className="flex flex-col gap-5">
                                 <p className="text-center sm:text-left">Sharing is rewarding! Refer your friends and earn a lifetime income</p>
                                 <button onClick={handleShare} type="button" className="font-bold rounded p-2 text-white bg-warning ml-auto sm:ml-0">
@@ -352,65 +352,70 @@ const Index = () => {
                                 Subscription Package
                             </button>
                         </div>
-                        <img className="absolute right-5 top-[25%] h-[50%]  z-0" src="/public/assets/images/subscription.svg" alt="" />
+                        <img className="absolute right-5 top-[25%] h-[50%]  z-0" src="/assets/images/subscription.svg" alt="" />
                     </div>
                 </div>
 
                 {/*------Start Awards and rewards--------- */}
-                <div className="mt-10 lg:mt-16 text-primary ">
-                    <div className="flex justify-between">
-                        <h2 className="mb-6 font-bold text-lg">Awards and Rewards</h2>
-                        <span
-                            onClick={() => {
-                                navigate('/pages/awards');
-                            }}
-                            className="mb-6 font-bold text-md cursor-pointer"
-                        >
-                            show more....
-                        </span>
-                    </div>
-                    {awards.length !== 0 ? (
-                        <>
-                            <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
-                                {awards.map((award: any) => {
-                                    return (
-                                        <div key={award._id} className="min-h-full min-w-[220px] max-w-[220px] gap-2 w-full p-5 bg-white  flex flex-col items-center shadow-md rounded-[12px]">
-                                            <div className="w-20 h-20 ">
-                                                <img className="w-full rounded-full h-20 shadow-md" src={`${Base_url}/uploads/${award?.memberImage}`} alt="profile" />
+                {awards.length > 0 && (
+                    <div className="mt-10 lg:mt-16 text-primary ">
+                        <div className="flex justify-between">
+                            <h2 className="mb-6 font-bold text-lg">Awards and Rewards</h2>
+                            <span
+                                onClick={() => {
+                                    navigate('/pages/awards');
+                                }}
+                                className="mb-6 font-bold text-md cursor-pointer"
+                            >
+                                show more....
+                            </span>
+                        </div>
+                        {awards.length !== 0 ? (
+                            <>
+                                <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
+                                    {awards.map((award: any) => {
+                                        return (
+                                            <div key={award._id} className="min-h-full min-w-[220px] max-w-[220px] gap-2 w-full p-5 bg-white  flex flex-col items-center shadow-md rounded-[12px]">
+                                                <div className="w-20 h-20 ">
+                                                    <img className="w-full rounded-full h-20 shadow-md" src={`${Base_url}/uploads/${award?.memberImage}`} alt="profile" />
+                                                </div>
+                                                <span className="text-[16px] font-[600]">{award?.memberName}</span>
+                                                <span>{award?.achivedDetails}</span>
                                             </div>
-                                            <span className="text-[16px] font-[600]">{award?.memberName}</span>
-                                            <span>{award?.achivedDetails}</span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <div className="min-h-full min-w-[220px] max-w-[220px] gap-2 w-full p-5 bg-gray-200  flex flex-col items-center shadow-md rounded-[12px]">
-                                <div className="w-20 h-20 "></div>
-                                <span className="text-[16px] font-[600]"></span>
-                                <span></span>
-                            </div> 
-                        </>
-                    )}
-                </div>
+                                        );
+                                    })}
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="min-h-full min-w-[220px] max-w-[220px] gap-2 w-full p-5 bg-gray-200  flex flex-col items-center shadow-md rounded-[12px]">
+                                    <div className="w-20 h-20 "></div>
+                                    <span className="text-[16px] font-[600]"></span>
+                                    <span></span>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                )}
+
                 {/*-----End Awards and rewards ---------*/}
 
                 {/* pool Rank list */}
-
-                <div className="mt-10 lg:mt-16 text-primary ">
-                    <div className="flex justify-between">
-                        <h2 className="mb-6 font-bold text-lg">Leader Boards</h2>
-                    </div>
-                    <>
-                        <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
-                            {autoPool?.map((pool: any, index: number) => (
-                                <RankList key={index} pool={String.fromCharCode(65 + index)} members={pool?.count} amount={pool?.amount} />
-                            ))}
+                {autoPool.length > 0 && (
+                    <div className="mt-10 lg:mt-16 text-primary ">
+                        <div className="flex justify-between">
+                            <h2 className="mb-6 font-bold text-lg">Leader Boards</h2>
                         </div>
-                    </>
-                </div>
+                        <>
+                            <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
+                                {autoPool?.map((pool: any, index: number) => (
+                                    <RankList key={index} pool={String.fromCharCode(65 + index)} members={pool?.count} amount={pool?.amount} />
+                                ))}
+                            </div>
+                        </>
+                    </div>
+                )}
+
                 {/* pool Rank list end */}
 
                 {/*----Start Flash Feed------  */}
