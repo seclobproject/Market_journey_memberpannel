@@ -153,7 +153,7 @@ const Header = () => {
                     <div className="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-black">
                         <div className="horizontal-logo flex lg:hidden justify-between items-center ltr:mr-2 rtl:ml-2">
                             <Link to="/" className="main-logo flex items-center shrink-0">
-                                <img className="w-20 ltr:-ml-1 rtl:-mr-1 inline" src="/public/marketlogo.png" alt="logo" />
+                                <img className="w-20 ltr:-ml-1 rtl:-mr-1 inline" src="/marketlogo.png" alt="logo" />
                             </Link>
                             <button
                                 type="button"
@@ -197,7 +197,7 @@ const Header = () => {
                                                             <div className="group flex items-center px-4 py-2">
                                                                 <div className="grid place-content-center rounded">
                                                                     <div className="w-12 h-12 relative">
-                                                                        <img src="/public/web logo-01.ico" alt="img" className="w-14 h-14 rounded-full object-none m-auto" />
+                                                                        <img src="/web logo-01.ico" alt="img" className="w-14 h-14 rounded-full object-none m-auto" />
                                                                         {/* <span className="bg-success w-2 h-2 rounded-full block absolute right-[6px] bottom-0"></span> */}
                                                                     </div>
                                                                 </div>

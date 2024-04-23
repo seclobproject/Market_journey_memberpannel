@@ -339,7 +339,7 @@ const RegisterBoxed = () => {
                 <div className="relative w-full max-w-[870px] rounded-md bg-[linear-gradient(45deg,#fff9f9_0%,rgba(255,255,255,0)_25%,rgba(255,255,255,0)_75%,_#fff9f9_100%)] p-2 dark:bg-[linear-gradient(52.22deg,#0E1726_0%,rgba(14,23,38,0)_18.66%,rgba(14,23,38,0)_51.04%,rgba(14,23,38,0)_80.07%,#0E1726_100%)]">
                     <div className="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[758px] py-20 pt-10">
                         <div className="w-full flex justify-center mb-10">
-                            <img className="w-[150px] text-center" src="/public/marketlogo.png" alt="logo" />
+                            <img className="w-[150px] text-center" src="/marketlogo.png" alt="logo" />
                         </div>
                         <div className="mx-auto w-full">
                             {/* <div className="w-full flex mb-10">

@@ -106,7 +106,7 @@ const Withdrawal = () => {
                         <h5 className="font-semibold text-md text-warning">Your Balance</h5>
                     </div>
                     <div className="flex h-full justify-between items-center  dark:text-white-light">
-                        <img src="/public/assets/images/wallet.svg" alt="" />
+                        <img src="/assets/images/wallet.svg" alt="" />
                     </div>
                 </div>
                 <button onClick={() => setRequestModal(true)} className="panel flex items-center ml-auto mb-3  p-2 text-base bg-primary text-white justify-center max-w-[220px] w-full ">
