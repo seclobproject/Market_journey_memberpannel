@@ -98,14 +98,14 @@ const Member = () => {
     const { stateList } = useAppSelector((state) => state.location);
     const { user } = useAppSelector((state) => state.user);
 
-console.log(user,'user');
+    console.log(user, 'user');
 
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        getMembers(); 
+        getMembers();
         dispatch(getStatesApi());
-         dispatch(userProfileApi());
+        dispatch(userProfileApi());
     }, []);
 
     useEffect(() => {
@@ -480,27 +480,26 @@ console.log(user,'user');
                         <option value={'Courses'}>Courses </option>
                         <option value={'Signals'}>Signals</option>
                     </select>
-                    {user?.franchise ==='District Franchise' &&(
-<select
-                        className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
-                        onChange={(e) => {
-                            const selectedValue = e.target.value;
+                    {user?.franchise === 'District Franchise' && (
+                        <select
+                            className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
+                            onChange={(e) => {
+                                const selectedValue = e.target.value;
 
-                            if (selectedValue) {
-                                setSelectedZonalId(selectedValue);
-                            }
-                        }}
-                        // value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
-                    >
-                        <option>Select zonal </option>
-                        {zonalList.map((zonal: any) => (
-                            <option key={zonal.id} value={zonal?._id}>
-                                {zonal.name}
-                            </option>
-                        ))}
-                    </select>
-                    )
-                }
+                                if (selectedValue) {
+                                    setSelectedZonalId(selectedValue);
+                                }
+                            }}
+                            // value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
+                        >
+                            <option>Select zonal </option>
+                            {zonalList.map((zonal: any) => (
+                                <option key={zonal.id} value={zonal?._id}>
+                                    {zonal.name}
+                                </option>
+                            ))}
+                        </select>
+                    )}
                     <select
                         onChange={(e) => {
                             setAddMember({ ...addMember, panchayath: e.target.value });
@@ -516,75 +515,11 @@ console.log(user,'user');
                 {/* filter options end */}
 
                 <div className="table-responsive mb-5">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>SINo</th>
-                                <th>Name</th>
-                                <th>UserId</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Sponsor Name</th>
-                                <th> franchise Type</th>
-                                <th> franchise Name</th>
-                                <th> Package Amount</th>
-                                {/* {showViewTreeColumn && */}
-                                <th>View Tree</th>
-                                {/* } */}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loading ? (
-                                <tr>
-                                    <td colSpan={7} style={{ textAlign: 'center' }}>
-                                        <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
-                                    </td>
-                                </tr>
-                            ) : filterMembers?.length > 0 ? (
-                                filterMembers.map((data: any, index: number) => (
-                                    <tr key={data?._id}>
-                                        <td>{index + 1}</td>
-                                        <td className="capitalize">{data?.name}</td>
-                                        <td>{data?.ownSponserId}</td>
-                                        <td>{data?.email}</td>
-                                        <td className="whitespace-nowrap">{data?.phone}</td>
-                                        <td className="capitalize whitespace-nowrap">{data?.sponserName}</td>
-                                        <td className="whitespace-nowrap">{data?.franchise}</td>
-                                        <td className="whitespace-nowrap">{data?.franchiseName}</td>
-                                        <td>{data?.packageAmount}</td>
-                                        {/* {showViewTreeColumn && ( */}
-                                        <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
-                                            <button className="bg-primary text-center text-white p-2 rounded-sm">
-                                                <i className="fas fa-sitemap mr-2"></i> View Tree
-                                            </button>
-                                        </td>
-                                        {/* )} */}
-                                        {/* <td>
-                                            <button
-                                                className={`whitespace-nowrap text-white p-1.5 rounded-lg ${
-                                                    data?.userStatus === 'approved' ? 'bg-green-400' : data?.userStatus === 'Pending' ? 'bg-warning' : 'bg-green-500'
-                                                }`}
-                                            >
-                                                {data?.userStatus}
-                                            </button>
-                                        </td> */}
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={7} style={{ textAlign: 'center' }}>
-                                        <span className="align-middle m-auto mb-10">No Member</span>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
                     <InfiniteScroll
                         dataLength={allMembers?.length}
                         next={fetchData}
                         hasMore={true}
                         loader={<h4></h4>}
-                        children={undefined}
                         // endMessage={
                         //     <p style={{ textAlign: 'center' }}>
                         //         <b>Yay! You have seen it all</b>
@@ -597,7 +532,69 @@ console.log(user,'user');
                         // pullDownToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8595; Pull down to refresh</h3>}
                         // releaseToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>}
                     >
-                        {/* {items}  */}
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>SINo</th>
+                                    <th>Name</th>
+                                    <th>UserId</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Sponsor Name</th>
+                                    <th> franchise Type</th>
+                                    <th> franchise Name</th>
+                                    <th> Package Amount</th>
+                                    {/* {showViewTreeColumn && */}
+                                    <th>View Tree</th>
+                                    {/* } */}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan={7} style={{ textAlign: 'center' }}>
+                                            <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                                        </td>
+                                    </tr>
+                                ) : filterMembers?.length > 0 ? (
+                                    filterMembers.map((data: any, index: number) => (
+                                        <tr key={data?._id}>
+                                            <td>{index + 1}</td>
+                                            <td className="capitalize">{data?.name}</td>
+                                            <td>{data?.ownSponserId}</td>
+                                            <td>{data?.email}</td>
+                                            <td className="whitespace-nowrap">{data?.phone}</td>
+                                            <td className="capitalize whitespace-nowrap">{data?.sponserName}</td>
+                                            <td className="whitespace-nowrap">{data?.franchise}</td>
+                                            <td className="whitespace-nowrap">{data?.franchiseName}</td>
+                                            <td>{data?.packageAmount}</td>
+                                            {/* {showViewTreeColumn && ( */}
+                                            <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
+                                                <button className="bg-primary text-center text-white p-2 rounded-sm">
+                                                    <i className="fas fa-sitemap mr-2"></i> View Tree
+                                                </button>
+                                            </td>
+                                            {/* )} */}
+                                            {/* <td>
+                                            <button
+                                                className={`whitespace-nowrap text-white p-1.5 rounded-lg ${
+                                                    data?.userStatus === 'approved' ? 'bg-green-400' : data?.userStatus === 'Pending' ? 'bg-warning' : 'bg-green-500'
+                                                }`}
+                                            >
+                                                {data?.userStatus}
+                                            </button>
+                                        </td> */}
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={7} style={{ textAlign: 'center' }}>
+                                            <span className="align-middle m-auto mb-10">No Member</span>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
                     </InfiniteScroll>
                 </div>
 

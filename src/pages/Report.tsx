@@ -264,62 +264,10 @@ const Report = () => {
                     <h5 className="font-semibold text-warning text-lg dark:text-white-light">Report</h5>
                 </div>
                 <div className="table-responsive mb-5">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>SIno</th>
-                                <th>Date</th>
-                                {activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' ? <th>Amount From</th> : activeButton !== 'bonus' && <th>Designation</th>}
-                                {activeButton === 'levelIncome' && <th> New Member</th>}
-
-                                {/* <th>Name</th> */}
-                                {activeButton !== 'levelIncome' && activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' && <th> Franchise</th>}
-
-                                {activeButton !== 'bonus' && <th> PercentageCredited</th>}
-                                {activeButton === 'levelIncome' && <th> Amount</th>}
-
-                                {activeButton === 'bonus' ? <th>Bonus Amount</th> : <th> Amount Credited</th>}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {reports?.length > 0 ? (
-                                reports.map((data: any, index: number) => {
-                                    return (
-                                        <tr key={index}>
-                                            <td>
-                                                <div className=" font-medium text-base">{index + 1}</div>
-                                            </td>
-                                            <td className="font-medium text-base">{data?.createdAt}</td>
-                                            {/* <td className="whitespace-nowrap font-medium text-base">{data?.designation}</td> */}
-                                            {activeButton !== 'bonus' && (
-                                                <td>
-                                                    <div className="whitespace-nowrap font-medium text-base">{data?.name}</div>
-                                                </td>
-                                            )}
-                                            {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.newMember}</td>}
-                                            {(activeButton !== 'bonus' && activeButton !== 'levelIncome') && <td className="font-medium text-base">{data?.franchise}</td>}
-
-                                            {activeButton !== 'bonus' && <td className="font-medium text-base">{data?.percentageCredited}</td>}
-                                            {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.Amount}</td>}
-
-                                            <td className="text-center text-success font-medium text-base">{activeButton !== 'bonus' ? data?.amountCredited : data?.bonusAmount}</td>
-                                        </tr>
-                                    );
-                                })
-                            ) : (
-                                <tr>
-                                    <td colSpan={7} style={{ textAlign: 'center' }}>
-                                        <span className="align-middle m-auto mb-10">No Reports</span>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
                     <InfiniteScroll
                         dataLength={reports?.length}
                         next={fetchData}
                         hasMore={true}
-                        children={undefined}
                         loader={undefined}
                         //   endMessage={
                         //     <p style={{ textAlign: 'center' }}>
@@ -333,7 +281,57 @@ const Report = () => {
                         // pullDownToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8595; Pull down to refresh</h3>}
                         // releaseToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>}
                     >
-                        {/* {items} */}
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>SIno</th>
+                                    <th>Date</th>
+                                    {activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' ? <th>Amount From</th> : activeButton !== 'bonus' && <th>Designation</th>}
+                                    {activeButton === 'levelIncome' && <th> New Member</th>}
+
+                                    {/* <th>Name</th> */}
+                                    {activeButton !== 'levelIncome' && activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' && <th> Franchise</th>}
+
+                                    {activeButton !== 'bonus' && <th> PercentageCredited</th>}
+                                    {activeButton === 'levelIncome' && <th> Amount</th>}
+
+                                    {activeButton === 'bonus' ? <th>Bonus Amount</th> : <th> Amount Credited</th>}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {reports?.length > 0 ? (
+                                    reports.map((data: any, index: number) => {
+                                        return (
+                                            <tr key={index}>
+                                                <td>
+                                                    <div className=" font-medium text-base">{index + 1}</div>
+                                                </td>
+                                                <td className="font-medium text-base">{data?.createdAt}</td>
+                                                {/* <td className="whitespace-nowrap font-medium text-base">{data?.designation}</td> */}
+                                                {activeButton !== 'bonus' && (
+                                                    <td>
+                                                        <div className="whitespace-nowrap font-medium text-base">{data?.name}</div>
+                                                    </td>
+                                                )}
+                                                {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.newMember}</td>}
+                                                {activeButton !== 'bonus' && activeButton !== 'levelIncome' && <td className="font-medium text-base">{data?.franchise}</td>}
+
+                                                {activeButton !== 'bonus' && <td className="font-medium text-base">{data?.percentageCredited}</td>}
+                                                {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.Amount}</td>}
+
+                                                <td className="text-center text-success font-medium text-base">{activeButton !== 'bonus' ? data?.amountCredited : data?.bonusAmount}</td>
+                                            </tr>
+                                        );
+                                    })
+                                ) : (
+                                    <tr>
+                                        <td colSpan={7} style={{ textAlign: 'center' }}>
+                                            <span className="align-middle m-auto mb-10">No Reports</span>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
                     </InfiniteScroll>
                 </div>
             </div>
