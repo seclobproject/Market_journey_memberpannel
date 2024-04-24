@@ -260,7 +260,7 @@ const Profile = () => {
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <h1 className="text-[25px] font-semibold text-primary">₹{user?.directIncome}</h1>
-                                    <h5 className="font-semibold text-md text-warning">DirectIncome</h5>
+                                    <h5 className="font-semibold text-md text-primary">DirectIncome</h5>
                                 </div>
                             </div>
                             <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#DDE4EB] text-white">
@@ -269,17 +269,17 @@ const Profile = () => {
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <h1 className="text-[25px] font-semibold text-primary">₹{user?.inDirectIncome}</h1>
-                                    <h5 className="font-semibold text-md text-warning">InDirectIncome</h5>
+                                    <h5 className="font-semibold text-md text-primary">InDirectIncome</h5>
                                 </div>
                             </div>
 
                             <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#DDE4EB] text-white">
                                 <div className="flex h-full justify-between items-center  dark:text-white-light">
-                                    <IconCreditCard className="w-10 h-10 text-warning" />
+                                    <IconCashBanknotes className="w-10 h-10 text-warning" />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <h1 className="text-[25px] font-semibold text-primary">₹{user?.totalLevelIncome}</h1>
-                                    <h5 className="font-semibold text-md text-warning">LevelIncome</h5>
+                                    <h5 className="font-semibold text-md text-primary">LevelIncome</h5>
                                 </div>
                             </div>
                         </div>
@@ -297,7 +297,7 @@ const Profile = () => {
                                 <div className="flex flex-col justify-center items-center py-2">
                                     <img src="/assets/images/userProfile.jpg" alt="img" className="w-24 h-24 rounded-full object-cover mb-5" />
                                     <p className="font-semibold text-white text-xl">{user.name}</p>
-                                    <p className={user.userStatus === 'approved' ? 'text-green-500' : 'text-warning'}>{user.userStatus}</p>
+                                    <p className={user.userStatus === 'approved' ? 'text-warning' : 'text-warning'}>{user.userStatus}</p>
                                 </div>
                                 <div className="mt-5 flex m-auto space-y-4 flex-wrap  text-white gap-10 font-semibold text-base">
                                     <ul className="mt-5 sm:m-auto space-y-4 max-w-[280px] ">
@@ -356,7 +356,7 @@ const Profile = () => {
                         {userView && (
                             <div className="panel mb-5 p-5 bg-[#DDE4EB]  w-full">
                                 <div className="flex mb-5 ">
-                                    <h5 className="font-semibold text-warning text-lg dark:text-white-light">Bank Details</h5>
+                                    <h5 className="font-semibold text-primary text-lg dark:text-white-light">Bank Details</h5>
                                     <div onClick={() => setUpdateBankModal(true)} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full cursor-pointer">
                                         <IconPencilPaper />
                                     </div>

@@ -51,7 +51,7 @@ const Subscriptions = () => {
     return (
         <>
             <div>
-                <div className="panel min-h-[200px] max-w-md sm:h-auto flex  rounded-[14px] justify-between bg-[#00335B] text-white relative">
+                <div className="panel min-h-[200px] max-w-md sm:h-auto flex  rounded-[14px] justify-between bg-primary text-white relative">
                     <div className="flex flex-col gap-5 z-10">
                         <div className=" dark:text-white-light">
                             <h5 className=" text-md ">
@@ -59,7 +59,7 @@ const Subscriptions = () => {
                             </h5>
                         </div>
                         <p className="text-left sm:text-left max-w-[230px]">Your monthly subscription plan has 10 days to renew Subscription is 0 Please upload the screenshot</p>
-                        <button onClick={() => setSubscriptionModal(true)} type="button" className="text-white hover:text-white bg-warning z-10 font-bold rounded-lg border-warning p-2 mr-auto border ">
+                        <button onClick={() => setSubscriptionModal(true)} type="button" className="text-primary  bg-warning z-10 font-bold rounded-lg border-warning p-2 mr-auto border ">
                             Subscription Package
                         </button>
                     </div>

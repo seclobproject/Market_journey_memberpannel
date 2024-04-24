@@ -90,7 +90,7 @@ const Sidebar = () => {
         if (userPackageType === 'Courses' || userPackageType === 'Signals') {
             setUserView(true);
         }
-    });
+    },[]);
 
     return (
         <div className={` ${semidark ? 'dark' : ''}`}>

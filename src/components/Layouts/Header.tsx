@@ -23,13 +23,14 @@ import { AlertUrl, getProfileUrl } from '../../utils/EndPoints';
 
 const Header = () => {
     const [logoutModal, setLogoutModal] = useState(false);
-        // const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
-        //     name: '',
-        //     email: '',
-        //     userStatus: '',
-        //     walletAmount: '',
-        // });
-            const { user } = useAppSelector((state) => state.user);
+    const [viewNotifications, setViewNotification] = useState(false);
+    // const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
+    //     name: '',
+    //     email: '',
+    //     userStatus: '',
+    //     walletAmount: '',
+    // });
+    const { user } = useAppSelector((state) => state.user);
     const location = useLocation();
     const navigate = useNavigate();
     useEffect(() => {
@@ -61,7 +62,6 @@ const Header = () => {
     function createMarkup(messages: any) {
         return { __html: messages };
     }
-
 
     // const removeNotification = (value: number) => {
     //     setNotifications(notifications.filter((user) => user.id !== value));
@@ -103,7 +103,7 @@ const Header = () => {
     //     getProfile();
     // }, []);
 
-     const [alert, setAlert] = useState([]);
+    const [alert, setAlert] = useState([]);
 
     //  const seenNotifications = JSON.parse(localStorage.getItem('seenNotifications') || '[]');
 
@@ -112,15 +112,20 @@ const Header = () => {
     //      localStorage.setItem('seenNotifications', JSON.stringify(updatedSeenNotifications));
     //  };
 
-     useEffect(() => {
-         let latestNotification;
-         const fetchNotifications = async () => {
-             try {
-                 const res: any = await ApiCall('get', AlertUrl);
+    useEffect(() => {
+        let latestNotification;
+        const userStatus = sessionStorage.getItem('status');
+        if (userStatus === 'readyToApprove') {
+            setViewNotification(true);
+        }
+
+        const fetchNotifications = async () => {
+            try {
+                const res: any = await ApiCall('get', AlertUrl);
                 //  const notifications = res?.data?.alertData || [];
-                 if (Array.isArray(res?.data?.alertData)) {
-                     setAlert(res?.data?.alertData.slice(0, 3));
-                 }
+                if (Array.isArray(res?.data?.alertData)) {
+                    setAlert(res?.data?.alertData.slice(0, 3));
+                }
                 //  setAlert(res?.data?.alertData);
 
                 //  const unseenNotifications: any[] = notifications.filter((notification: any) => !seenNotifications.includes(notification._id));
@@ -130,22 +135,22 @@ const Header = () => {
                 //      markNotificationAsSeen(latestNotification._id);
                 //      Show_Toast({ message: latestNotification.description, type: true });
                 //  }
-             } catch (error) {
-                 console.error('Error fetching notifications:', error);
-             }
-         };
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        };
 
-         fetchNotifications();
-     }, []);
+        fetchNotifications();
+    }, []);
 
-     const openModal = () => {
-         setLogoutModal(true);
-         document.body.classList.add('overflow-hidden');
-     };
-     const closeModal = () => {
-         setLogoutModal(false);
-         document.body.classList.remove('overflow-hidden');
-     };
+    const openModal = () => {
+        setLogoutModal(true);
+        document.body.classList.add('overflow-hidden');
+    };
+    const closeModal = () => {
+        setLogoutModal(false);
+        document.body.classList.remove('overflow-hidden');
+    };
     return (
         <>
             <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
@@ -167,75 +172,77 @@ const Header = () => {
                         </div>
 
                         <div className="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]  ">
-                            <div className="dropdown shrink-0 ml-auto">
-                                <Dropdown
-                                    offset={[0, 8]}
-                                    placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                    btnClassName="relative block p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
-                                    button={
-                                        <span>
-                                            <IconBellBing />
-                                            <span className="flex absolute w-3 h-3 ltr:right-0 rtl:left-0 top-0">
-                                                <span className="animate-ping absolute ltr:-left-[3px] rtl:-right-[3px] -top-[3px] inline-flex h-full w-full rounded-full bg-success/50 opacity-75"></span>
-                                                <span className="relative inline-flex rounded-full w-[6px] h-[6px] bg-success"></span>
+                            {!viewNotifications  && (
+                                <div className="dropdown shrink-0 ml-auto">
+                                    <Dropdown
+                                        offset={[0, 8]}
+                                        placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
+                                        btnClassName="relative block p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
+                                        button={
+                                            <span>
+                                                <IconBellBing />
+                                                <span className="flex absolute w-3 h-3 ltr:right-0 rtl:left-0 top-0">
+                                                    <span className="animate-ping absolute ltr:-left-[3px] rtl:-right-[3px] -top-[3px] inline-flex h-full w-full rounded-full bg-success/50 opacity-75"></span>
+                                                    <span className="relative inline-flex rounded-full w-[6px] h-[6px] bg-success"></span>
+                                                </span>
                                             </span>
-                                        </span>
-                                    }
-                                >
-                                    <ul className="!py-0 text-dark dark:text-white-dark w-[300px] sm:w-[350px] divide-y dark:divide-white/10">
-                                        <li onClick={(e) => e.stopPropagation()}>
-                                            <div className="flex items-center px-4 py-2 justify-between font-semibold">
-                                                <h4 className="text-lg">Notification</h4>
-                                                {/* {alert.length ? <span className="badge bg-primary/80">{notifications.length}New</span> : ''} */}
-                                            </div>
-                                        </li>
-                                        {alert.length > 0 ? (
-                                            <>
-                                                {alert.map((notification: any) => {
-                                                    return (
-                                                        <li key={notification._id} className="dark:text-white-light/90" onClick={(e) => e.stopPropagation()}>
-                                                            <div className="group flex items-center px-4 py-2">
-                                                                <div className="grid place-content-center rounded">
-                                                                    <div className="w-12 h-12 relative">
-                                                                        <img src="/web logo-01.ico" alt="img" className="w-14 h-14 rounded-full object-none m-auto" />
-                                                                        {/* <span className="bg-success w-2 h-2 rounded-full block absolute right-[6px] bottom-0"></span> */}
-                                                                    </div>
-                                                                </div>
-                                                                <div className="ltr:pl-3 rtl:pr-3 flex flex-auto">
-                                                                    <div className="ltr:pr-3 rtl:pl-3">
-                                                                        <h6
-                                                                            dangerouslySetInnerHTML={{
-                                                                                __html: notification.description,
-                                                                            }}
-                                                                        ></h6>
-                                                                        <span className="text-xs block font-normal dark:text-gray-500">{notification?.time}</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    );
-                                                })}
-                                                <li>
-                                                    <div className="p-4">
-                                                        <button onClick={() => navigate('/pages/notifications')} className="btn btn-primary block w-full btn-small">
-                                                            Read All Notifications
-                                                        </button>
-                                                    </div>
-                                                </li>
-                                            </>
-                                        ) : (
+                                        }
+                                    >
+                                        <ul className="!py-0 text-dark dark:text-white-dark w-[300px] sm:w-[350px] divide-y dark:divide-white/10">
                                             <li onClick={(e) => e.stopPropagation()}>
-                                                <button type="button" className="!grid place-content-center hover:!bg-transparent text-lg min-h-[200px]">
-                                                    <div className="mx-auto ring-4 ring-primary/30 rounded-full mb-4 text-primary">
-                                                        <IconInfoCircle fill={true} className="w-10 h-10" />
-                                                    </div>
-                                                    No data available.
-                                                </button>
+                                                <div className="flex items-center px-4 py-2 justify-between font-semibold">
+                                                    <h4 className="text-lg">Notification</h4>
+                                                    {/* {alert.length ? <span className="badge bg-primary/80">{notifications.length}New</span> : ''} */}
+                                                </div>
                                             </li>
-                                        )}
-                                    </ul>
-                                </Dropdown>
-                            </div>
+                                            {alert.length > 0 ? (
+                                                <>
+                                                    {alert.map((notification: any) => {
+                                                        return (
+                                                            <li key={notification._id} className="dark:text-white-light/90" onClick={(e) => e.stopPropagation()}>
+                                                                <div className="group flex items-center px-4 py-2">
+                                                                    <div className="grid place-content-center rounded">
+                                                                        <div className="w-12 h-12 relative">
+                                                                            <img src="/public/web logo-01.svg" alt="img" className="w-14 h-14 rounded-full object-none m-auto" />
+                                                                            {/* <span className="bg-success w-2 h-2 rounded-full block absolute right-[6px] bottom-0"></span> */}
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="ltr:pl-3 rtl:pr-3 flex flex-auto">
+                                                                        <div className="ltr:pr-3 rtl:pl-3">
+                                                                            <h6
+                                                                                dangerouslySetInnerHTML={{
+                                                                                    __html: notification.description,
+                                                                                }}
+                                                                            ></h6>
+                                                                            <span className="text-xs block font-normal dark:text-gray-500">{notification?.time}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        );
+                                                    })}
+                                                    <li>
+                                                        <div className="p-4">
+                                                            <button onClick={() => navigate('/pages/notifications')} className="btn btn-primary block w-full btn-small">
+                                                                Read All Notifications
+                                                            </button>
+                                                        </div>
+                                                    </li>
+                                                </>
+                                            ) : (
+                                                <li onClick={(e) => e.stopPropagation()}>
+                                                    <button type="button" className="!grid place-content-center hover:!bg-transparent text-lg min-h-[200px]">
+                                                        <div className="mx-auto ring-4 ring-primary/30 rounded-full mb-4 text-primary">
+                                                            <IconInfoCircle fill={true} className="w-10 h-10" />
+                                                        </div>
+                                                        No data available.
+                                                    </button>
+                                                </li>
+                                            )}
+                                        </ul>
+                                    </Dropdown>
+                                </div>
+                            )}
                             <div className="dropdown shrink-0 flex">
                                 <Dropdown
                                     offset={[0, 8]}
