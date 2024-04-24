@@ -98,9 +98,9 @@ const Withdrawal = () => {
         <>
             <div className="panel">
                 <div className="flex justify-between items-center mb-5">
-                    <h5 className="font-semibold text-warning text-lg dark:text-white-light">Withdrawal</h5>
+                    <h5 className="font-semibold text-primary text-lg dark:text-white-light">Withdrawal</h5>
                 </div>
-                <div className="panel lg:h-[100px]  sm:h-auto flex gap-4  items-center justify-around bg-[#00335B] text-white mb-3 max-w-sm">
+                <div className="panel lg:h-[100px]  sm:h-auto flex gap-4  items-center justify-around bg-primary text-white mb-3 max-w-sm">
                     <div className="flex flex-col gap-2">
                         <h1 className="text-[25px] font-semibold">₹ {walletAmount}</h1>
                         <h5 className="font-semibold text-md text-warning">Your Balance</h5>

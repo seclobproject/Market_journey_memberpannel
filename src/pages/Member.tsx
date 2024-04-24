@@ -412,29 +412,10 @@ const Member = () => {
 
     return (
         <>
-            {/* <div className="flex gap-5 w-full mb-4"> */}
-            {/* <div
-                    // onClick={getLevelOneMembers}
-                    className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
-                        activeButton === 'level1' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
-                    } justify-center max-w-[120px] w-full`}
-                >
-                    Level 1
-                </div>
-                <div
-                    onClick={getLevelTwoMembers}
-                    className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
-                        activeButton === 'level2' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
-                    } justify-center max-w-[120px] w-full`}
-                >
-                    Level 2
-                </div> */}
-
-            {/* </div> */}
             <div className="panel">
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-                    <h5 className="font-semibold text-warning text-lg dark:text-white-light">Member</h5>
-                    <div className="sm:ltr:mr-auto sm:rtl:ml-auto sm:mt-0 mt-6 sm:mb-0 mb-[-16px]">
+                    <h5 className="font-semibold text-primary text-lg dark:text-white-light">Member</h5>
+                    {/* <div className="sm:ltr:mr-auto sm:rtl:ml-auto sm:mt-0 mt-6 sm:mb-0 mb-[-16px]">
                         <form className={`${search && '!block'} mt-2 sm:mt-0 inset-x-0 sm:translate-y-0 -translate-y-1/2 sm:mx-0  z-10`} onSubmit={() => {}}>
                             <div className="relative">
                                 <input
@@ -452,11 +433,11 @@ const Member = () => {
                                 </button>
                             </div>
                         </form>
-                    </div>
+                    </div> */}
 
                     <button
                         onClick={() => setAddModal(true)}
-                        className="panel flex items-center overflow-x-auto whitespace-nowrap p-2 text-base bg-warning text-white justify-center max-w-[100px] w-full "
+                        className="panel flex items-center overflow-x-auto whitespace-nowrap p-2 text-base bg-primary text-warning font-semibold justify-center max-w-[100px] w-full "
                     >
                         Add
                     </button>
@@ -466,54 +447,55 @@ const Member = () => {
                         <IconArrowBackward />
                     </button>
                 )}
-
                 {/* fiter options start */}
-                <div className="flex flex-wrap gap-2">
-                    <select
-                        onChange={(e) => filterWithPackagetype(e.target.value)}
-                        value={filterPackageType}
-                        className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
-                    >
-                        <option> select Package type </option>
-                        <option value={'All'}>All </option>
-                        <option value={'Franchise'}>Franchise </option>
-                        <option value={'Courses'}>Courses </option>
-                        <option value={'Signals'}>Signals</option>
-                    </select>
-                    {user?.franchise === 'District Franchise' && (
-                        <select
-                            className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
-                            onChange={(e) => {
-                                const selectedValue = e.target.value;
+                {user?.franchise === 'District Franchise' ||
+                    (user?.franchise === 'Zonal Franchise' && (
+                        <div className="flex flex-wrap gap-2">
+                            <select
+                                onChange={(e) => filterWithPackagetype(e.target.value)}
+                                value={filterPackageType}
+                                className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
+                            >
+                                <option> Select package type </option>
+                                <option value={'All'}>All </option>
+                                <option value={'Franchise'}>Franchise </option>
+                                <option value={'Courses'}>Courses </option>
+                                <option value={'Signals'}>Signals</option>
+                            </select>
+                            {user?.franchise === 'District Franchise' && (
+                                <select
+                                    className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
+                                    onChange={(e) => {
+                                        const selectedValue = e.target.value;
 
-                                if (selectedValue) {
-                                    setSelectedZonalId(selectedValue);
-                                }
-                            }}
-                            // value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
-                        >
-                            <option>Select zonal </option>
-                            {zonalList.map((zonal: any) => (
-                                <option key={zonal.id} value={zonal?._id}>
-                                    {zonal.name}
-                                </option>
-                            ))}
-                        </select>
-                    )}
-                    <select
-                        onChange={(e) => {
-                            setAddMember({ ...addMember, panchayath: e.target.value });
-                        }}
-                        className="form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary"
-                    >
-                        <option>Select panchayath </option>
-                        {panchayathList.map((panchayath: any) => (
-                            <option key={panchayath.id}>{panchayath.name}</option>
-                        ))}
-                    </select>
-                </div>
+                                        if (selectedValue) {
+                                            setSelectedZonalId(selectedValue);
+                                        }
+                                    }}
+                                    // value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
+                                >
+                                    <option>Select zonal </option>
+                                    {zonalList.map((zonal: any) => (
+                                        <option key={zonal.id} value={zonal?._id}>
+                                            {zonal.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
+                            <select
+                                onChange={(e) => {
+                                    setAddMember({ ...addMember, panchayath: e.target.value });
+                                }}
+                                className="form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary"
+                            >
+                                <option>Select panchayath </option>
+                                {panchayathList.map((panchayath: any) => (
+                                    <option key={panchayath.id}>{panchayath.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    ))}
                 {/* filter options end */}
-
                 <div className="table-responsive mb-5">
                     <InfiniteScroll
                         dataLength={allMembers?.length}
@@ -570,7 +552,7 @@ const Member = () => {
                                             <td>{data?.packageAmount}</td>
                                             {/* {showViewTreeColumn && ( */}
                                             <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
-                                                <button className="bg-primary text-center text-white p-2 rounded-sm">
+                                                <button className="bg-primary text-center text-warning p-2 rounded-sm">
                                                     <i className="fas fa-sitemap mr-2"></i> View Tree
                                                 </button>
                                             </td>
@@ -597,7 +579,6 @@ const Member = () => {
                         </table>
                     </InfiniteScroll>
                 </div>
-
                 <div>
                     <Transition appear show={addModal} as={Fragment}>
                         <Dialog

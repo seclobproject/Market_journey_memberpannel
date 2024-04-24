@@ -221,10 +221,10 @@ const DematAccount = () => {
             {/* <div className={`panel ${reports.length >= 10 ? 'min-h-[95vh]' : 'h-full'}`}> */}
             <div className={`panel 'h-full'}`}>
                 <div className="flex items-center justify-between mb-5">
-                    <h5 className="font-semibold text-warning text-lg dark:text-white-light">Demat Account</h5>
+                    <h5 className="font-semibold text-primary text-lg dark:text-white-light">Demat Account</h5>
                     <button
                         onClick={() => setAddModal(true)}
-                        className="panel flex items-center overflow-x-auto whitespace-nowrap p-2 text-base bg-warning text-white justify-center max-w-[100px] w-full "
+                        className="panel flex items-center overflow-x-auto whitespace-nowrap p-2 text-base bg-primary text-warning justify-center max-w-[100px] w-full "
                     >
                         Add
                     </button>

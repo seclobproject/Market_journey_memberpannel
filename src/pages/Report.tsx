@@ -156,7 +156,7 @@ const Report = () => {
         }
     };
 
-    // pagination in LevelIncome data
+    // pagination in data
     const fetchData = () => {
         const LevelIncomeReport = async () => {
             try {
@@ -221,7 +221,7 @@ const Report = () => {
                 <div
                     onClick={() => DirectReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
-                        activeButton === 'directIncome' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                        activeButton === 'directIncome' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
                 >
                     Direct
@@ -229,7 +229,7 @@ const Report = () => {
                 <div
                     onClick={() => InDirectReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
-                        activeButton === 'inDirectIncome' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                        activeButton === 'inDirectIncome' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
                 >
                     InDirect
@@ -237,7 +237,7 @@ const Report = () => {
                 <div
                     onClick={() => LevelIncomeReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
-                        activeButton === 'levelIncome' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                        activeButton === 'levelIncome' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
                 >
                     LevelIncome
@@ -245,7 +245,7 @@ const Report = () => {
                 <div
                     onClick={() => AutoPoolReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
-                        activeButton === 'autoPoolCreditHistory' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                        activeButton === 'autoPoolCreditHistory' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
                 >
                     Auto pool
@@ -253,7 +253,7 @@ const Report = () => {
                 <div
                     onClick={() => BonusReport(1)}
                     className={`panel cursor-pointer flex items-center overflow-x-auto whitespace-nowrap p-2 text-base ${
-                        activeButton === 'bonus' ? 'bg-primary text-white' : 'bg-white border-2 border-primary text-primary font-bold'
+                        activeButton === 'bonus' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
                     } justify-center max-w-[120px] w-full`}
                 >
                     Bonus
@@ -261,7 +261,7 @@ const Report = () => {
             </div>
             <div className={`panel ${reports.length >= 10 ? 'min-h-[95vh]' : 'h-full'}`}>
                 <div className="flex items-center justify-between mb-5">
-                    <h5 className="font-semibold text-warning text-lg dark:text-white-light">Report</h5>
+                    <h5 className="font-semibold text-primary text-lg dark:text-white-light">Report</h5>
                 </div>
                 <div className="table-responsive mb-5">
                     <InfiniteScroll

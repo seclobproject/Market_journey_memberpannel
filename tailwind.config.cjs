@@ -17,7 +17,7 @@ module.exports = {
         extend: {
             colors: {
                 primary: {
-                    DEFAULT: '#00335B',
+                    DEFAULT: 'rgb(7 39 64)',
                     light: '#eaf1ff',
                     'dark-light': 'rgba(67,97,238,.15)',
                 },
@@ -37,7 +37,8 @@ module.exports = {
                     'dark-light': 'rgba(231,81,90,.15)',
                 },
                 warning: {
-                    DEFAULT: 'rgb(247, 174, 21)',
+                    // DEFAULT: 'rgb(165 234 74)',
+                    DEFAULT: '#A5EA4A',
                     light: '#fff9ed',
                     'dark-light': 'rgba(226,160,63,.15)',
                 },
@@ -63,7 +64,7 @@ module.exports = {
                 },
             },
             backgroundColor: {
-                primary: '#00335B',
+                primary: 'rgb(7 39 64)',
                 'primary-light': '#eaf1ff',
             },
             fontFamily: {

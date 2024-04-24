@@ -255,7 +255,7 @@ const Index = () => {
         <>
             <div>
                 {(updateStatus === 'readyToApprove' || updateStatus === 'pending') && (
-                    <div className="bg-warning p-2 text-center text-white font-bold mb-2 rounded-md">
+                    <div className="bg-[#F7AE15] p-2 text-center text-white font-bold mb-2 rounded-md">
                         <h4>Please wait for admin confirmation, your status is pending.</h4>
                     </div>
                 )}
@@ -275,7 +275,7 @@ const Index = () => {
                 )}
                 {userView && (
                     <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
-                        <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                        <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-primary text-white">
                             <div className="flex h-full justify-between items-center  dark:text-white-light">
                                 <IconCashBanknotes className="w-10 h-10 text-warning" />
                             </div>
@@ -284,7 +284,7 @@ const Index = () => {
                                 <h5 className="font-semibold text-md text-warning">DirectIncome</h5>
                             </div>
                         </div>
-                        <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                        <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-primary text-white">
                             <div className="flex h-full justify-between items-center  dark:text-white-light">
                                 <IconCashBanknotes className="w-10 h-10 text-warning" />
                             </div>
@@ -294,7 +294,7 @@ const Index = () => {
                             </div>
                         </div>
 
-                        <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-[#00335B] text-white">
+                        <div className="panel lg:h-[120px]  sm:h-auto flex gap-4  items-center justify-center bg-primary text-white">
                             <div className="flex h-full justify-between items-center  dark:text-white-light">
                                 <IconCreditCard className="w-10 h-10 text-warning" />
                             </div>
@@ -326,7 +326,7 @@ const Index = () => {
                             </div>
                         </div>
                     )}
-                    <div className="panel sm:h-auto flex flex-col justify-between bg-[#00335B] text-white">
+                    <div className="panel sm:h-auto flex flex-col justify-between bg-primary text-white">
                         <div className="flex justify-between dark:text-white-light mb-5">
                             <h5 className="font-semibold text-lg ">Refer Now</h5>
                         </div>
@@ -334,13 +334,13 @@ const Index = () => {
                             <img className="w-[117px] h-[72px]" src="/assets/images/referal_img.png" alt="" />
                             <div className="flex flex-col gap-5">
                                 <p className="text-center sm:text-left">Sharing is rewarding! Refer your friends and earn a lifetime income</p>
-                                <button onClick={handleShare} type="button" className="font-bold rounded p-2 text-white bg-warning ml-auto sm:ml-0">
+                                <button onClick={handleShare} type="button" className="font-bold rounded p-2 text-primary bg-warning ml-auto sm:ml-0">
                                     Refer Now
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div className="panel min-h-[200px] max-w-md sm:h-auto flex  justify-between bg-[#00335B] text-white relative">
+                    <div className="panel min-h-[200px] max-w-md sm:h-auto flex  justify-between bg-primary text-white relative">
                         <div className="flex flex-col gap-5 z-10">
                             <div className=" dark:text-white-light">
                                 <h5 className=" text-md ">
@@ -348,7 +348,7 @@ const Index = () => {
                                 </h5>
                             </div>
                             <p className="text-left sm:text-left max-w-[230px]">Your monthly subscription plan has 10 days to renew Subscription is 0 Please upload the screenshot</p>
-                            <button type="button" className="text-white hover:text-white bg-warning z-10 font-bold rounded border-warning p-2 mr-auto border ">
+                            <button type="button" className="text-primary hover:text-white bg-warning z-10 font-bold rounded border-warning p-2 mr-auto border ">
                                 Subscription Package
                             </button>
                         </div>

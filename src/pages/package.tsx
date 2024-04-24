@@ -34,7 +34,7 @@ const Package = () => {
     return (
         <div className="panel">
             <div className="flex items-center justify-between mb-5">
-                <h5 className="font-semibold text-warning text-lg dark:text-white-light">Package</h5>
+                <h5 className="font-semibold text-primary text-lg dark:text-white-light">Packages</h5>
             </div>
             {loading ? (
                 <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
