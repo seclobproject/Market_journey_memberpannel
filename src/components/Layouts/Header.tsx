@@ -172,7 +172,7 @@ const Header = () => {
                         </div>
 
                         <div className="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]  ">
-                            {!viewNotifications  && (
+                            {!viewNotifications && (
                                 <div className="dropdown shrink-0 ml-auto">
                                     <Dropdown
                                         offset={[0, 8]}
@@ -243,7 +243,7 @@ const Header = () => {
                                     </Dropdown>
                                 </div>
                             )}
-                            <div className="dropdown shrink-0 flex">
+                            <div className="dropdown shrink-0 flex ml-auto">
                                 <Dropdown
                                     offset={[0, 8]}
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
