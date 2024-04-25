@@ -13,10 +13,15 @@ export const packagesListUrl = '/api/admin/view-package';
 export const memberaddUrl = '/api/user/add-user';
 export const addReferaUrl = '/api/user/add-referal-user';
 export const getUsers = '/api/user/view-level1-user';
+export const filterMembersUrl = '/api/user/view-district-Users';
 
 // user
 export const getProfileUrl = '/api/user/view-user-profile';
 export const editProfileUrl = '/api/user/edit-profile';
+export const userVerificationUrl = '/api/user/user-verification';
+
+// renewal
+export const renewalUrl = '/api/user/user-renewal-request';
 
 export const updateBankDetailsurl = '/api/user/add-bank-account';
 export const updateNomineeDetailsurl = '/api/user/add-nominee';
@@ -48,3 +53,8 @@ export const AwardsUrl = '/api/admin/view-award-details';
 
 // Alert
 export const AlertUrl = '/api/user/view-user-alerts';
+
+// Renewal
+export const getAddOnUrl = '/api/user/view-addon-signals';
+export const convertedPackagesUrl = '/api/user/view-convert-packages';
+export const renewalPackageUrl = '/api/user/view-renewal-packages';

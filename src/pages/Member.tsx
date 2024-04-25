@@ -6,6 +6,7 @@ import { ApiCall } from '../Services/Api';
 import {
     districtlistinNotdropdownUrl,
     districtlistindropdownUrl,
+    filterMembersUrl,
     getUsers,
     memberaddUrl,
     packagesListUrl,
@@ -63,7 +64,6 @@ const Member = () => {
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<string | undefined>();
     // const [previousMemberData, setPreviousMemberData] = useState(null);
-    // const [packageType, setPackageType] = useState('');
     const [addMember, setAddMember] = useState<Member>({
         name: '',
         email: '',
@@ -81,6 +81,7 @@ const Member = () => {
         panchayath: '',
         franchiseName: '',
     });
+    console.log(addMember);
 
     // const [stateList, setStateList] = useState<any>([]);
     const [districtList, setDistrictList] = useState([]);
@@ -93,6 +94,12 @@ const Member = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
     const [filterPackageType, setFilterPackageType] = useState('');
+    const [filterData, setFilterData] = useState({
+        zonal: '',
+        panchayath: '',
+    });
+    console.log(filterData,'filtered data df');
+
     const [search, setSearch] = useState('');
 
     const { stateList } = useAppSelector((state) => state.location);
@@ -103,9 +110,12 @@ const Member = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        getMembers();
+        // getMembers();
+        filterMemberDatas();
         dispatch(getStatesApi());
         dispatch(userProfileApi());
+        setSelectedDistrictId(user?.districtFranchise);
+        setSelectedZonalId(user?.zonalFranchise);
     }, []);
 
     useEffect(() => {
@@ -135,6 +145,10 @@ const Member = () => {
     useEffect(() => {
         getPackagesList();
     }, [addMember?.packageType]);
+
+    useEffect(() => {
+        filterMemberDatas();
+    }, [filterData]);
 
     //------ show password-----
     const handleTogglePassword = () => {
@@ -169,11 +183,36 @@ const Member = () => {
 
     // fiter members
     const filterWithPackagetype = (type: string) => {
+        setFilterPackageType(type);
         if (type === 'All') {
             setFilterMembers(allMembers);
         } else {
             const filterMembers = allMembers.filter((member: any) => member?.packageType === type);
             setFilterMembers(filterMembers);
+        }
+    };
+
+    // filter with zonal
+    const filterMemberDatas = async () => {
+        try {
+            setLoading(true);
+            console.log('dsfs dfsd');
+            const response = await ApiCall('post', filterMembersUrl, filterData, { page: pageNumber, pageSize: 10 });
+            console.log(response, 'response');
+
+            if (response instanceof Error) {
+                console.error('Error fetching allMembers list:', response.message);
+            } else if (response.status === 200) {
+                setAllMembers(response?.data?.filteredUsers);
+                setFilterMembers(response?.data?.filteredUsers);
+                setLoading(false);
+            } else {
+                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching allMembers list:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -448,53 +487,69 @@ const Member = () => {
                     </button>
                 )}
                 {/* fiter options start */}
-                {user?.franchise === 'District Franchise' ||
-                    (user?.franchise === 'Zonal Franchise' && (
-                        <div className="flex flex-wrap gap-2">
-                            <select
-                                onChange={(e) => filterWithPackagetype(e.target.value)}
-                                value={filterPackageType}
-                                className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
-                            >
-                                <option> Select package type </option>
-                                <option value={'All'}>All </option>
-                                <option value={'Franchise'}>Franchise </option>
-                                <option value={'Courses'}>Courses </option>
-                                <option value={'Signals'}>Signals</option>
-                            </select>
-                            {user?.franchise === 'District Franchise' && (
-                                <select
-                                    className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
-                                    onChange={(e) => {
-                                        const selectedValue = e.target.value;
 
-                                        if (selectedValue) {
-                                            setSelectedZonalId(selectedValue);
-                                        }
-                                    }}
-                                    // value={addMember?.franchise === 'Zonal Franchise' ? addMember.franchiseName : addMember.zonal}
-                                >
-                                    <option>Select zonal </option>
-                                    {zonalList.map((zonal: any) => (
-                                        <option key={zonal.id} value={zonal?._id}>
+                <div className="flex flex-wrap gap-2">
+                    {/* <select
+                        onChange={(e) => filterWithPackagetype(e.target.value)}
+                        value={filterPackageType}
+                        className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
+                    >
+                        <option> Select package type </option>
+                        <option value={'All'}>All </option>
+                        <option value={'Franchise'}>Franchise </option>
+                        <option value={'Courses'}>Courses </option>
+                        <option value={'Signals'}>Signals</option>
+                    </select> */}
+                    {user?.franchise === 'District Franchise' && (
+                        <select
+                            className="form-input ps-10 placeholder:text-white-dark max-w-[220px] sm:mb-4 border-primary"
+                            onChange={(e) => {
+                                const selectedValue = e.target.value;
+                                const selectedzonal = zonalList.find((zon: any) => zon.name === selectedValue) as any;
+                                console.log(selectedzonal);
+
+                                setFilterData({ ...filterData, zonal: selectedzonal === undefined ? '' : selectedzonal.name, panchayath: '' });
+                                setSelectedZonalId(selectedzonal === undefined ? '' : selectedzonal?.id);
+                                // }
+                                // filterMemberDatas();
+                            }}
+                            value={filterData?.zonal}
+                            placeholder="Select zonal"
+                        >
+                            {/* <option>Select zonal </option> */}
+                            <option value="">All Zonals</option>
+                            {zonalList.map(
+                                (zonal: any) => (
+                                    console.log(zonal, 'xonal skdjkfj'),
+                                    (
+                                        <option key={zonal.id} value={zonal?.name}>
                                             {zonal.name}
                                         </option>
-                                    ))}
-                                </select>
+                                    )
+                                )
                             )}
-                            <select
-                                onChange={(e) => {
-                                    setAddMember({ ...addMember, panchayath: e.target.value });
-                                }}
-                                className="form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary"
-                            >
-                                <option>Select panchayath </option>
-                                {panchayathList.map((panchayath: any) => (
-                                    <option key={panchayath.id}>{panchayath.name}</option>
-                                ))}
-                            </select>
-                        </div>
-                    ))}
+                        </select>
+                    )}
+                    {(user?.franchise === 'District Franchise' || user?.franchise === 'Zonal Franchise') && (
+                        <select
+                            onChange={(e) => {
+                                const selectedValue = e.target.value;
+                                if (selectedValue) {
+                                    setFilterData({ ...filterData, panchayath: selectedValue });
+                                    filterMemberDatas();
+                                }
+                            }}
+                            className="form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary"
+                            value={filterData?.panchayath}
+                        >
+                            <option>Select panchayath </option>
+                            {panchayathList.map((panchayath: any) => (
+                                <option key={panchayath.id}>{panchayath.name}</option>
+                            ))}
+                        </select>
+                    )}
+                </div>
+
                 {/* filter options end */}
                 <div className="table-responsive mb-5">
                     <InfiniteScroll
@@ -542,7 +597,7 @@ const Member = () => {
                                     filterMembers.map((data: any, index: number) => (
                                         <tr key={data?._id}>
                                             <td>{index + 1}</td>
-                                            <td className="capitalize">{data?.name}</td>
+                                            <td className="capitalize whitespace-nowrap">{data?.name}</td>
                                             <td>{data?.ownSponserId}</td>
                                             <td>{data?.email}</td>
                                             <td className="whitespace-nowrap">{data?.phone}</td>

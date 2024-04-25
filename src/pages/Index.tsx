@@ -5,7 +5,7 @@ import IconPlayCircle from '../components/Icon/IconPlayCircle';
 
 import IconCreditCard from '../components/Icon/IconCreditCard';
 import { ApiCall, Base_url } from '../Services/Api';
-import { AwardsUrl, getImagesUrl, getVideoUrl, liveNewsUrl, viewAutoPoolUrl } from '../utils/EndPoints';
+import { AwardsUrl, getImagesUrl, getVideoUrl, liveNewsUrl, userVerificationUrl, viewAutoPoolUrl } from '../utils/EndPoints';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -209,7 +209,7 @@ const Index = () => {
                 formData.append('transactionNumber', transactionNumber);
                 formData.append('screenshot', selectedFile, selectedFile?.name);
 
-                const response = await axios.post(`${Base_url}/api/user/user-verification`, formData, config);
+                const response = await axios.post(`${Base_url}${userVerificationUrl}`, formData, config);
                 console.log(response);
                 setSelectedFile(null);
                 sessionStorage.setItem('status', response?.data?.updatedUser?.userStatus);
@@ -348,9 +348,11 @@ const Index = () => {
                                 </h5>
                             </div>
                             <p className="text-left sm:text-left max-w-[230px]">Your monthly subscription plan has 10 days to renew Subscription is 0 Please upload the screenshot</p>
-                            <button type="button" className="text-primary hover:text-white bg-warning z-10 font-bold rounded border-warning p-2 mr-auto border ">
-                                Subscription Package
-                            </button>
+                            <Link to="/pages/subscription">
+                                <button type="button" className="text-primary hover:text-white bg-warning z-10 font-bold rounded border-warning p-2 mr-auto border ">
+                                    Subscription Package
+                                </button>
+                            </Link>
                         </div>
                         <img className="absolute right-5 top-[25%] h-[50%]  z-0" src="/assets/images/subscription.svg" alt="" />
                     </div>

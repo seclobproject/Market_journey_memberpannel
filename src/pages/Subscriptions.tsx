@@ -1,17 +1,41 @@
 import { Dialog, Transition } from '@headlessui/react';
 import axios from 'axios';
-import React, { Fragment, useState } from 'react';
-import { Base_url } from '../Services/Api';
-import { useAppSelector } from '../store';
+import React, { Fragment, useEffect, useState } from 'react';
+import { ApiCall, Base_url } from '../Services/Api';
+import { useAppDispatch, useAppSelector } from '../store';
+import { convertedPackagesUrl, getAddOnUrl, renewalPackageUrl, renewalUrl } from '../utils/EndPoints';
+import { userProfileApi } from '../store/UserSlice';
 
 const Subscriptions = () => {
     const [subscriptionModal, setSubscriptionModal] = useState(false);
+    const [verificationModal, setVerificationModal] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [transactionNumber, setTransacrionNumber] = useState('');
     const [showSelectDocumentMessage, setShowSelectDocumentMessage] = useState(false);
+    const [addOn, setAddOn] = useState([]);
+    const [convetPackages, setConvetPackages] = useState([]);
+    const [renewalPackage, setRenewalPackage] = useState({
+        packageName:'',
+        packageAmount:''
+    });
+    const [selectedPackage, setSelectedPackage] = useState({
+        action:'',
+        package: '',
+        amount: '',
+    });
     const [loading, setLoading] = useState(false);
 
-      const { user } = useAppSelector((state) => state.user);
+    const { user } = useAppSelector((state) => state.user);
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(userProfileApi());
+        getAddOn();
+        if (user?.packageType !== 'Franchise') {
+            getConvetPackage();
+        }
+        getRenewalPackage();
+    }, []);
 
     const handleUpload = async () => {
         if (selectedFile) {
@@ -28,8 +52,11 @@ const Subscriptions = () => {
                 const formData = new FormData();
                 formData.append('transactionNumber', transactionNumber);
                 formData.append('screenshot', selectedFile, selectedFile?.name);
+                formData.append('reqPackage', selectedPackage?.package );
+                formData.append('amount', selectedPackage?.amount);
+                formData.append('action', selectedPackage?.action);
 
-                const response = await axios.post(`${Base_url}/api/user/user-verification`, formData, config);
+                const response = await axios.post(`${Base_url}${renewalUrl}`, formData, config);
                 console.log(response);
                 setSelectedFile(null);
                 sessionStorage.setItem('status', response?.data?.updatedUser?.userStatus);
@@ -44,10 +71,67 @@ const Subscriptions = () => {
             setShowSelectDocumentMessage(true);
         }
     };
-   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-       const file = event.target.files?.[0];
-       setSelectedFile(file || null);
-   };
+    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        setSelectedFile(file || null);
+    };
+
+    // get add one
+    const getAddOn = async () => {
+        try {
+            const response = await ApiCall('get', getAddOnUrl);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setAddOn(response?.data?.addOns);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+
+    // get convert packages
+
+    const getConvetPackage = async () => {
+        try {
+            const response = await ApiCall('get', convertedPackagesUrl);
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setConvetPackages(response?.data?.anotherPackages);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    // get convert packages
+
+    const getRenewalPackage = async () => {
+        try {
+            const response = await ApiCall('get', renewalPackageUrl);
+            console.log(response, 'renewalPackageUrl');
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setRenewalPackage(response?.data?.renewPackages);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    const handleverificationModal = (pkg: any,action:string) => {
+        setVerificationModal(true);
+        setSelectedPackage({ ...selectedPackage, package: pkg?.packageName, amount: pkg?.packageAmount, action:action });
+    };
     return (
         <>
             <div>
@@ -156,6 +240,7 @@ const Subscriptions = () => {
                     </div>
                 </div>
             </div>
+
             <Transition appear show={subscriptionModal} as={Fragment}>
                 <Dialog
                     as="div"
@@ -180,16 +265,122 @@ const Subscriptions = () => {
                             >
                                 <Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-[500px] my-8 text-black dark:text-white-dark">
                                     <div className="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
-                                        <h5 className="text-warning">Subscription</h5>
+                                        <h5 className="text-warning">Renewal Package</h5>
                                         <button type="button" onClick={() => setSubscriptionModal(false)} className="text-white-dark hover:text-dark text-[28px] p-2">
                                             ×
                                         </button>
                                     </div>
                                     <div className="p-5">
                                         <div className="flex flex-col">
+                                            {user?.renewalStatus && (
+                                                <div>
+                                                    <h3 className="text-primary font-bold mb-2">Add on</h3>
+                                                    {addOn.map((add: any) => (
+                                                        <div
+                                                            onClick={() => handleverificationModal(add, 'addOn')}
+                                                            className="w-full flex justify-between min-h-[80px] cursor-pointer bg-primary rounded-3xl p-5 mb-2
+                
+                "
+                                                        >
+                                                            <div className="flex gap-4">
+                                                                <div className="flex flex-col gap-2">
+                                                                    <h4 className="text-white  text-base">{add?.packageName}</h4>
+                                                                    <span className="text-warning font-semiboldy">₹ {add?.packageAmount}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            {!user?.renewalStatus && (
+                                                <div>
+                                                    <h3 className="text-primary font-bold mb-2">Renewal Signals</h3>
+                                                    <div
+                                                        onClick={() => handleverificationModal(renewalPackage, 'renewal')}
+                                                        className="w-full flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2 cursor-pointer  "
+                                                    >
+                                                        <div className="flex gap-4">
+                                                            <div className="flex flex-col gap-2">
+                                                                <h4 className="text-white  text-base">{renewalPackage?.packageName}</h4>
+                                                                <span className="text-warning font-semiboldy">₹ {renewalPackage?.packageAmount}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {user?.packageType !== 'Franchise' && (
+                                                <div>
+                                                    <h3 className="text-primary font-bold mb-2">convert Packages</h3>
+                                                    {convetPackages?.map((conPkg: any) => (
+                                                        <div
+                                                            onClick={() => handleverificationModal(conPkg,'convert')}
+                                                            className="w-full flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2 cursor-pointer
+                
+                "
+                                                        >
+                                                            <div className="flex gap-4">
+                                                                <div className="flex flex-col gap-2">
+                                                                    <h4 className="text-white  text-base">{conPkg?.packageName}</h4>
+                                                                    <span className="text-warning font-semiboldy">₹ {conPkg?.packageAmount}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                        {/* <div className="flex justify-end items-center mt-4">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    handleUpload();
+                                                }}
+                                                className="btn btn-primary text-sm ltr:ml-2 rtl:mr-2 p-2"
+                                            >
+                                                {loading ? 'Saving...' : 'Save'}
+                                            </button>
+                                        </div> */}
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
+            <Transition appear show={verificationModal} as={Fragment}>
+                <Dialog
+                    as="div"
+                    open={verificationModal}
+                    onClose={() => {
+                        setVerificationModal(false);
+                    }}
+                >
+                    <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+                        <div className="fixed inset-0" />
+                    </Transition.Child>
+                    <div id="register_modal" className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
+                        <div className="flex items-start justify-center min-h-screen px-4">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95"
+                                enterTo="opacity-100 scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100"
+                                leaveTo="opacity-0 scale-95"
+                            >
+                                <Dialog.Panel className="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-[500px] my-8 text-black dark:text-white-dark">
+                                    <div className="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
+                                        <h5 className="text-warning">Renewal Package</h5>
+                                        <button type="button" onClick={() => setVerificationModal(false)} className="text-white-dark hover:text-dark text-[28px] p-2">
+                                            ×
+                                        </button>
+                                    </div>
+                                    <div className="p-5">
+                                        <div className="flex flex-col">
                                             <div>
-                                                <h3 className="text-primary font-semibold">Package Amount</h3>
-                                                <h1 className="text-2xl text-primary font-bold mb-4">₹{user?.tempPackageAmount}</h1>
+                                                <h3 className="text-primary font-semibold">{selectedPackage?.package}</h3>
+                                                <h1 className="text-2xl text-primary font-bold mb-4">₹{selectedPackage?.amount}</h1>
                                                 <label htmlFor="transactionId" className="text-[14px] text-primary">
                                                     Your Transaction Id{' '}
                                                 </label>
