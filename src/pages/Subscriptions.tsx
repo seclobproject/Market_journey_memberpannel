@@ -14,10 +14,7 @@ const Subscriptions = () => {
     const [showSelectDocumentMessage, setShowSelectDocumentMessage] = useState(false);
     const [addOn, setAddOn] = useState([]);
     const [convetPackages, setConvetPackages] = useState([]);
-    const [renewalPackage, setRenewalPackage] = useState({
-        packageName:'',
-        packageAmount:''
-    });
+    const [renewalPackage, setRenewalPackage] = useState([]);
     const [selectedPackage, setSelectedPackage] = useState({
         action:'',
         package: '',
@@ -61,6 +58,7 @@ const Subscriptions = () => {
                 setSelectedFile(null);
                 sessionStorage.setItem('status', response?.data?.updatedUser?.userStatus);
                 setSubscriptionModal(false);
+                setVerificationModal(false)
                 setShowSelectDocumentMessage(false);
             } catch (error) {
                 console.error('Upload failed:', error);
@@ -120,7 +118,7 @@ const Subscriptions = () => {
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
-                setRenewalPackage(response?.data?.renewPackages);
+                setRenewalPackage(response?.data?.renewPackages );
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
             }
@@ -139,7 +137,7 @@ const Subscriptions = () => {
                     <div className="flex flex-col gap-5 z-10">
                         <div className=" dark:text-white-light">
                             <h5 className=" text-md ">
-                                <span className="text-4xl font-bold">10</span> day left
+                                <span className="text-4xl font-bold">{user?.daysUntilRenewal}</span> day left
                             </h5>
                         </div>
                         <p className="text-left sm:text-left max-w-[230px]">Your monthly subscription plan has 10 days to renew Subscription is 0 Please upload the screenshot</p>
@@ -295,17 +293,19 @@ const Subscriptions = () => {
                                             {!user?.renewalStatus && (
                                                 <div>
                                                     <h3 className="text-primary font-bold mb-2">Renewal Signals</h3>
-                                                    <div
-                                                        onClick={() => handleverificationModal(renewalPackage, 'renewal')}
-                                                        className="w-full flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2 cursor-pointer  "
-                                                    >
-                                                        <div className="flex gap-4">
-                                                            <div className="flex flex-col gap-2">
-                                                                <h4 className="text-white  text-base">{renewalPackage?.packageName}</h4>
-                                                                <span className="text-warning font-semiboldy">₹ {renewalPackage?.packageAmount}</span>
+                                                    {renewalPackage.map((ren: any) => (
+                                                        <div
+                                                            onClick={() => handleverificationModal(ren, 'renewal')}
+                                                            className="w-full flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2 cursor-pointer  "
+                                                        >
+                                                            <div className="flex gap-4">
+                                                                <div className="flex flex-col gap-2">
+                                                                    <h4 className="text-white  text-base">{ren?.packageName}</h4>
+                                                                    <span className="text-warning font-semiboldy">₹ {ren?.packageAmount}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    ))}
                                                 </div>
                                             )}
                                             {user?.packageType !== 'Franchise' && (
@@ -313,7 +313,7 @@ const Subscriptions = () => {
                                                     <h3 className="text-primary font-bold mb-2">convert Packages</h3>
                                                     {convetPackages?.map((conPkg: any) => (
                                                         <div
-                                                            onClick={() => handleverificationModal(conPkg,'convert')}
+                                                            onClick={() => handleverificationModal(conPkg, 'convert')}
                                                             className="w-full flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2 cursor-pointer
                 
                 "
