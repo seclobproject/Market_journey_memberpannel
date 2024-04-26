@@ -344,7 +344,7 @@ const Index = () => {
                         <div className="flex flex-col gap-5 z-10">
                             <div className=" dark:text-white-light">
                                 <h5 className=" text-md ">
-                                    <span className="text-4xl font-bold">10</span> day left
+                                    <span className="text-4xl font-bold">{user?.daysUntilRenewal}</span> day left
                                 </h5>
                             </div>
                             <p className="text-left sm:text-left max-w-[230px]">Your monthly subscription plan has 10 days to renew Subscription is 0 Please upload the screenshot</p>
@@ -422,59 +422,59 @@ const Index = () => {
 
                 {/*----Start Flash Feed------  */}
                 <div className="mt-10 lg:mt-16 text-primary ">
-                    {slideVideos.length > 0 && <h2 className="mb-6 font-bold text-lg">FLASH FEED</h2>}
+                    {(slideVideos.length > 0 || slideImages.length > 0) && <h2 className="mb-6 font-bold text-lg">FLASH FEED</h2>}
+                    {slideVideos.length > 0 && (
+                        <div className="swiper mt-10" id="slider2">
+                            {
+                                slideVideos.length > 0 && (
+                                    <>
+                                        <div className="swiper-wrapper">
+                                            <Swiper
+                                                modules={[Navigation, Pagination, Autoplay]}
+                                                navigation={{
+                                                    nextEl: '.swiper-button-next-ex2',
+                                                    prevEl: '.swiper-button-prev-ex2',
+                                                }}
+                                                // pagination={{
+                                                //     clickable: true,
+                                                // }}
+                                                autoplay={{ delay: 4000 }}
+                                                loop={true}
+                                                breakpoints={{
+                                                    1024: {
+                                                        slidesPerView: slideImages.length == 1 ? 1 : slideImages.length == 2 ? 2 : 3,
+                                                        spaceBetween: 30,
+                                                    },
+                                                    768: {
+                                                        slidesPerView: slideImages.length == 2 ? 2 : 1,
+                                                        spaceBetween: 40,
+                                                    },
+                                                    320: {
+                                                        slidesPerView: 1,
+                                                        spaceBetween: 20,
+                                                    },
+                                                }}
+                                            >
+                                                {slideVideos.map((item: any) => {
+                                                    // console.log(${Base_url}/uploads/${item.videoThambnail});
 
-                    <div className="swiper mt-10" id="slider2">
-                        {
-                            slideVideos.length > 0 && (
-                                <>
-                                    <div className="swiper-wrapper">
-                                        <Swiper
-                                            modules={[Navigation, Pagination, Autoplay]}
-                                            navigation={{
-                                                nextEl: '.swiper-button-next-ex2',
-                                                prevEl: '.swiper-button-prev-ex2',
-                                            }}
-                                            // pagination={{
-                                            //     clickable: true,
-                                            // }}
-                                            autoplay={{ delay: 4000 }}
-                                            loop={true}
-                                            breakpoints={{
-                                                1024: {
-                                                    slidesPerView: slideImages.length == 1 ? 1 : slideImages.length == 2 ? 2 : 3,
-                                                    spaceBetween: 30,
-                                                },
-                                                768: {
-                                                    slidesPerView: slideImages.length == 2 ? 2 : 1,
-                                                    spaceBetween: 40,
-                                                },
-                                                320: {
-                                                    slidesPerView: 1,
-                                                    spaceBetween: 20,
-                                                },
-                                            }}
-                                        >
-                                            {slideVideos.map((item: any) => {
-                                                // console.log(${Base_url}/uploads/${item.videoThambnail});
+                                                    return (
+                                                        <SwiperSlide key={item._id}>
+                                                            <img src={`${Base_url}/uploads/${item.videoThambnail}`} className="w-full h-[200px] object-cover rounded-lg" alt="itemImg" />
+                                                            <Link to={`${item.videoLink}`} target="_blank">
+                                                                <button
+                                                                    type="button"
+                                                                    className="absolute left-1/2 top-1/3 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/3 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
+                                                                >
+                                                                    <IconPlayCircle className="h-[62px] w-[62px] " fill={true} />
+                                                                </button>
+                                                            </Link>
+                                                            <p className="font-semibold text-[14px]">{item.videoTitle}</p>
+                                                        </SwiperSlide>
+                                                    );
+                                                })}
 
-                                                return (
-                                                    <SwiperSlide key={item._id}>
-                                                        <img src={`${Base_url}/uploads/${item.videoThambnail}`} className="w-full h-[200px] object-cover rounded-lg" alt="itemImg" />
-                                                        <Link to={`${item.videoLink}`} target="_blank">
-                                                            <button
-                                                                type="button"
-                                                                className="absolute left-1/2 top-1/3 grid h-[62px] w-[62px] -translate-x-1/2 -translate-y-1/3 place-content-center rounded-full text-white duration-300 group-hover:scale-110"
-                                                            >
-                                                                <IconPlayCircle className="h-[62px] w-[62px] " fill={true} />
-                                                            </button>
-                                                        </Link>
-                                                        <p className="font-semibold text-[14px]">{item.videoTitle}</p>
-                                                    </SwiperSlide>
-                                                );
-                                            })}
-
-                                            {/* {items.map((item:any) => {
+                                                {/* {items.map((item:any) => {
                                     return (
                                         <SwiperSlide key={i}>
                                             <img src={`/public/assets/images/carousel2.jpeg`} className="w-full rounded-lg" alt="itemImg" />
@@ -489,21 +489,22 @@ const Index = () => {
                                         </SwiperSlide>
                                     );
                                 })} */}
-                                        </Swiper>
-                                    </div>
-                                    <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
-                                        <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
-                                    </button>
-                                    <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
-                                        <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
-                                    </button>
-                                </>
-                            )
-                            // ) : (
-                            //     <div className="max-w-[350px] h-[200px] rounded-lg bg-gray-200" />
-                            // )
-                        }
-                    </div>
+                                            </Swiper>
+                                        </div>
+                                        <button className="swiper-button-prev-ex2 grid place-content-center ltr:left-2 rtl:right-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                            <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
+                                        </button>
+                                        <button className="swiper-button-next-ex2 grid place-content-center ltr:right-2 rtl:left-2 p-1 transition text-white border border-primary  hover:border-primary bg-primary rounded-full absolute z-[999] top-[44%] -translate-y-1/2">
+                                            <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
+                                        </button>
+                                    </>
+                                )
+                                // ) : (
+                                //     <div className="max-w-[350px] h-[200px] rounded-lg bg-gray-200" />
+                                // )
+                            }
+                        </div>
+                    )}
                     <div className="swiper mt-20" id="slider1">
                         {
                             slideImages.length > 0 && (

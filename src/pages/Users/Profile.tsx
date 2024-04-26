@@ -1,14 +1,11 @@
-import { Link } from 'react-router-dom';
+import React, { useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { setPageTitle } from '../../store/themeConfigSlice';
 import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-
+import { usePDF } from 'react-to-pdf';
 import IconPencilPaper from '../../components/Icon/IconPencilPaper';
-
 import IconMapPin from '../../components/Icon/IconMapPin';
 import IconMail from '../../components/Icon/IconMail';
-
 import { ApiCall } from '../../Services/Api';
 import { editProfileUrl, updateBankDetailsurl, updateNomineeDetailsurl } from '../../utils/EndPoints';
 import IconCashBanknotes from '../../components/Icon/IconCashBanknotes';
@@ -19,32 +16,12 @@ import { userProfileApi } from '../../store/UserSlice';
 import IconUser from '../../components/Icon/IconUser';
 import IconNotes from '../../components/Icon/IconNotes';
 import IconCode from '../../components/Icon/IconCode';
-import { Show_Toast } from '../Components/Toast';
 import IconCreditCard from '../../components/Icon/IconCreditCard';
-import IconArchive from '../../components/Icon/IconArchive';
 import IconAward from '../../components/Icon/IconAward';
-// interface ProfileDetails {
-//     name: string;
-//     address: string;
-//     phone: string;
-//     email: string;
-//     franchise: string;
-//     franchiseN: string;
-//     userStatus: string;
-//     walletAmount: string;
-// }
+import Certificate from '../Components/certificate';
 
 const Profile = () => {
-    // const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
-    //     name: '',
-    //     address: '',
-    //     phone: '',
-    //     email: '',
-    //     franchise: '',
-    //     franchiseN: '',
-    //     userStatus: '',
-    //     walletAmount: '',
-    // });
+
     const [editProfleData, setEditProfileData] = useState({
         name: '',
         address: '',
@@ -75,20 +52,21 @@ const Profile = () => {
     const [confirmPassword, setConfirmPasswod] = useState('');
     const [errorMessage, setErrorMessage] = useState(false);
     const [userView, setUserView] = useState(false);
+
     const { user } = useAppSelector((state) => state.user);
+    const dispatch = useAppDispatch();
+  const { toPDF, targetRef } = usePDF({ filename: `${user.name}-invoiceSlip` });
+
     useEffect(() => {
-        // dispatch(setPageTitle('Profile'));
-        const userPackageType =  sessionStorage.getItem('packageType');
+        const userPackageType = sessionStorage.getItem('packageType');
         dispatch(userProfileApi());
         setBankDetails(user?.bankDetails);
         setEditProfileData(user);
         setNomineeDetails(user?.nomineeDetails);
-          if (userPackageType === 'Franchise') {
-              setUserView(true);
-          }
+        if (userPackageType === 'Franchise') {
+            setUserView(true);
+        }
     }, []);
-
-    const dispatch = useAppDispatch();
 
     useEffect(() => {
         setBankDetails(user?.bankDetails);
@@ -104,25 +82,15 @@ const Profile = () => {
         }
     }, [confirmPassword]);
 
-    //----------Get user profile -----------
-
-    // const getProfile = async () => {
-    //     try {
-    //         const response = await ApiCall('get', getProfileUrl);
-    //         console.log(response);
-
-    //         if (response instanceof Error) {
-    //             console.error('Error fetching state list:', response.message);
-    //         } else if (response.status === 200) {
-    //             setProfileDetails(response?.data);
-    //         } else {
-    //             console.error('Error fetching state list. Unexpected status:', response.status);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching state list:', error);
-    //     }
-    // };
-    //--------------------------------
+  const generatePdf = async () => {
+      try {
+          if (targetRef.current) {
+              await toPDF(targetRef.current);
+          }
+      } catch (error) {
+          console.error('Error generating PDF:', error);
+      }
+  };
 
     // ---------- Edit profile --------------
     const editProfile = async (e: React.FormEvent) => {
@@ -241,16 +209,6 @@ const Profile = () => {
     return (
         <>
             <div>
-                {/* <ul className="flex space-x-2 rtl:space-x-reverse">
-                <li>
-                    <Link to="#" className="text-primary hover:underline">
-                        Users
-                    </Link>
-                </li>
-                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                    <span>Profile</span>
-                </li>
-            </ul> */}
                 <div className="pt-5">
                     {userView && (
                         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
@@ -325,18 +283,6 @@ const Profile = () => {
                                                 walletAmount : {user.walletAmount}
                                             </li>
                                         )}
-                                        {/* <li className="flex items-center gap-3">
-                                            <IconCashBanknotes className="shrink-0" fill />
-                                            directIncome : {user.directIncome}
-                                        </li>
-                                        <li className="flex items-center gap-3">
-                                            <IconCashBanknotes className="shrink-0" fill />
-                                            inDirectIncome : {user.inDirectIncome}
-                                        </li>
-                                        <li className="flex items-center gap-3">
-                                            <IconCashBanknotes className="shrink-0" fill />
-                                            totalLevelIncome : {user.totalLevelIncome}
-                                        </li> */}
                                         <li className="flex items-center gap-3">
                                             <IconBox className="shrink-0" />
                                             Franchise Type : {user.franchise}
@@ -438,6 +384,12 @@ const Profile = () => {
                     </ul>
                 </div>
             )}
+            <div className="mt-5">
+                {/* <button className='ml-auto bg-primary text-warning p-2 rounded-md m-2'  onClick={generatePdf}>download Certificate</button> */}
+                <div ref={targetRef}>
+                    <Certificate userDetails={user} />
+                </div>
+            </div>
             {/* edit user profile modal */}
             <div>
                 <Transition appear show={editUserModal} as={Fragment}>
@@ -553,7 +505,6 @@ const Profile = () => {
                 </Transition>
             </div>
             {/* edit user profile end */}
-
             {/* update bank details */}
             <div>
                 <Transition appear show={updateBankModal} as={Fragment}>
@@ -659,7 +610,6 @@ const Profile = () => {
                     </Dialog>
                 </Transition>
             </div>
-
             {/* update nominee details */}
             <div>
                 <Transition appear show={updateNomineeModal} as={Fragment}>
