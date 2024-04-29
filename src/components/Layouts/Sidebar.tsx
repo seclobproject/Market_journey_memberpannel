@@ -6,26 +6,15 @@ import { toggleSidebar } from '../../store/themeConfigSlice';
 import { IRootState } from '../../store';
 import { useState, useEffect } from 'react';
 import IconCaretsDown from '../Icon/IconCaretsDown';
-import IconMenuChat from '../Icon/Menu/IconMenuChat';
-import IconMenuMailbox from '../Icon/Menu/IconMenuMailbox';
-import IconMenuTodo from '../Icon/Menu/IconMenuTodo';
 import IconMenuNotes from '../Icon/Menu/IconMenuNotes';
-import IconHome from '../Icon/IconHome';
 import IconMenuDashboard from '../Icon/Menu/IconMenuDashboard';
-import IconMenuContacts from '../Icon/Menu/IconMenuContacts';
 import IconMenuUsers from '../Icon/Menu/IconMenuUsers';
 import IconMenuPages from '../Icon/Menu/IconMenuPages';
-import IconDollarSignCircle from '../Icon/IconDollarSignCircle';
-import IconDollarSign from '../Icon/IconDollarSign';
 import IconCashBanknotes from '../Icon/IconCashBanknotes';
 import IconBox from '../Icon/IconBox';
-import IconShoppingBag from '../Icon/IconShoppingBag';
-import IconChatNotification from '../Icon/IconChatNotification';
 import IconBell from '../Icon/IconBell';
 import IconUser from '../Icon/IconUser';
 import IconAward from '../Icon/IconAward';
-import IconPaperclip from '../Icon/IconPaperclip';
-import IconPencilPaper from '../Icon/IconPencilPaper';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -100,7 +89,7 @@ const Sidebar = () => {
                 <div className="bg-white dark:bg-black h-full">
                     <div className="flex justify-between items-center px-4 py-3">
                         <NavLink to="/" className="main-logo flex items-center shrink-0">
-                            <img className=" text-2xl w-[140px] ml-[5px] flex-none " src="/marketlogo.png" alt="logo" />
+                            <img className=" text-2xl w-[140px] ml-[5px] flex-none " src="/Rebrand-06.png" alt="logo" />
                         </NavLink>
 
                         <button
