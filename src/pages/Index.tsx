@@ -5,7 +5,7 @@ import IconPlayCircle from '../components/Icon/IconPlayCircle';
 
 import IconCreditCard from '../components/Icon/IconCreditCard';
 import { ApiCall, Base_url } from '../Services/Api';
-import { AwardsUrl, getImagesUrl, getVideoUrl, liveNewsUrl, userVerificationUrl, viewAutoPoolUrl } from '../utils/EndPoints';
+import { AwardsUrl, getImagesUrl, getVideoUrl, liveNewsUrl, userVerificationUrl, viewAutoPoolUrl, viewCurentAutoPoolUrl } from '../utils/EndPoints';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -40,6 +40,7 @@ const Index = () => {
     const [awards, setAwards] = useState<any>([]);
     const [news, setNews] = useState<any>([]);
     const [autoPool, setAutoPool] = useState<any>([]);
+    const [currentautoPool, setCurrentAutoPool] = useState<any>([]);
     // const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
     //     name: '',
     //     email: '',
@@ -52,6 +53,8 @@ const Index = () => {
     const [userView, setUserView] = useState(false);
     const { user } = useAppSelector((state) => state.user);
 
+    const poolNames = ['Team Leader (A)', 'Business Development Manager (B)', 'Regional Manager (C)', 'Territory Manager (D)', 'Associate Direction (E)'];
+
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
@@ -62,6 +65,7 @@ const Index = () => {
         showAwards();
         showLiveNewes();
         getAutopPool();
+        getCurrentAutoPool()
     }, []);
 
     useEffect(() => {
@@ -100,6 +104,7 @@ const Index = () => {
     //         console.error('Error fetching state list:', error);
     //     }
     // };
+    
     //--------- get sliding images-------
     const getImages = async () => {
         try {
@@ -150,7 +155,26 @@ const Index = () => {
         }
     };
 
-    //----- get autopool values--------
+    //----- get autopool after distributed values--------
+    const getCurrentAutoPool = async () => {
+        try {
+            const response = await ApiCall('get', viewCurentAutoPoolUrl);
+console.log(response,"auto pool");
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                
+                setCurrentAutoPool(response?.data?.pool);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+
+    //----- get autopool after distributed values--------
     const getAutopPool = async () => {
         try {
             const response = await ApiCall('get', viewAutoPoolUrl);
@@ -166,6 +190,7 @@ const Index = () => {
             console.error('Error fetching state list:', error);
         }
     };
+
     //get news api call
     const showLiveNewes = async () => {
         try {
@@ -228,7 +253,7 @@ const Index = () => {
 
     // share referal link
     const shareTitle = 'Check out this awesome link!';
-    const shareUrl = `https://admin.marketjourney.in/auth/boxed-signup/${user?.id}`;
+    const shareUrl = `https://member.marketjourney.in/auth/boxed-signup/${user?.id}`;
 
     const handleShare = async () => {
         if (navigator.share) {
@@ -273,6 +298,40 @@ const Index = () => {
                         </div>
                     </>
                 )}
+                {/* pool current list */}
+                {currentautoPool.length > 0 && (
+                    <div className="mt-10 mb-5 text-primary ">
+                        <div className="flex justify-between">
+                            <h2 className="mb-6 font-bold text-lg">Leader Boards</h2>
+                        </div>
+                        <>
+                            <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
+                                {currentautoPool?.map((pool: any, index: number) => (
+                                    <RankList key={index} pool={poolNames[index]} members={pool?.count} amount={pool?.amount} />
+                                ))}
+                            </div>
+                        </>
+                    </div>
+                )}
+
+                {/* pool current list end */}
+                {/* pool Rank list */}
+                {autoPool.length > 0 && (
+                    <div className="mt-10 mb-5 text-primary ">
+                        <div className="flex justify-between">
+                            <h2 className="mb-6 font-bold text-lg">Distributed Leader Boards</h2>
+                        </div>
+                        <>
+                            <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
+                                {autoPool?.map((pool: any, index: number) => (
+                                    <RankList key={index} pool={poolNames[index]} members={pool?.count} amount={pool?.amount} />
+                                ))}
+                            </div>
+                        </>
+                    </div>
+                )}
+
+                {/* pool Rank list end */}
                 {userView && (
                     <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
                         <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-primary text-white">
@@ -401,24 +460,6 @@ const Index = () => {
                 )}
 
                 {/*-----End Awards and rewards ---------*/}
-
-                {/* pool Rank list */}
-                {autoPool.length > 0 && (
-                    <div className="mt-10 lg:mt-16 text-primary ">
-                        <div className="flex justify-between">
-                            <h2 className="mb-6 font-bold text-lg">Leader Boards</h2>
-                        </div>
-                        <>
-                            <div className="flex overflow-x-auto scrollbar-hidden gap-4 py-2">
-                                {autoPool?.map((pool: any, index: number) => (
-                                    <RankList key={index} pool={String.fromCharCode(65 + index)} members={pool?.count} amount={pool?.amount} />
-                                ))}
-                            </div>
-                        </>
-                    </div>
-                )}
-
-                {/* pool Rank list end */}
 
                 {/*----Start Flash Feed------  */}
                 <div className="mt-10 lg:mt-16 text-primary ">

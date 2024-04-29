@@ -14,6 +14,7 @@ const Withdrawal = () => {
     const [walletAmount, setWalletAmount] = useState();
     const [withdrawalRequest, setWithdrawalRequest] = useState({ withdrawAmount: '' });
     const [tdsAmount, setTdsAmount] = useState(0);
+    const [serviceAmount, setServiceAmount] = useState(0);
     const [totalAmount, setTotalAmount] = useState(0);
     const [loading, setLoading] = useState(false);
 
@@ -58,9 +59,10 @@ const Withdrawal = () => {
             setWithdrawalRequest({ withdrawAmount: '' });
         } else if (/^[0-9]+$/.test(amount)) {
             const withdrawAmount = parseFloat(amount);
-            const tenPercentAmount = withdrawAmount * 0.1;
-            const totalAmountAfterDeduction = withdrawAmount - tenPercentAmount;
-
+            const tenPercentAmount = withdrawAmount * 0.05;
+            const serviceAmount = withdrawAmount * 0.05;
+            const totalAmountAfterDeduction = withdrawAmount - tenPercentAmount - serviceAmount;
+            setServiceAmount(serviceAmount);
             setTdsAmount(tenPercentAmount);
             setTotalAmount(totalAmountAfterDeduction);
             setWithdrawalRequest({ withdrawAmount: amount });
@@ -234,6 +236,24 @@ const Withdrawal = () => {
                                                                     className="form-input ps-10 placeholder:text-white-dark"
                                                                 /> */}
                                                                 <span className=" start-4 top-1/2 -translate-y-1/2">{tdsAmount}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex  w-full flex-col lg:flex-row gap-5 lg:flex-wrap">
+                                                    <div className="space-y-5  w-full">
+                                                        <div>
+                                                            <label htmlFor="TDSAmount">Service Amount</label>
+                                                            <div className="relative text-white-dark">
+                                                                {/* <input
+                                                                    onChange={(e) => {}}
+                                                                    id="Name"
+                                                                    type="text"
+                                                                    readOnly
+                                                                    // placeholder="Enter TDS Amount"
+                                                                    className="form-input ps-10 placeholder:text-white-dark"
+                                                                /> */}
+                                                                <span className=" start-4 top-1/2 -translate-y-1/2">{serviceAmount}</span>
                                                             </div>
                                                         </div>
                                                     </div>

@@ -61,7 +61,7 @@ const LoginBoxed = () => {
                     <div className="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 py-20">
                         <div className="mx-auto w-full max-w-[440px]">
                             <div className="w-full flex justify-center mb-10">
-                                <img className="w-[150px] text-center" src="/marketlogo.png" alt="logo" />
+                                <img className="w-[150px] text-center" src="/Rebrand-06.png" alt="logo" />
                             </div>
                             <div className="mb-10">
                                 <h1 className="text-3xl font-extrabold uppercase !leading-snug  text-primary md:text-4xl">Log in</h1>

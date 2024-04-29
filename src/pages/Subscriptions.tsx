@@ -3,8 +3,9 @@ import axios from 'axios';
 import React, { Fragment, useEffect, useState } from 'react';
 import { ApiCall, Base_url } from '../Services/Api';
 import { useAppDispatch, useAppSelector } from '../store';
-import { convertedPackagesUrl, getAddOnUrl, renewalPackageUrl, renewalUrl } from '../utils/EndPoints';
+import { convertedPackagesUrl, getAddOnUrl, renewalHistoryUrl, renewalPackageUrl, renewalUrl } from '../utils/EndPoints';
 import { userProfileApi } from '../store/UserSlice';
+import { Show_Toast } from './Components/Toast';
 
 const Subscriptions = () => {
     const [subscriptionModal, setSubscriptionModal] = useState(false);
@@ -15,6 +16,7 @@ const Subscriptions = () => {
     const [addOn, setAddOn] = useState([]);
     const [convetPackages, setConvetPackages] = useState([]);
     const [renewalPackage, setRenewalPackage] = useState([]);
+    const [renewalHistory, setRenewalHistory] = useState([]);
     const [selectedPackage, setSelectedPackage] = useState({
         action:'',
         package: '',
@@ -27,6 +29,7 @@ const Subscriptions = () => {
 
     useEffect(() => {
         dispatch(userProfileApi());
+        getRenewalHistory()
         getAddOn();
         if (user?.packageType !== 'Franchise') {
             getConvetPackage();
@@ -38,7 +41,6 @@ const Subscriptions = () => {
         if (selectedFile) {
             try {
                 setLoading(true); // Set loading to true when form submission begins
-
                 const token: any = sessionStorage.getItem('User');
                 const config = {
                     headers: {
@@ -54,12 +56,12 @@ const Subscriptions = () => {
                 formData.append('action', selectedPackage?.action);
 
                 const response = await axios.post(`${Base_url}${renewalUrl}`, formData, config);
-                console.log(response);
                 setSelectedFile(null);
                 sessionStorage.setItem('status', response?.data?.updatedUser?.userStatus);
                 setSubscriptionModal(false);
                 setVerificationModal(false)
                 setShowSelectDocumentMessage(false);
+                Show_Toast({ message: 'subscription succcess', type: true });
             } catch (error) {
                 console.error('Upload failed:', error);
             } finally {
@@ -93,6 +95,24 @@ const Subscriptions = () => {
 
     // get convert packages
 
+    const getRenewalHistory = async () => {
+        try {
+            const response = await ApiCall('get', renewalHistoryUrl);
+console.log(response,'renew');
+
+            if (response instanceof Error) {
+                console.error('Error fetching state list:', response.message);
+            } else if (response.status === 200) {
+                setRenewalHistory(response?.data?.subscriptionHistory);
+            } else {
+                console.error('Error fetching state list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching state list:', error);
+        }
+    };
+    // get convert packages
+
     const getConvetPackage = async () => {
         try {
             const response = await ApiCall('get', convertedPackagesUrl);
@@ -118,7 +138,7 @@ const Subscriptions = () => {
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
-                setRenewalPackage(response?.data?.renewPackages );
+                setRenewalPackage(response?.data?.renewPackages);
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
             }
@@ -151,36 +171,39 @@ const Subscriptions = () => {
                 <div className="mt-4 flex flex-col gap-2 ">
                     <h1 className="text-xl font-semibold mt-5">Transaction History</h1>
                     <div className="w-full h-[1.8px] bg-warning mb-2"></div>
-                    <div className="w-full flex justify-between min-h-[100px] bg-[#DDE4EB] rounded-3xl p-4">
-                        <div className="flex gap-4">
-                            <svg className="w-[40px] h-[68px]" width="23" height="12" viewBox="0 0 23 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M5.49425 1.45386C5.19017 1.45386 4.94368 1.2071 4.94368 0.90271C4.94368 0.598322 5.19017 0.351562 5.49425 0.351562H9.89885C10.507 0.351562 11 0.845076 11 1.45386V5.86303C11 6.16743 10.7535 6.41418 10.4494 6.41418C10.1453 6.41418 9.89885 6.16743 9.89885 5.86303V2.22184L0.93989 11.1901C0.72488 11.4054 0.376272 11.4054 0.161262 11.1901C-0.053754 10.9749 -0.053754 10.6259 0.161262 10.4107L9.10878 1.45386H5.49425Z"
-                                    fill="#09FF30"
-                                />
-                                <path
-                                    d="M17.1479 10.2405C17.4514 10.2204 17.7136 10.4503 17.7338 10.754C17.754 11.0577 17.5243 11.3203 17.2209 11.3404L12.826 11.6321C12.2192 11.6723 11.6946 11.2125 11.6543 10.6051L11.3623 6.20561C11.3421 5.90188 11.5718 5.63935 11.8752 5.61921C12.1786 5.59907 12.4409 5.82896 12.461 6.13269L12.7022 9.76589L21.0476 0.224009C21.2479 -0.00497913 21.5957 -0.0280638 21.8245 0.172448C22.0533 0.373016 22.0764 0.721182 21.8761 0.950226L13.5413 10.4799L17.1479 10.2405Z"
-                                    fill="#09FF30"
-                                />
-                            </svg>
+                    {renewalHistory?.map((history: any) => (
+                        <div className="w-full flex justify-between min-h-[100px] bg-[#DDE4EB] rounded-3xl p-4">
+                            <div className="flex gap-4">
+                                <svg className="w-[40px] h-[68px]" width="23" height="12" viewBox="0 0 23 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M5.49425 1.45386C5.19017 1.45386 4.94368 1.2071 4.94368 0.90271C4.94368 0.598322 5.19017 0.351562 5.49425 0.351562H9.89885C10.507 0.351562 11 0.845076 11 1.45386V5.86303C11 6.16743 10.7535 6.41418 10.4494 6.41418C10.1453 6.41418 9.89885 6.16743 9.89885 5.86303V2.22184L0.93989 11.1901C0.72488 11.4054 0.376272 11.4054 0.161262 11.1901C-0.053754 10.9749 -0.053754 10.6259 0.161262 10.4107L9.10878 1.45386H5.49425Z"
+                                        fill="#09FF30"
+                                    />
+                                    <path
+                                        d="M17.1479 10.2405C17.4514 10.2204 17.7136 10.4503 17.7338 10.754C17.754 11.0577 17.5243 11.3203 17.2209 11.3404L12.826 11.6321C12.2192 11.6723 11.6946 11.2125 11.6543 10.6051L11.3623 6.20561C11.3421 5.90188 11.5718 5.63935 11.8752 5.61921C12.1786 5.59907 12.4409 5.82896 12.461 6.13269L12.7022 9.76589L21.0476 0.224009C21.2479 -0.00497913 21.5957 -0.0280638 21.8245 0.172448C22.0533 0.373016 22.0764 0.721182 21.8761 0.950226L13.5413 10.4799L17.1479 10.2405Z"
+                                        fill="#09FF30"
+                                    />
+                                </svg>
 
-                            <div className="flex flex-col">
-                                <h4 className="text-primary font-semibold text-lg">Name</h4>
-                                <h6 className="text-primary">first level</h6>
-                                <span className="text-primary">20-07-2024</span>
+                                <div className="flex flex-col">
+                                    <h4 className="text-primary font-semibold text-lg">{history?.name}</h4>
+                                    <h6 className="text-primary">{history?.action}</h6>
+                                    <span className="text-primary">{history?.createdAt}</span>
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <h3 className="text-primary font-bold text-lg">₹{history?.amount}</h3>
+                                <span
+                                    className={`text-white px-2 py-1 rounded-[10px] ${
+                                        history?.status === 'Approved' ? 'bg-green-500' : history?.status === 'Rejected' ? 'bg-red-500' : 'bg-yellow-500'
+                                    }`}
+                                >
+                                    {history?.status}
+                                </span>
                             </div>
                         </div>
-                        <div className="flex flex-col gap-2">
-                            <h3 className="text-primary font-bold text-lg">₹56788</h3>
-                            <span
-                                className="text-white bg-green-500 px-2 py-1 rounded-[10px]
-              {status === 'accepted' ? 'bg-green-500' : status === 'rejected' ? 'bg-red' : 'bg-yellow'}"
-                            >
-                                Accepted
-                            </span>
-                        </div>
-                    </div>
-                    <div className="w-full flex justify-between min-h-[100px] bg-[#DDE4EB] rounded-3xl p-4">
+                    ))}
+                    {/* <div className="w-full flex justify-between min-h-[100px] bg-[#DDE4EB] rounded-3xl p-4">
                         <div className="flex gap-4">
                             <svg className="w-[40px] h-[68px]" width="23" height="12" viewBox="0 0 23 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -235,7 +258,7 @@ const Subscriptions = () => {
                                 Regected
                             </span>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
@@ -273,27 +296,31 @@ const Subscriptions = () => {
                                             {user?.renewalStatus && (
                                                 <div>
                                                     <h3 className="text-primary font-bold mb-2">Add on</h3>
-                                                    {addOn.map((add: any) => (
-                                                        <div
-                                                            onClick={() => handleverificationModal(add, 'addOn')}
-                                                            className="w-full flex justify-between min-h-[80px] cursor-pointer bg-primary rounded-3xl p-5 mb-2
+                                                    {addOn.length > 0 ? (
+                                                        addOn?.map((add: any) => (
+                                                            <div
+                                                                onClick={() => handleverificationModal(add, 'addOn')}
+                                                                className="w-full flex justify-between min-h-[80px] cursor-pointer bg-primary rounded-3xl p-5 mb-2
                 
                 "
-                                                        >
-                                                            <div className="flex gap-4">
-                                                                <div className="flex flex-col gap-2">
-                                                                    <h4 className="text-white  text-base">{add?.packageName}</h4>
-                                                                    <span className="text-warning font-semiboldy">₹ {add?.packageAmount}</span>
+                                                            >
+                                                                <div className="flex gap-4">
+                                                                    <div className="flex flex-col gap-2">
+                                                                        <h4 className="text-white  text-base">{add?.packageName}</h4>
+                                                                        <span className="text-warning font-semiboldy">₹ {add?.packageAmount}</span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    ))}
+                                                        ))
+                                                    ) : (
+                                                        <p>you take all signals</p>
+                                                    )}
                                                 </div>
                                             )}
                                             {!user?.renewalStatus && (
                                                 <div>
                                                     <h3 className="text-primary font-bold mb-2">Renewal Signals</h3>
-                                                    {renewalPackage.map((ren: any) => (
+                                                    {renewalPackage?.map((ren: any) => (
                                                         <div
                                                             onClick={() => handleverificationModal(ren, 'renewal')}
                                                             className="w-full flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2 cursor-pointer  "

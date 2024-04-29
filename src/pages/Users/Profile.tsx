@@ -21,7 +21,6 @@ import IconAward from '../../components/Icon/IconAward';
 import Certificate from '../Components/certificate';
 
 const Profile = () => {
-
     const [editProfleData, setEditProfileData] = useState({
         name: '',
         address: '',
@@ -55,7 +54,7 @@ const Profile = () => {
 
     const { user } = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
-  const { toPDF, targetRef } = usePDF({ filename: `${user.name}-invoiceSlip` });
+    const { toPDF, targetRef } = usePDF({ filename: `${user.name}-invoiceSlip` });
 
     useEffect(() => {
         const userPackageType = sessionStorage.getItem('packageType');
@@ -82,15 +81,15 @@ const Profile = () => {
         }
     }, [confirmPassword]);
 
-  const generatePdf = async () => {
-      try {
-          if (targetRef.current) {
-              await toPDF(targetRef.current);
-          }
-      } catch (error) {
-          console.error('Error generating PDF:', error);
-      }
-  };
+    const generatePdf = async () => {
+        try {
+            if (targetRef.current) {
+                await toPDF(targetRef.current);
+            }
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+        }
+    };
 
     // ---------- Edit profile --------------
     const editProfile = async (e: React.FormEvent) => {
@@ -254,46 +253,64 @@ const Profile = () => {
                             <div className="mb-5">
                                 <div className="flex flex-col justify-center items-center py-2">
                                     <img src="/assets/images/userProfile.jpg" alt="img" className="w-24 h-24 rounded-full object-cover mb-5" />
-                                    <p className="font-semibold text-white text-xl">{user.name}</p>
-                                    <p className={user.userStatus === 'approved' ? 'text-warning' : 'text-warning'}>{user.userStatus}</p>
+                                    <p className="font-semibold text-white text-xl">{user?.name}</p>
+                                    <p className={user?.userStatus === 'approved' ? 'text-warning' : 'text-warning'}>{user?.userStatus}</p>
                                 </div>
                                 <div className="mt-5 flex m-auto space-y-4 flex-wrap  text-white gap-10 font-semibold text-base">
                                     <ul className="mt-5 sm:m-auto space-y-4 max-w-[280px] ">
                                         <li className="flex items-center gap-3">
                                             <IconMail className="w-5 h-5 shrink-0" fill />
-                                            Email : {user.email}
+                                            Email : {user?.email}
                                         </li>
                                         <li className="flex items-center gap-2 ">
                                             <IconPhoneCall fill />
-                                            Phone : {user.phone}
+                                            Phone : {user?.phone}
                                         </li>
                                         <li className="flex items-center gap-3">
                                             <IconMapPin className="shrink-0" fill />
-                                            Address : {user.address}
+                                            Address : {user?.address}
                                         </li>
                                         <li className="flex items-center gap-3">
                                             <IconBox className="shrink-0" />
-                                            User Id : {user.ownSponserId}
+                                            User Id : {user?.ownSponserId}
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <IconCashBanknotes className="shrink-0" fill />
+                                            Package Amount : {user?.packageAmount}
                                         </li>
                                     </ul>
                                     <ul className="mt-5 sm:m-auto space-y-4 ">
                                         {userView && (
                                             <li className="flex items-center gap-3">
                                                 <IconCashBanknotes className="shrink-0" fill />
-                                                walletAmount : {user.walletAmount}
+                                                walletAmount : {user?.walletAmount}
                                             </li>
                                         )}
                                         <li className="flex items-center gap-3">
                                             <IconBox className="shrink-0" />
-                                            Franchise Type : {user.franchise}
+                                            Package Type : {user?.packageType}
                                         </li>
-                                        <li className="flex items-center gap-3">
-                                            <IconPencil className="shrink-0" fill />
-                                            Franchise Name : {user.franchiseName}
-                                        </li>
+                                        {userView ? (
+                                            <>
+                                                <li className="flex items-center gap-3">
+                                                    <IconPencil className="shrink-0" fill />
+                                                    Franchise type : {user?.franchise}
+                                                </li>
+                                                <li className="flex items-center gap-3">
+                                                    <IconPencil className="shrink-0" fill />
+                                                    Franchise Name : {user?.franchiseName}
+                                                </li>
+                                            </>
+                                        ) : (
+                                            <li className="flex items-center gap-3">
+                                                <IconPencil className="shrink-0" fill />
+                                                Package Name : {user?.franchise}
+                                            </li>
+                                        )}
+
                                         <li className="flex items-center gap-3">
                                             <IconAward className="shrink-0" fill />
-                                            Pool Rank: {user.pool}
+                                            Pool Rank: {user?.pool}
                                         </li>
                                     </ul>
                                 </div>

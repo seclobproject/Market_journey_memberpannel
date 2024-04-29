@@ -33,6 +33,7 @@ export const addAndEditDematAccounturl = '/api/user/add-demate-account';
 // Home
 export const liveNewsUrl = '/api/admin/view-news-details';
 export const viewAutoPoolUrl = '/api/user/get-pool-count-amount';
+export const viewCurentAutoPoolUrl = '/api/user/get-pool-amount';
 export const getImagesUrl = '/api/admin/view-home-images';
 export const getVideoUrl = '/api/admin/view-home-videos';
 
@@ -58,3 +59,4 @@ export const AlertUrl = '/api/user/view-user-alerts';
 export const getAddOnUrl = '/api/user/view-addon-signals';
 export const convertedPackagesUrl = '/api/user/view-convert-packages';
 export const renewalPackageUrl = '/api/user/view-renewal-packages';
+export const renewalHistoryUrl = '/api/user/user-subscription-report';

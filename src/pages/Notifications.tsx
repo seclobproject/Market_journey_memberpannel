@@ -45,7 +45,7 @@ const Notifications = () => {
                     >
                         <div className="flex items-start">
                             <div className="w-14 h-14 ltr:mr-5 rtl:ml-5 flex-none">
-                                <img src="/public/web logo-01.svg" alt="img" className="w-14 h-14 rounded-full object-none m-auto" />
+                                <img src="/Rebrand-02.svg" alt="img" className="w-14 h-14 rounded-full object-none m-auto" />
                             </div>
                             <div className="flex-1">
                                 <h3 className="text-lg">{noti?.title}</h3>

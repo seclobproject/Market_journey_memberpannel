@@ -218,7 +218,7 @@ const Member = () => {
 
     // -----handle back ---------
     const BackTree = () => {
-        getMembers();
+        filterMemberDatas();
         setShowViewTreeColumn(true);
     };
 
