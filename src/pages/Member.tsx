@@ -114,9 +114,13 @@ const Member = () => {
         filterMemberDatas();
         dispatch(getStatesApi());
         dispatch(userProfileApi());
-        setSelectedDistrictId(user?.districtFranchise);
-        setSelectedZonalId(user?.zonalFranchise);
     }, []);
+    useEffect(() => {
+        if (user) {
+            setSelectedDistrictId(user.districtFranchise || '');
+            setSelectedZonalId(user.zonalFranchise || '');
+        }
+    }, [user]);
 
     useEffect(() => {
         if (selectedStateId) {
@@ -520,7 +524,6 @@ const Member = () => {
                             <option value="">All Zonals</option>
                             {zonalList.map(
                                 (zonal: any) => (
-                                    console.log(zonal, 'xonal skdjkfj'),
                                     (
                                         <option key={zonal.id} value={zonal?.name}>
                                             {zonal.name}

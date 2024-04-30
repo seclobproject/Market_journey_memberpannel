@@ -65,7 +65,7 @@ const Index = () => {
         showAwards();
         showLiveNewes();
         getAutopPool();
-        getCurrentAutoPool()
+        getCurrentAutoPool();
     }, []);
 
     useEffect(() => {
@@ -104,7 +104,7 @@ const Index = () => {
     //         console.error('Error fetching state list:', error);
     //     }
     // };
-    
+
     //--------- get sliding images-------
     const getImages = async () => {
         try {
@@ -159,12 +159,11 @@ const Index = () => {
     const getCurrentAutoPool = async () => {
         try {
             const response = await ApiCall('get', viewCurentAutoPoolUrl);
-console.log(response,"auto pool");
+            console.log(response, 'auto pool');
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
-                
                 setCurrentAutoPool(response?.data?.pool);
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
@@ -256,6 +255,8 @@ console.log(response,"auto pool");
     const shareUrl = `https://member.marketjourney.in/auth/boxed-signup/${user?.id}`;
 
     const handleShare = async () => {
+        console.log('share');
+        // copyLinkToClipboard();
         if (navigator.share) {
             try {
                 await navigator.share({
@@ -270,8 +271,11 @@ console.log(response,"auto pool");
             // Fallback for browsers that do not support the Web Share API
             console.warn('Web Share API is not supported in this browser.');
             // You can provide alternative sharing methods here (e.g., copy to clipboard)
+            // Example: copyToClipboard(shareUrl);
         }
     };
+
+
     useEffect(() => {
         document.documentElement.style.setProperty('--news-count', news.length);
     }, [news.length]);
@@ -330,7 +334,6 @@ console.log(response,"auto pool");
                         </>
                     </div>
                 )}
-
                 {/* pool Rank list end */}
                 {userView && (
                     <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
