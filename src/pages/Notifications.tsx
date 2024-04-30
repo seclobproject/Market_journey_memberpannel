@@ -25,6 +25,7 @@ const Notifications = () => {
         };
 
         fetchNotifications();
+          
     }, []);
     const formatTimestamp = (timestamp: string) => {
         const date = new Date(timestamp);
@@ -40,10 +41,10 @@ const Notifications = () => {
                 alert.map((noti: any) => (
                     <blockquote
                         key={noti._id}
-                        className="text-black p-5 ltr:pl-3.5 rtl:pr-3.5 bg-white shadow-md rounded-tr-md rounded-br-md border border-white-light border-l-2 !border-l-primary dark:bg-[#060818] dark:border-[#060818]"
+                        className="text-black p-5 ltr:pl-3.5 rtl:pr-3.5 bg-white shadow-md rounded-tr-md rounded-br-md border border-white-light border-l-2 !border-l-primary dark:bg-[#060818] dark:border-[#060818]  no-select"
                         style={{ overflow: 'hidden' }}
                     >
-                        <div className="flex items-start">
+                        <div className="flex items-start ">
                             <div className="w-14 h-14 ltr:mr-5 rtl:ml-5 flex-none">
                                 <img src="/Rebrand-02.svg" alt="img" className="w-14 h-14 rounded-full object-none m-auto" />
                             </div>
