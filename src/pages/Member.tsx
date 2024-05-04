@@ -1,6 +1,8 @@
-import React, { FormEvent, Fragment, useEffect, useState } from 'react';
+import React, { FormEvent, Fragment, ReactEventHandler, useEffect, useState } from 'react';
 import Tippy from '@tippyjs/react';
 import { Dialog, Transition } from '@headlessui/react';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 import { Show_Toast } from './Components/Toast';
 import { ApiCall } from '../Services/Api';
 import {
@@ -61,6 +63,10 @@ const Member = () => {
     const [showViewTreeColumn, setShowViewTreeColumn] = useState(true);
     const [allMembers, setAllMembers] = useState<any>([]);
     const [filterMembers, setFilterMembers] = useState<any>([]);
+    const [pageNumber, setPageNumber] = useState(1);
+    console.log(pageNumber,'pageNumber');
+    
+    const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<string | undefined>();
     // const [previousMemberData, setPreviousMemberData] = useState(null);
@@ -92,13 +98,15 @@ const Member = () => {
     const [selectedDistrictId, setSelectedDistrictId] = useState('');
     const [selectedZonalId, setSelectedZonalId] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [pageNumber, setPageNumber] = useState(1);
+    const [dropDownpackageList, setDropDownPackageList] = useState<Package[]>([]);
     const [filterPackageType, setFilterPackageType] = useState('');
     const [filterData, setFilterData] = useState({
         zonal: '',
         panchayath: '',
     });
-    console.log(filterData,'filtered data df');
+    const [packageNameFilter, setPackageNameFilter] = useState('');
+    console.log(filterData, 'filtered data df');
+    console.log(packageList, 'df');
 
     const [search, setSearch] = useState('');
 
@@ -106,7 +114,10 @@ const Member = () => {
     const { user } = useAppSelector((state) => state.user);
 
     console.log(user, 'user');
-
+const [params, setParams] = useState({
+      page: 1, pageSize: 10 
+});
+const startIndex = (params.page - 1) * params.pageSize;
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -152,19 +163,25 @@ const Member = () => {
 
     useEffect(() => {
         filterMemberDatas();
-    }, [filterData]);
+    }, [filterData,params]);
 
     //------ show password-----
     const handleTogglePassword = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
     };
     //---------------------
+  const handlePageChange = (event: any, newPage: number) => {
+      setParams((prevParams) => ({
+          ...prevParams,
+          page: newPage,
+      }));
+  };
 
     //----Get Level members-----
     const getMembers = async (id?: string) => {
         try {
             setLoading(true);
-            const response = await ApiCall('get', getUsers, '', { id: id, page: pageNumber, pageSize: 10 });
+            const response = await ApiCall('get', getUsers, '', { id: id, page: params?.page, pageSize: 10 });
 
             // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
 
@@ -187,11 +204,14 @@ const Member = () => {
 
     // fiter members
     const filterWithPackagetype = (type: string) => {
+        console.log(type, 'type');
         setFilterPackageType(type);
         if (type === 'All') {
             setFilterMembers(allMembers);
         } else {
-            const filterMembers = allMembers.filter((member: any) => member?.packageType === type);
+            // Use type instead of filterPackageType
+            const filterMembers = allMembers.filter((member: any) => member?.franchise === type);
+            console.log(filterMembers, 'filterMembers');
             setFilterMembers(filterMembers);
         }
     };
@@ -201,7 +221,7 @@ const Member = () => {
         try {
             setLoading(true);
             console.log('dsfs dfsd');
-            const response = await ApiCall('post', filterMembersUrl, filterData, { page: pageNumber, pageSize: 10 });
+            const response = await ApiCall('post', filterMembersUrl, filterData, params);
             console.log(response, 'response');
 
             if (response instanceof Error) {
@@ -209,6 +229,7 @@ const Member = () => {
             } else if (response.status === 200) {
                 setAllMembers(response?.data?.filteredUsers);
                 setFilterMembers(response?.data?.filteredUsers);
+                setTotalPages(response?.data?.pagination?.totalPages);
                 setLoading(false);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
@@ -234,26 +255,26 @@ const Member = () => {
     };
 
     // pagination in member data
-    const fetchData = () => {
-        const getLevelMembers = async () => {
-            try {
-                const response = await ApiCall('get', getUsers, '', { id: userId, page: pageNumber + 1, pageSize: 10 });
-                // const response = await ApiCall('get', getLevelOneUsers, '', { page: pageNumber, pageSize: 10 });
+    // const fetchData = () => {
+    //     const getLevelMembers = async () => {
+    //         try {
+    //             const response = await ApiCall('get', getUsers, '', { id: userId, page: pageNumber + 1, pageSize: 10 });
+    //             // const response = await ApiCall('get', getLevelOneUsers, '', { page: pageNumber, pageSize: 10 });
 
-                if (response instanceof Error) {
-                    console.error('Error fetching allMembers list:', response.message);
-                } else if (response.status === 200) {
-                    setAllMembers(allMembers.concat(response?.data?.child1));
-                    setPageNumber(pageNumber + 1);
-                } else {
-                    console.error('Error fetching allMembers list. Unexpected status:', response.status);
-                }
-            } catch (error) {
-                console.error('Error fetching allMembers list:', error);
-            }
-        };
-        getLevelMembers();
-    };
+    //             if (response instanceof Error) {
+    //                 console.error('Error fetching allMembers list:', response.message);
+    //             } else if (response.status === 200) {
+    //                 setAllMembers(allMembers.concat(response?.data?.child1));
+    //                 setPageNumber(pageNumber + 1);
+    //             } else {
+    //                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching allMembers list:', error);
+    //         }
+    //     };
+    //     getLevelMembers();
+    // };
 
     //------------------- get all state------------------
 
@@ -363,6 +384,7 @@ const Member = () => {
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
+                setDropDownPackageList(response?.data?.packageData);
                 const filteredPackageList = await response?.data?.packageData.filter((pkg: any) => {
                     if (addMember?.packageType === 'Franchise') {
                         return pkg?.franchiseName !== 'Courses' && pkg?.franchiseName !== 'Signals';
@@ -522,15 +544,11 @@ const Member = () => {
                         >
                             {/* <option>Select zonal </option> */}
                             <option value="">All Zonals</option>
-                            {zonalList.map(
-                                (zonal: any) => (
-                                    (
-                                        <option key={zonal.id} value={zonal?.name}>
-                                            {zonal.name}
-                                        </option>
-                                    )
-                                )
-                            )}
+                            {zonalList.map((zonal: any) => (
+                                <option key={zonal.id} value={zonal?.name}>
+                                    {zonal.name}
+                                </option>
+                            ))}
                         </select>
                     )}
                     {(user?.franchise === 'District Franchise' || user?.franchise === 'Zonal Franchise') && (
@@ -551,71 +569,81 @@ const Member = () => {
                             ))}
                         </select>
                     )}
+
+                    <button
+                        onClick={() => {
+                            setFilterData({ zonal: '', panchayath: '' });
+                            setPackageNameFilter('');
+                        }}
+                        className="bg-primary text-white px-3 rounded-lg h-10"
+                    >
+                        Reset
+                    </button>
+                    <select
+                        onChange={(e) => {
+                            const selectedValue = e.target.value;
+                            if (selectedValue) {
+                                setPackageNameFilter(selectedValue);
+                                // filterMemberDatas();
+                                filterWithPackagetype(selectedValue);
+                            }
+                        }}
+                        className="ml-auto form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary"
+                        value={packageNameFilter}
+                    >
+                        <option value={'All'}>All Package Type</option>
+                        {dropDownpackageList.map((pkg: any) => (
+                            <option key={pkg._id}>{pkg.packageName}</option>
+                        ))}
+                    </select>
                 </div>
 
                 {/* filter options end */}
                 <div className="table-responsive mb-5">
-                    <InfiniteScroll
-                        dataLength={allMembers?.length}
-                        next={fetchData}
-                        hasMore={true}
-                        loader={<h4></h4>}
-                        // endMessage={
-                        //     <p style={{ textAlign: 'center' }}>
-                        //         <b>Yay! You have seen it all</b>
-                        //     </p>
-                        // }
-                        // below props only if you need pull down functionality
-                        // refreshFunction={this.refresh}
-                        // pullDownToRefresh
-                        // pullDownToRefreshThreshold={50}
-                        // pullDownToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8595; Pull down to refresh</h3>}
-                        // releaseToRefreshContent={<h3 style={{ textAlign: 'center' }}>&#8593; Release to refresh</h3>}
-                    >
-                        <table>
-                            <thead>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SINo</th>
+                                <th>Name</th>
+                                <th>UserId</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Sponsor Name</th>
+                                <th> Package</th>
+                                <th> franchise Name</th>
+                                <th> Package Amount</th>
+                                {/* {showViewTreeColumn && */}
+                                <th>View Tree</th>
+                                {/* } */}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loading ? (
                                 <tr>
-                                    <th>SINo</th>
-                                    <th>Name</th>
-                                    <th>UserId</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Sponsor Name</th>
-                                    <th> franchise Type</th>
-                                    <th> franchise Name</th>
-                                    <th> Package Amount</th>
-                                    {/* {showViewTreeColumn && */}
-                                    <th>View Tree</th>
-                                    {/* } */}
+                                    <td colSpan={7} style={{ textAlign: 'center' }}>
+                                        <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {loading ? (
-                                    <tr>
-                                        <td colSpan={7} style={{ textAlign: 'center' }}>
-                                            <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                            ) : filterMembers?.length > 0 ? (
+                                filterMembers.map((data: any, index: number) => (
+                                    <tr key={data?._id}>
+                                        <td>{startIndex + index + 1}</td>
+                                        <td className="capitalize whitespace-nowrap">{data?.name}</td>
+                                        <td>{data?.ownSponserId}</td>
+                                        <td>{data?.email}</td>
+                                        <td className="whitespace-nowrap">{data?.phone}</td>
+                                        <td className="capitalize whitespace-nowrap">{data?.sponserName}</td>
+                                        <td className="whitespace-nowrap">{data?.franchise}</td>
+                                        <td className="whitespace-nowrap">{data?.franchiseName}</td>
+                                        <td>{data?.packageAmount}</td>
+                                        {/* {showViewTreeColumn && ( */}
+                                        <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
+                                            <button className="bg-primary text-center text-warning p-2 rounded-sm">
+                                                <i className="fas fa-sitemap mr-2"></i> View Tree
+                                            </button>
                                         </td>
-                                    </tr>
-                                ) : filterMembers?.length > 0 ? (
-                                    filterMembers.map((data: any, index: number) => (
-                                        <tr key={data?._id}>
-                                            <td>{index + 1}</td>
-                                            <td className="capitalize whitespace-nowrap">{data?.name}</td>
-                                            <td>{data?.ownSponserId}</td>
-                                            <td>{data?.email}</td>
-                                            <td className="whitespace-nowrap">{data?.phone}</td>
-                                            <td className="capitalize whitespace-nowrap">{data?.sponserName}</td>
-                                            <td className="whitespace-nowrap">{data?.franchise}</td>
-                                            <td className="whitespace-nowrap">{data?.franchiseName}</td>
-                                            <td>{data?.packageAmount}</td>
-                                            {/* {showViewTreeColumn && ( */}
-                                            <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
-                                                <button className="bg-primary text-center text-warning p-2 rounded-sm">
-                                                    <i className="fas fa-sitemap mr-2"></i> View Tree
-                                                </button>
-                                            </td>
-                                            {/* )} */}
-                                            {/* <td>
+                                        {/* )} */}
+                                        {/* <td>
                                             <button
                                                 className={`whitespace-nowrap text-white p-1.5 rounded-lg ${
                                                     data?.userStatus === 'approved' ? 'bg-green-400' : data?.userStatus === 'Pending' ? 'bg-warning' : 'bg-green-500'
@@ -624,18 +652,22 @@ const Member = () => {
                                                 {data?.userStatus}
                                             </button>
                                         </td> */}
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={7} style={{ textAlign: 'center' }}>
-                                            <span className="align-middle m-auto mb-10">No Member</span>
-                                        </td>
                                     </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </InfiniteScroll>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={7} style={{ textAlign: 'center' }}>
+                                        <span className="align-middle m-auto mb-10">No Member</span>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="w-full">
+                    <Stack spacing={2}>
+                        <Pagination count={totalPages} color="primary" onChange={handlePageChange} style={{ marginLeft: 'auto' }} />
+                    </Stack>
                 </div>
                 <div>
                     <Transition appear show={addModal} as={Fragment}>

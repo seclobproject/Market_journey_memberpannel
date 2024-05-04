@@ -288,7 +288,6 @@ const Report = () => {
                                     <th>Date</th>
                                     {activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' ? <th>Amount From</th> : activeButton !== 'bonus' && <th>Designation</th>}
                                     {activeButton === 'levelIncome' && <th> New Member</th>}
-
                                     {/* <th>Name</th> */}
                                     {activeButton !== 'levelIncome' && activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' && <th> Franchise</th>}
 
@@ -307,14 +306,12 @@ const Report = () => {
                                                     <div className=" font-medium text-base">{index + 1}</div>
                                                 </td>
                                                 <td className="font-medium text-base">{data?.createdAt}</td>
-                                                {/* <td className="whitespace-nowrap font-medium text-base">{data?.designation}</td> */}
-                                                {activeButton !== 'bonus' && (
-                                                    <td>
-                                                        <div className="whitespace-nowrap font-medium text-base">{data?.name}</div>
-                                                    </td>
-                                                )}
+                                                {/* {activeButton === 'autoPoolCreditHistory' && <td className="whitespace-nowrap font-medium text-base">{data?.designation}</td>} */}
+                                                {activeButton !== 'bonus' && <td className="whitespace-nowrap font-medium text-base">{data?.name ?? data?.designation}</td>}
                                                 {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.newMember}</td>}
-                                                {activeButton !== 'bonus' && activeButton !== 'levelIncome' && <td className="font-medium text-base">{data?.franchise}</td>}
+                                                {activeButton !== 'bonus' && activeButton !== 'levelIncome' && activeButton !== 'autoPoolCreditHistory' && (
+                                                    <td className="font-medium text-base">{data?.franchise}</td>
+                                                )}
 
                                                 {activeButton !== 'bonus' && <td className="font-medium text-base">{data?.percentageCredited}</td>}
                                                 {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.Amount}</td>}
