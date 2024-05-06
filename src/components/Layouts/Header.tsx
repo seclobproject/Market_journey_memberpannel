@@ -23,6 +23,7 @@ import { AlertUrl, getProfileUrl } from '../../utils/EndPoints';
 
 const Header = () => {
     const [logoutModal, setLogoutModal] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [viewNotifications, setViewNotification] = useState(false);
     // const [profielDetails, setProfileDetails] = useState<ProfileDetails>({
     //     name: '',
@@ -121,11 +122,13 @@ const Header = () => {
 
         const fetchNotifications = async () => {
             try {
+                setLoading(true);
                 const res: any = await ApiCall('get', AlertUrl);
                 //  const notifications = res?.data?.alertData || [];
-                if (Array.isArray(res?.data?.alertData)) {
-                    setAlert(res?.data?.alertData.slice(0, 3));
-                }
+                // if (Array.isArray(res?.data?.alertData)) {
+                    setAlert(res?.data?.signals.slice(0, 3));
+                    setLoading(false);
+                // }
                 //  setAlert(res?.data?.alertData);
 
                 //  const unseenNotifications: any[] = notifications.filter((notification: any) => !seenNotifications.includes(notification._id));
@@ -137,6 +140,8 @@ const Header = () => {
                 //  }
             } catch (error) {
                 console.error('Error fetching notifications:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -195,7 +200,9 @@ const Header = () => {
                                                     {/* {alert.length ? <span className="badge bg-primary/80">{notifications.length}New</span> : ''} */}
                                                 </div>
                                             </li>
-                                            {alert.length > 0 ? (
+                                            {loading ? (
+                                                <span className="animate-[spin_2s_linear_infinite] border-8 border-[#f1f2f3] border-l-primary border-r-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                                            ) : alert.length > 0 ? (
                                                 <>
                                                     {alert.map((notification: any) => {
                                                         return (
@@ -203,7 +210,7 @@ const Header = () => {
                                                                 <div className="group flex items-center px-4 py-2">
                                                                     <div className="grid place-content-center rounded">
                                                                         <div className="w-12 h-12 relative">
-                                                                            <img src="/public/web logo-01.svg" alt="img" className="w-14 h-14 rounded-full object-none m-auto" />
+                                                                            <img src="/Rebrand-02.svg" alt="img" className="w-14 h-14 rounded-full object-none m-auto" />
                                                                             {/* <span className="bg-success w-2 h-2 rounded-full block absolute right-[6px] bottom-0"></span> */}
                                                                         </div>
                                                                     </div>

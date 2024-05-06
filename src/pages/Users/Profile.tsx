@@ -19,6 +19,7 @@ import IconCode from '../../components/Icon/IconCode';
 import IconCreditCard from '../../components/Icon/IconCreditCard';
 import IconAward from '../../components/Icon/IconAward';
 import Certificate from '../Components/certificate';
+import Invoice from '../Components/invoice';
 
 const Profile = () => {
     const [editProfleData, setEditProfileData] = useState({
@@ -405,6 +406,11 @@ const Profile = () => {
                 {/* <button className='ml-auto bg-primary text-warning p-2 rounded-md m-2'  onClick={generatePdf}>download Certificate</button> */}
                 <div ref={targetRef}>
                     <Certificate userDetails={user} />
+                </div>
+            </div>
+            <div className="mt-5">
+                <div>
+                    <Invoice userDetails={user} />
                 </div>
             </div>
             {/* edit user profile modal */}
