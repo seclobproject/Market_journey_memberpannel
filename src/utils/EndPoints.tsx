@@ -13,6 +13,7 @@ export const packagesListUrl = '/api/admin/view-package';
 export const memberaddUrl = '/api/user/add-user';
 export const addReferaUrl = '/api/user/add-referal-user';
 export const getUsers = '/api/user/view-level1-user';
+export const level2MembersUrl = '/api/user/view-level2-user';
 export const filterMembersUrl = '/api/user/view-district-Users';
 
 // user
@@ -39,6 +40,7 @@ export const getVideoUrl = '/api/admin/view-home-videos';
 
 
 // Reports
+export const AllReportUrl = '/api/user/view-all-credits';
 export const DirectReportUrl = '/api/user/direct-referal-report';
 export const InDirectReportUrl = '/api/user/indirect-referal-report';
 export const LevelIncomeReportUrl = '/api/user/level-income-report';
