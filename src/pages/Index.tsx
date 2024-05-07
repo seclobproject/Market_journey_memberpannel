@@ -375,7 +375,7 @@ const Index = () => {
                             style={{ background: 'linear-gradient(0deg, #00c6fb -227%, #132239)' }}
                         >
                             <div className="flex relative items-start justify-between text-white-light mb-16 z-[7]">
-                                <h5 className="font-semibold  text-lg">Total Balance</h5>
+                                <h5 className="font-semibold  text-lg">Mpay Balance</h5>
                                 <img className="absolute right-2 top-2 sm:w-[80px] w-auto" src="/assets/images/total_wallet.svg" alt="rupee" />
                             </div>
                             <div className="flex items-center justify-between z-10">

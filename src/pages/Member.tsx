@@ -10,6 +10,7 @@ import {
     districtlistindropdownUrl,
     filterMembersUrl,
     getUsers,
+    level2MembersUrl,
     memberaddUrl,
     packagesListUrl,
     panchayathlistindropdownUrl,
@@ -34,6 +35,7 @@ import IconArrowWaveLeftUp from '../components/Icon/IconArrowWaveLeftUp';
 import IconArrowForward from '../components/Icon/IconArrowForward';
 import IconDroplet from '../components/Icon/IconDroplet';
 import { userProfileApi } from '../store/UserSlice';
+import useDebounce from '../hooks/useDebounce';
 
 interface Member {
     name: string;
@@ -64,8 +66,8 @@ const Member = () => {
     const [allMembers, setAllMembers] = useState<any>([]);
     const [filterMembers, setFilterMembers] = useState<any>([]);
     const [pageNumber, setPageNumber] = useState(1);
-    console.log(pageNumber,'pageNumber');
-    
+    const [activeButton, setActiveButton] = useState('level1');
+
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<string | undefined>();
@@ -105,27 +107,35 @@ const Member = () => {
         panchayath: '',
     });
     const [packageNameFilter, setPackageNameFilter] = useState('');
-    console.log(filterData, 'filtered data df');
-    console.log(packageList, 'df');
-
-    const [search, setSearch] = useState('');
-
     const { stateList } = useAppSelector((state) => state.location);
     const { user } = useAppSelector((state) => state.user);
-
-    console.log(user, 'user');
-const [params, setParams] = useState({
-      page: 1, pageSize: 10 
-});
-const startIndex = (params.page - 1) * params.pageSize;
+    const [params, setParams] = useState({
+        page: 1,
+        pageSize: 10,
+    });
+    const [search, setSearch] = useState('');
+    const startIndex = (params.page - 1) * params.pageSize;
+    const debouncedSearchValue = useDebounce(search, 1000);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        // getMembers();
-        filterMemberDatas();
+        if (user?.franchise === 'Mobile Franchise') {
+            getMembers();
+        } else {
+            filterMemberDatas();
+        }
         dispatch(getStatesApi());
         dispatch(userProfileApi());
     }, []);
+
+    useEffect(() => {
+        if (activeButton === 'level1') {
+            getMembers();
+        } else {
+            getLevelTwoMembers();
+        }
+    }, [search]);
+
     useEffect(() => {
         if (user) {
             setSelectedDistrictId(user.districtFranchise || '');
@@ -163,25 +173,27 @@ const startIndex = (params.page - 1) * params.pageSize;
 
     useEffect(() => {
         filterMemberDatas();
-    }, [filterData,params]);
+    }, [filterData, params]);
 
     //------ show password-----
     const handleTogglePassword = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
     };
     //---------------------
-  const handlePageChange = (event: any, newPage: number) => {
-      setParams((prevParams) => ({
-          ...prevParams,
-          page: newPage,
-      }));
-  };
+    const handlePageChange = (event: any, newPage: number) => {
+        setParams((prevParams) => ({
+            ...prevParams,
+            page: newPage,
+        }));
+    };
 
     //----Get Level members-----
     const getMembers = async (id?: string) => {
+        setActiveButton('level1');
+        setPackageNameFilter('');
         try {
             setLoading(true);
-            const response = await ApiCall('get', getUsers, '', { id: id, page: params?.page, pageSize: 10 });
+            const response = await ApiCall('get', getUsers, '', { id: id, page: params?.page, pageSize: 10, searchText: search });
 
             // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
 
@@ -201,12 +213,41 @@ const startIndex = (params.page - 1) * params.pageSize;
             setLoading(false);
         }
     };
+    //----Get Leve2 mobile members-----
+    const getLevelTwoMembers = async () => {
+        setActiveButton('level2');
+        setPackageNameFilter('');
+        try {
+            setLoading(true);
+            const response = await ApiCall('get', level2MembersUrl, '', { page: params?.page, pageSize: 10, searchText: search });
 
-    // fiter members
+            // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
+
+            if (response instanceof Error) {
+                console.error('Error fetching allMembers list:', response.message);
+            } else if (response.status === 200) {
+                // setPreviousMemberData(allMembers);
+                console.log(response);
+
+                setAllMembers(response?.data?.child2);
+                setFilterMembers(response?.data?.child2);
+                setLoading(false);
+            } else {
+                console.error('Error fetching allMembers list. Unexpected status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching allMembers list:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // fiter members with packages
+
     const filterWithPackagetype = (type: string) => {
         console.log(type, 'type');
         setFilterPackageType(type);
-        if (type === 'All') {
+        if (type === 'All package type') {
             setFilterMembers(allMembers);
         } else {
             // Use type instead of filterPackageType
@@ -216,7 +257,8 @@ const startIndex = (params.page - 1) * params.pageSize;
         }
     };
 
-    // filter with zonal
+    // filter all members
+
     const filterMemberDatas = async () => {
         try {
             setLoading(true);
@@ -243,7 +285,11 @@ const startIndex = (params.page - 1) * params.pageSize;
 
     // -----handle back ---------
     const BackTree = () => {
-        filterMemberDatas();
+        if (user?.franchise === 'Mobile Franchise') {
+            getMembers();
+        } else {
+            filterMemberDatas();
+        }
         setShowViewTreeColumn(true);
     };
 
@@ -253,46 +299,6 @@ const startIndex = (params.page - 1) * params.pageSize;
         getMembers(id);
         setShowViewTreeColumn(false);
     };
-
-    // pagination in member data
-    // const fetchData = () => {
-    //     const getLevelMembers = async () => {
-    //         try {
-    //             const response = await ApiCall('get', getUsers, '', { id: userId, page: pageNumber + 1, pageSize: 10 });
-    //             // const response = await ApiCall('get', getLevelOneUsers, '', { page: pageNumber, pageSize: 10 });
-
-    //             if (response instanceof Error) {
-    //                 console.error('Error fetching allMembers list:', response.message);
-    //             } else if (response.status === 200) {
-    //                 setAllMembers(allMembers.concat(response?.data?.child1));
-    //                 setPageNumber(pageNumber + 1);
-    //             } else {
-    //                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
-    //             }
-    //         } catch (error) {
-    //             console.error('Error fetching allMembers list:', error);
-    //         }
-    //     };
-    //     getLevelMembers();
-    // };
-
-    //------------------- get all state------------------
-
-    // const getStateList = async () => {
-    //     try {
-    //         const response = await ApiCall('get', statelistPageUrl);
-
-    //         if (response instanceof Error) {
-    //             console.error('Error fetching state list:', response.message);
-    //         } else if (response.status === 200) {
-    //             setStateList(response?.data?.states);
-    //         } else {
-    //             console.error('Error fetching state list. Unexpected status:', response.status);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching state list:', error);
-    //     }
-    // };
 
     //-----------list district --------
     const getDistrictList = async () => {
@@ -480,17 +486,15 @@ const startIndex = (params.page - 1) * params.pageSize;
             <div className="panel">
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
                     <h5 className="font-semibold text-primary text-lg dark:text-white-light">Member</h5>
-                    {/* <div className="sm:ltr:mr-auto sm:rtl:ml-auto sm:mt-0 mt-6 sm:mb-0 mb-[-16px]">
-                        <form className={`${search && '!block'} mt-2 sm:mt-0 inset-x-0 sm:translate-y-0 -translate-y-1/2 sm:mx-0  z-10`} onSubmit={() => {}}>
+                    <div className="sm:ltr:mr-auto sm:rtl:ml-auto sm:mt-0 mt-6 sm:mb-0 mb-[-16px]">
+                        <form className={`${search && '!block'} mt-2 sm:mt-0 inset-x-0 sm:translate-y-0 -translate-y-1/2 sm:mx-0  z-10`}>
                             <div className="relative">
                                 <input
                                     type="text"
                                     className="form-input ltr:pl-9 rtl:pr-9 ltr:sm:pr-4 rtl:sm:pl-4 ltr:pr-9 rtl:pl-9 peer sm:bg-transparent bg-gray-100 placeholder:tracking-widest"
                                     placeholder="Search..."
-                                    onChange={() => {
-                                        (e: any) => {
-                                            setSearch(e.target.value);
-                                        };
+                                    onChange={(e) => {
+                                        setSearch(e.target.value);
                                     }}
                                 />
                                 <button type="submit" className="absolute w-9 h-9 inset-0 ltr:right-auto rtl:left-auto appearance-none peer-focus:text-primary">
@@ -498,7 +502,7 @@ const startIndex = (params.page - 1) * params.pageSize;
                                 </button>
                             </div>
                         </form>
-                    </div> */}
+                    </div>
 
                     <button
                         onClick={() => setAddModal(true)}
@@ -569,16 +573,48 @@ const startIndex = (params.page - 1) * params.pageSize;
                             ))}
                         </select>
                     )}
+                    {user?.franchise === 'Mobile Franchise' && (
+                        <>
+                            <div
+                                onClick={() => getMembers()}
+                                className={`panel cursor-pointer flex items-center whitespace-nowrap h-[40px] text-base ${
+                                    activeButton === 'level1' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
+                                } justify-center max-w-[120px] w-full`}
+                            >
+                                Level 1
+                            </div>
+                            <div
+                                onClick={getLevelTwoMembers}
+                                className={`panel cursor-pointer flex items-center whitespace-nowrap h-[40px] text-base ${
+                                    activeButton === 'level2' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
+                                } justify-center max-w-[120px] w-full`}
+                            >
+                                Level 2
+                            </div>
+                        </>
+                    )}
+                    {user?.franchise !== 'Mobile Franchise' && (
+                        <button
+                            onClick={() => {
+                                setFilterData({ zonal: '', panchayath: '' });
+                                setPackageNameFilter('');
+                            }}
+                            className="bg-primary text-white px-3 rounded-lg h-10"
+                        >
+                            Reset
+                        </button>
+                    )}
+                    {user?.franchise !== 'Mobile Franchise' && (
+                        <div
+                            onClick={() => getMembers()}
+                            className={`ml-auto panel cursor-pointer flex items-center whitespace-nowrap h-[40px] text-base ${
+                                activeButton === 'level1' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
+                            } justify-center max-w-[120px] w-full`}
+                        >
+                            LevelUsers
+                        </div>
+                    )}
 
-                    <button
-                        onClick={() => {
-                            setFilterData({ zonal: '', panchayath: '' });
-                            setPackageNameFilter('');
-                        }}
-                        className="bg-primary text-white px-3 rounded-lg h-10"
-                    >
-                        Reset
-                    </button>
                     <select
                         onChange={(e) => {
                             const selectedValue = e.target.value;
@@ -588,10 +624,10 @@ const startIndex = (params.page - 1) * params.pageSize;
                                 filterWithPackagetype(selectedValue);
                             }
                         }}
-                        className="ml-auto form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary"
+                        className={`form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary ${user?.franchise === 'Mobile Franchise' ? 'ml-auto' : ''}`}
                         value={packageNameFilter}
                     >
-                        <option value={'All'}>All Package Type</option>
+                        <option value={'All package type'}>All Package Type</option>
                         {dropDownpackageList.map((pkg: any) => (
                             <option key={pkg._id}>{pkg.packageName}</option>
                         ))}
@@ -613,7 +649,7 @@ const startIndex = (params.page - 1) * params.pageSize;
                                 <th> franchise Name</th>
                                 <th> Package Amount</th>
                                 {/* {showViewTreeColumn && */}
-                                <th>View Tree</th>
+                                {user?.franchise !== 'Mobile Franchise' && <th>View Tree</th>}
                                 {/* } */}
                             </tr>
                         </thead>
@@ -637,11 +673,14 @@ const startIndex = (params.page - 1) * params.pageSize;
                                         <td className="whitespace-nowrap">{data?.franchiseName}</td>
                                         <td>{data?.packageAmount}</td>
                                         {/* {showViewTreeColumn && ( */}
-                                        <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
-                                            <button className="bg-primary text-center text-warning p-2 rounded-sm">
-                                                <i className="fas fa-sitemap mr-2"></i> View Tree
-                                            </button>
-                                        </td>
+                                        {user?.franchise !== 'Mobile Franchise' && (
+                                            <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
+                                                <button className="bg-primary text-center text-warning p-2 rounded-sm">
+                                                    <i className="fas fa-sitemap mr-2"></i> View Tree
+                                                </button>
+                                            </td>
+                                        )}
+
                                         {/* )} */}
                                         {/* <td>
                                             <button

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ApiCall } from '../Services/Api';
 import { liveNewsUrl } from '../utils/EndPoints';
+import { formatDateAndTime } from '../utils/FormateDate';
 
 const News = () => {
     const [news, setNews] = useState<any>([]);
@@ -23,7 +24,7 @@ const News = () => {
 
                 const formattedNews = response.data.newsData.map((item: any) => ({
                     ...item,
-                    createdAt: formatTimestamp(item.createdAt),
+                    createdAt: formatDateAndTime(item.createdAt),
                 }));
 
                 setNews(formattedNews);
@@ -37,12 +38,6 @@ const News = () => {
         }
     };
 
-    // Function to format timestamp
-    const formatTimestamp = (timestamp: string) => {
-        const date = new Date(timestamp);
-        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} ${date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })}`;
-        return formattedDate;
-    };
     return (
         <div>
             <h2 className=" font-bold text-primary text-lg">Latest News</h2>

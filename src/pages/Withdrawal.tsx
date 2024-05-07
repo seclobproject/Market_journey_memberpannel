@@ -7,6 +7,7 @@ import { ApiCall } from '../Services/Api';
 import { withdrawalHistoryUrl, withdrawalRequestUrl } from '../utils/EndPoints';
 import { Show_Toast } from './Components/Toast';
 import IconUser from '../components/Icon/IconUser';
+import { formatDate } from '../utils/FormateDate';
 
 const Withdrawal = () => {
     const [requestModal, setRequestModal] = useState(false);
@@ -35,7 +36,7 @@ const Withdrawal = () => {
                 setWalletAmount(response?.data?.walletAmount);
                 const FormatedReport = response?.data?.walletWithdrawHistory.map((item: any) => ({
                     ...item,
-                    createdAt: formatTimestamp(item.createdAt),
+                    createdAt: formatDate(item.createdAt),
                 }));
                 setWithdrawalHistory(FormatedReport);
                 setLoading(false);
@@ -91,11 +92,6 @@ const Withdrawal = () => {
         }
     };
 
-    const formatTimestamp = (timestamp: string) => {
-        const date = new Date(timestamp);
-        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
-        return formattedDate;
-    };
     return (
         <>
             <div className="panel">

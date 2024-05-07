@@ -264,8 +264,8 @@ const Subscriptions = () => {
                                             {user?.renewalStatus && (
                                                 <div>
                                                     <h3 className="text-primary font-bold mb-2">Add on</h3>
-                                                    {addOn.length > 0 ? (
-                                                        addOn.map((add: any) => (
+                                                    {addOn?.length > 0 ? (
+                                                        addOn?.map((add: any) => (
                                                             <div
                                                                 onClick={() => handleverificationModal(add, 'addOn')}
                                                                 className="w-full flex justify-between min-h-[80px] cursor-pointer bg-primary rounded-3xl p-5 mb-2
@@ -285,10 +285,10 @@ const Subscriptions = () => {
                                                     )}
                                                 </div>
                                             )}
-                                            {!user.renewalStatus && (
+                                            {!user?.renewalStatus && (
                                                 <div>
                                                     <h3 className="text-primary font-bold mb-2">Renewal Signals</h3>
-                                                    {renewalPackage.map((ren: any) => (
+                                                    {renewalPackage?.map((ren: any) => (
                                                         <div
                                                             onClick={() => handleverificationModal(ren, 'renewal')}
                                                             className="w-full flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2 cursor-pointer  "
@@ -303,10 +303,10 @@ const Subscriptions = () => {
                                                     ))}
                                                 </div>
                                             )}
-                                            {user.packageType !== 'Franchise' && (
+                                            {user?.packageType !== 'Franchise' && (
                                                 <div>
                                                     <h3 className="text-primary font-bold mb-2">convert Packages</h3>
-                                                    {convetPackages.map((conPkg: any) => (
+                                                    {convetPackages?.map((conPkg: any) => (
                                                         <div
                                                             onClick={() => handleverificationModal(conPkg, 'convert')}
                                                             className="w-full flex justify-between min-h-[80px] bg-primary rounded-3xl p-5 mb-2 cursor-pointer

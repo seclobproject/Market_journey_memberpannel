@@ -20,6 +20,7 @@ import IconCreditCard from '../../components/Icon/IconCreditCard';
 import IconAward from '../../components/Icon/IconAward';
 import Certificate from '../Components/certificate';
 import Invoice from '../Components/invoice';
+import { formatDate } from '../../utils/FormateDate';
 
 const Profile = () => {
     const [editProfleData, setEditProfileData] = useState({
@@ -258,7 +259,7 @@ const Profile = () => {
                                     <p className={user?.userStatus === 'approved' ? 'text-warning' : 'text-warning'}>{user?.userStatus}</p>
                                 </div>
                                 <div className="mt-5 flex m-auto space-y-4 flex-wrap  text-white gap-10 font-semibold text-base">
-                                    <ul className="mt-5 sm:m-auto space-y-4 max-w-[280px] ">
+                                    <ul className="mt-5 sm:m-auto space-y-4 max-w-[300px] ">
                                         <li className="flex items-center gap-3">
                                             <IconMail className="w-5 h-5 shrink-0" fill />
                                             Email : {user?.email}
@@ -270,6 +271,10 @@ const Profile = () => {
                                         <li className="flex items-center gap-3">
                                             <IconMapPin className="shrink-0" fill />
                                             Address : {user?.address}
+                                        </li>
+                                        <li className="flex items-center gap-3">
+                                            <IconMapPin className="shrink-0" fill />
+                                            Date of birth: {formatDate(user?.dateOfBirth)}
                                         </li>
                                         <li className="flex items-center gap-3">
                                             <IconBox className="shrink-0" />

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ApiCall } from '../Services/Api';
 import { AlertUrl } from '../utils/EndPoints';
+import { formatDateAndTime } from '../utils/FormateDate';
 
 const Notifications = () => {
     const [alert, setAlert] = useState([]);
@@ -14,7 +15,7 @@ const Notifications = () => {
                 const res: any = await ApiCall('get', AlertUrl);
                 const formatedAlert = res.data.signals.map((item: any) => ({
                     ...item,
-                    createdAt: formatTimestamp(item.createdAt),
+                    createdAt: formatDateAndTime(item.createdAt),
                 }));
                 setAlert(formatedAlert);
             } catch (error) {
@@ -27,11 +28,11 @@ const Notifications = () => {
         fetchNotifications();
           
     }, []);
-    const formatTimestamp = (timestamp: string) => {
-        const date = new Date(timestamp);
-        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} ${date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })}`;
-        return formattedDate;
-    };
+    // const formatTimestamp = (timestamp: string) => {
+    //     const date = new Date(timestamp);
+    //     const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} ${date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })}`;
+    //     return formattedDate;
+    // };
 
     return (
         <div className="flex flex-col gap-4">
