@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useLocation } from 'react-router-dom';
 import { toggleSidebar } from '../../store/themeConfigSlice';
-import { IRootState } from '../../store';
+import { IRootState, useAppDispatch, useAppSelector } from '../../store';
 import { useState, useEffect } from 'react';
 import IconCaretsDown from '../Icon/IconCaretsDown';
 import IconMenuNotes from '../Icon/Menu/IconMenuNotes';
@@ -15,6 +15,7 @@ import IconBox from '../Icon/IconBox';
 import IconBell from '../Icon/IconBell';
 import IconUser from '../Icon/IconUser';
 import IconAward from '../Icon/IconAward';
+import { userProfileApi } from '../../store/UserSlice';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -25,8 +26,9 @@ const Sidebar = () => {
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
     const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
     const location = useLocation();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const { t } = useTranslation();
+
     const toggleMenu = (value: string) => {
         setCurrentMenu((oldValue) => {
             return oldValue === value ? '' : value;
@@ -68,18 +70,18 @@ const Sidebar = () => {
     //         setUserView(true);
     //     }
     // };
- 
+
+
     useEffect(() => {
         const userStatus = sessionStorage.getItem('status');
         const userPackageType = sessionStorage.getItem('packageType');
         if (userStatus === 'readyToApprove') {
             setViewSidebar(true);
-            console.log(viewSidebar);
         }
         if (userPackageType === 'Courses' || userPackageType === 'Signals') {
             setUserView(true);
         }
-    },[]);
+    }, []);
 
     return (
         <div className={` ${semidark ? 'dark' : ''}`}>

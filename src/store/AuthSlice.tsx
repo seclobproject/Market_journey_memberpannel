@@ -4,10 +4,12 @@ import { ApiCall } from '../Services/Api';
 export const loginApi = createAsyncThunk<any, any>('auth/loginApi', async (data) => {
     try {
         const result = await ApiCall('post', '/api/user/user-login', data);
+        console.log(result);
+        
         return result;
-    } catch (error:any) {
+    } catch (error: any) {
         console.error('Error in loginApi:', error);
-        return error?.response?.data?.message; 
+        return error?.response?.data?.message;
     }
 });
 
@@ -30,6 +32,7 @@ const authSlice = createSlice({
             })
             .addCase(loginApi.fulfilled, (state, action) => {
                 state.token = action.payload?.data?.access_token;
+                sessionStorage.setItem('packageType', action?.payload?.data?.packageType);                
                 console.log('login fulfilled');
             })
             .addCase(loginApi.rejected, (state, action) => {
