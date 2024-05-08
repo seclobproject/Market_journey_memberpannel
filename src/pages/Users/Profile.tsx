@@ -21,6 +21,7 @@ import IconAward from '../../components/Icon/IconAward';
 import Certificate from '../Components/certificate';
 import Invoice from '../Components/invoice';
 import { formatDate } from '../../utils/FormateDate';
+import IconCalendar from '../../components/Icon/IconCalendar';
 
 const Profile = () => {
     const [editProfleData, setEditProfileData] = useState({
@@ -273,7 +274,7 @@ const Profile = () => {
                                             Address : {user?.address}
                                         </li>
                                         <li className="flex items-center gap-3">
-                                            <IconMapPin className="shrink-0" fill />
+                                            <IconCalendar className="shrink-0" fill />
                                             Date of birth: {formatDate(user?.dateOfBirth)}
                                         </li>
                                         <li className="flex items-center gap-3">
@@ -292,6 +293,10 @@ const Profile = () => {
                                                 walletAmount : {user?.walletAmount}
                                             </li>
                                         )}
+                                        <li className="flex items-center gap-3">
+                                            <IconAward className="shrink-0" fill />
+                                            Points: {user?.points}
+                                        </li>
                                         <li className="flex items-center gap-3">
                                             <IconBox className="shrink-0" />
                                             Package Type : {user?.packageType}

@@ -67,7 +67,7 @@ const Member = () => {
     const [filterMembers, setFilterMembers] = useState<any>([]);
     const [pageNumber, setPageNumber] = useState(1);
     const [activeButton, setActiveButton] = useState('level1');
-
+    const [levelUsers, setLevelUsers] = useState(false);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<string | undefined>();
@@ -105,6 +105,7 @@ const Member = () => {
     const [filterData, setFilterData] = useState({
         zonal: '',
         panchayath: '',
+        packageName: '',
     });
     const [packageNameFilter, setPackageNameFilter] = useState('');
     const { stateList } = useAppSelector((state) => state.location);
@@ -119,19 +120,21 @@ const Member = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if (user?.franchise === 'Mobile Franchise') {
-            getMembers();
-        } else {
-            filterMemberDatas();
-        }
-        dispatch(getStatesApi());
+        const franchise = sessionStorage.getItem('franchise');
         dispatch(userProfileApi());
+        dispatch(getStatesApi());
+        if (franchise === 'Mobile Franchise') {
+            getMembers();
+        }
     }, []);
 
     useEffect(() => {
-        if (activeButton === 'level1') {
+        const franchise = sessionStorage.getItem('franchise');
+        if (franchise !== 'Mobile Franchise') {
+            filterMemberDatas();
+        } else if (franchise === 'Mobile Franchise' && activeButton === 'level1') {
             getMembers();
-        } else {
+        } else if (activeButton === 'level2') {
             getLevelTwoMembers();
         }
     }, [search]);
@@ -193,7 +196,7 @@ const Member = () => {
         setPackageNameFilter('');
         try {
             setLoading(true);
-            const response = await ApiCall('get', getUsers, '', { id: id, page: params?.page, pageSize: 10, searchText: search });
+            const response = await ApiCall('get', getUsers, '', { id: id, page: params?.page, pageSize: 25, searchText: search });
 
             // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
 
@@ -219,7 +222,7 @@ const Member = () => {
         setPackageNameFilter('');
         try {
             setLoading(true);
-            const response = await ApiCall('get', level2MembersUrl, '', { page: params?.page, pageSize: 10, searchText: search });
+            const response = await ApiCall('get', level2MembersUrl, '', { page: params?.page, pageSize: 25, searchText: search });
 
             // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
 
@@ -244,18 +247,18 @@ const Member = () => {
 
     // fiter members with packages
 
-    const filterWithPackagetype = (type: string) => {
-        console.log(type, 'type');
-        setFilterPackageType(type);
-        if (type === 'All package type') {
-            setFilterMembers(allMembers);
-        } else {
-            // Use type instead of filterPackageType
-            const filterMembers = allMembers.filter((member: any) => member?.franchise === type);
-            console.log(filterMembers, 'filterMembers');
-            setFilterMembers(filterMembers);
-        }
-    };
+    // const filterWithPackagetype = (type: string) => {
+    //     console.log(type, 'type');
+    //     setFilterPackageType(type);
+    //     if (type === 'All package type') {
+    //         setFilterMembers(allMembers);
+    //     } else {
+    //         // Use type instead of filterPackageType
+    //         const filterMembers = allMembers.filter((member: any) => member?.franchise === type);
+    //         console.log(filterMembers, 'filterMembers');
+    //         setFilterMembers(filterMembers);
+    //     }
+    // };
 
     // filter all members
 
@@ -263,7 +266,7 @@ const Member = () => {
         try {
             setLoading(true);
             console.log('dsfs dfsd');
-            const response = await ApiCall('post', filterMembersUrl, filterData, params);
+            const response = await ApiCall('post', filterMembersUrl, filterData, { page: params?.page, pageSize: 25, searchText: search });
             console.log(response, 'response');
 
             if (response instanceof Error) {
@@ -540,6 +543,7 @@ const Member = () => {
 
                                 setFilterData({ ...filterData, zonal: selectedzonal === undefined ? '' : selectedzonal.name, panchayath: '' });
                                 setSelectedZonalId(selectedzonal === undefined ? '' : selectedzonal?.id);
+                                setLevelUsers(false);
                                 // }
                                 // filterMemberDatas();
                             }}
@@ -562,6 +566,7 @@ const Member = () => {
                                 if (selectedValue) {
                                     setFilterData({ ...filterData, panchayath: selectedValue });
                                     filterMemberDatas();
+                                    setLevelUsers(false);
                                 }
                             }}
                             className="form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary"
@@ -577,27 +582,28 @@ const Member = () => {
                         <>
                             <div
                                 onClick={() => getMembers()}
-                                className={`panel cursor-pointer flex items-center whitespace-nowrap h-[40px] text-base ${
+                                className={`panel cursor-pointer flex items-center whitespace-nowrap h-[40px] mb-2 text-base ${
                                     activeButton === 'level1' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
                                 } justify-center max-w-[120px] w-full`}
                             >
-                                Level 1
+                                Direct
                             </div>
                             <div
                                 onClick={getLevelTwoMembers}
-                                className={`panel cursor-pointer flex items-center whitespace-nowrap h-[40px] text-base ${
+                                className={`panel cursor-pointer flex items-center whitespace-nowrap h-[40px] mb-2 text-base ${
                                     activeButton === 'level2' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
                                 } justify-center max-w-[120px] w-full`}
                             >
-                                Level 2
+                                InDirect
                             </div>
                         </>
                     )}
                     {user?.franchise !== 'Mobile Franchise' && (
                         <button
                             onClick={() => {
-                                setFilterData({ zonal: '', panchayath: '' });
+                                setFilterData({ zonal: '', panchayath: '', packageName: '' });
                                 setPackageNameFilter('');
+                                setLevelUsers(false);
                             }}
                             className="bg-primary text-white px-3 rounded-lg h-10"
                         >
@@ -606,32 +612,36 @@ const Member = () => {
                     )}
                     {user?.franchise !== 'Mobile Franchise' && (
                         <div
-                            onClick={() => getMembers()}
+                            onClick={() => {
+                                getMembers();
+                                setLevelUsers(true);
+                            }}
                             className={`ml-auto panel cursor-pointer flex items-center whitespace-nowrap h-[40px] text-base ${
-                                activeButton === 'level1' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
+                                levelUsers ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
                             } justify-center max-w-[120px] w-full`}
                         >
                             LevelUsers
                         </div>
                     )}
-
-                    <select
-                        onChange={(e) => {
-                            const selectedValue = e.target.value;
-                            if (selectedValue) {
-                                setPackageNameFilter(selectedValue);
-                                // filterMemberDatas();
-                                filterWithPackagetype(selectedValue);
-                            }
-                        }}
-                        className={`form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary ${user?.franchise === 'Mobile Franchise' ? 'ml-auto' : ''}`}
-                        value={packageNameFilter}
-                    >
-                        <option value={'All package type'}>All Package Type</option>
-                        {dropDownpackageList.map((pkg: any) => (
-                            <option key={pkg._id}>{pkg.packageName}</option>
-                        ))}
-                    </select>
+                    {user?.franchise !== 'Mobile Franchise' && (
+                        <select
+                            onChange={(e) => {
+                                const selectedValue = e.target.value;
+                                if (selectedValue) {
+                                    setFilterData({ ...filterData, packageName: selectedValue, zonal: '', panchayath: '' });
+                                    // filterMemberDatas();
+                                    // filterWithPackagetype(selectedValue);
+                                }
+                            }}
+                            className={`form-input ps-10 placeholder:text-white-dark max-w-[220px] mb-4 border-primary ${user?.franchise === 'Mobile Franchise' ? 'ml-auto' : ''}`}
+                            value={packageNameFilter}
+                        >
+                            <option value={'All package type'}>All Package Type</option>
+                            {dropDownpackageList.map((pkg: any) => (
+                                <option key={pkg._id}>{pkg.packageName}</option>
+                            ))}
+                        </select>
+                    )}
                 </div>
 
                 {/* filter options end */}
@@ -644,12 +654,20 @@ const Member = () => {
                                 <th>UserId</th>
                                 <th>Email</th>
                                 <th>Phone</th>
-                                <th>Sponsor Name</th>
+                                {(user?.franchise !== 'Mobile Franchise' || activeButton !== 'level1') && <th>Sponsor Name</th>}
                                 <th> Package</th>
                                 <th> franchise Name</th>
                                 <th> Package Amount</th>
                                 {/* {showViewTreeColumn && */}
-                                {user?.franchise !== 'Mobile Franchise' && <th>View Tree</th>}
+                                {user?.franchise !== 'Mobile Franchise' || levelUsers ? (
+                                    <>
+                                        <th>Status</th> <th>View Tree</th>
+                                    </>
+                                ) : user?.franchise !== 'Mobile Franchise' ? (
+                                    <th>View Tree</th>
+                                ) : (
+                                    <th>Status</th>
+                                )}
                                 {/* } */}
                             </tr>
                         </thead>
@@ -668,16 +686,43 @@ const Member = () => {
                                         <td>{data?.ownSponserId}</td>
                                         <td>{data?.email}</td>
                                         <td className="whitespace-nowrap">{data?.phone}</td>
-                                        <td className="capitalize whitespace-nowrap">{data?.sponserName}</td>
+                                        {(user?.franchise !== 'Mobile Franchise' || activeButton !== 'level1') && <td className="capitalize whitespace-nowrap">{data?.sponserName}</td>}
                                         <td className="whitespace-nowrap">{data?.franchise}</td>
                                         <td className="whitespace-nowrap">{data?.franchiseName}</td>
                                         <td>{data?.packageAmount}</td>
                                         {/* {showViewTreeColumn && ( */}
-                                        {user?.franchise !== 'Mobile Franchise' && (
+                                        {user?.franchise !== 'Mobile Franchise' || levelUsers ? (
+                                            <>
+                                                <td>
+                                                    <span
+                                                        className={`text-white px-2 py-2 rounded-md ${
+                                                            data?.userStatus === 'approved' ? 'bg-green-500' : data?.userStatus === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
+                                                        }`}
+                                                    >
+                                                        {data?.userStatus}
+                                                    </span>
+                                                </td>
+                                                <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
+                                                    <button className="bg-primary text-center text-warning p-2 rounded-sm">
+                                                        <i className="fas fa-sitemap mr-2"></i> View Tree
+                                                    </button>
+                                                </td>
+                                            </>
+                                        ) : user?.franchise !== 'Mobile Franchise' ? (
                                             <td className="whitespace-nowrap " onClick={() => handleViewTreeClick(data?._id)}>
                                                 <button className="bg-primary text-center text-warning p-2 rounded-sm">
                                                     <i className="fas fa-sitemap mr-2"></i> View Tree
                                                 </button>
+                                            </td>
+                                        ) : (
+                                            <td>
+                                                <span
+                                                    className={`text-white px-2 py-1 rounded-[10px] ${
+                                                        data?.userStatus === 'approved' ? 'bg-green-500' : data?.userStatus === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
+                                                    }`}
+                                                >
+                                                    {data?.userStatus}
+                                                </span>
                                             </td>
                                         )}
 

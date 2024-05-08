@@ -62,6 +62,7 @@ const Subscriptions = () => {
                 setVerificationModal(false)
                 setShowSelectDocumentMessage(false);
                 Show_Toast({ message: 'subscription succcess', type: true });
+                getRenewalHistory();
             } catch (error) {
                 console.error('Upload failed:', error);
             } finally {
@@ -209,7 +210,7 @@ const Subscriptions = () => {
                                 )}
 
                                 <div className="flex flex-col">
-                                    <h4 className="text-primary font-semibold text-lg">{history?.name}</h4>
+                                    <h4 className="text-primary font-semibold text-lg">{history?.pendingPackage}</h4>
                                     <h6 className="text-primary">{history?.action}</h6>
                                     <span className="text-primary">{history?.createdAt}</span>
                                 </div>
@@ -226,7 +227,6 @@ const Subscriptions = () => {
                             </div>
                         </div>
                     ))}
-                    
                 </div>
             </div>
 
