@@ -16,7 +16,7 @@ const Report = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [params, setParams] = useState({
         page: 1,
-        pageSize: 10,
+        pageSize: 25,
     });
     const startIndex = (params.page - 1) * params.pageSize;
     useEffect(() => {
@@ -360,63 +360,104 @@ const Report = () => {
                     {activeButton !== 'transactions' && <span className="bg-primary text-white py-2 px-4 font-semibold rounded-lg text-base">Total: {totalIncome}</span>}
                 </div>
                 <div className="table-responsive mb-5">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>SIno</th>
-                                <th>Date</th>
-                                {activeButton === 'transactions' && <th>Report Name</th>}
-                                {activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' && activeButton !== 'transactions' ? (
-                                    <th>Amount From</th>
-                                ) : (
-                                    activeButton !== 'bonus' && activeButton !== 'transactions' && <th>Designation</th>
-                                )}
-                                {activeButton === 'levelIncome' && <th> New Member</th>}
-                                {/* <th>Name</th> */}
-                                {activeButton !== 'levelIncome' && activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' && activeButton !== 'transactions' && <th> Franchise</th>}
-
-                                {activeButton !== 'bonus' && <th> PercentageCredited / Description</th>}
-                                {activeButton === 'levelIncome' && <th> Amount</th>}
-
-                                {activeButton === 'bonus' ? <th>Bonus Amount</th> : <th> Amount Credited</th>}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {reports?.length > 0 ? (
-                                reports.map((data: any, index: number) => {
-                                    return (
-                                        <tr key={index}>
-                                            <td>
-                                                <div className=" font-medium text-base">{startIndex + index + 1}</div>
-                                            </td>
-                                            <td className="font-medium text-base">{data?.createdAt}</td>
-                                            {activeButton === 'transactions' && <td className="whitespace-nowrap font-medium text-base">{data?.reportName}</td>}
-                                            {activeButton !== 'bonus' && activeButton !== 'transactions' && (
-                                                <td className="whitespace-nowrap font-medium text-base">{data?.name ?? data?.designation}</td>
-                                            )}
-                                            {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.newMember}</td>}
-                                            {activeButton !== 'bonus' && activeButton !== 'levelIncome' && activeButton !== 'autoPoolCreditHistory' && activeButton !== 'transactions' && (
-                                                <td className="font-medium text-base">{data?.franchise}</td>
-                                            )}
-
-                                            {activeButton !== 'bonus' && <td className="font-medium text-base">{data?.percentageCredited || data?.description}</td>}
-                                            {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.Amount}</td>}
-
-                                            <td className="text-center text-success font-medium text-base">
-                                                {activeButton !== 'bonus' ? data?.amountCredited || data?.bonusAmount : data?.bonusAmount}
-                                            </td>
-                                        </tr>
-                                    );
-                                })
-                            ) : (
+                    {activeButton !== 'transactions' ? (
+                        <table>
+                            <thead>
                                 <tr>
-                                    <td colSpan={7} style={{ textAlign: 'center' }}>
-                                        <span className="align-middle m-auto mb-10">No Reports</span>
-                                    </td>
+                                    <th>SIno</th>
+                                    <th>Date</th>
+                                    {activeButton === 'transactions' && <th>Report Name</th>}
+                                    {activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' && activeButton !== 'transactions' ? (
+                                        <th>Amount From</th>
+                                    ) : (
+                                        activeButton !== 'bonus' && activeButton !== 'transactions' && <th>Designation</th>
+                                    )}
+                                    {activeButton === 'levelIncome' && <th> New Member</th>}
+                                    {/* <th>Name</th> */}
+                                    {activeButton !== 'levelIncome' && activeButton !== 'autoPoolCreditHistory' && activeButton !== 'bonus' && activeButton !== 'transactions' && <th> Franchise</th>}
+
+                                    {activeButton !== 'bonus' && <th> PercentageCredited / Description</th>}
+                                    {activeButton === 'levelIncome' && <th> Amount</th>}
+
+                                    {activeButton === 'bonus' ? <th>Bonus Amount</th> : <th> Amount Credited</th>}
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {reports?.length > 0 ? (
+                                    reports.map((data: any, index: number) => {
+                                        return (
+                                            <tr key={index}>
+                                                <td>
+                                                    <div className=" font-medium text-base">{startIndex + index + 1}</div>
+                                                </td>
+                                                <td className="font-medium text-base">{data?.createdAt}</td>
+                                                {activeButton === 'transactions' && <td className="whitespace-nowrap font-medium text-base">{data?.reportName}</td>}
+                                                {activeButton !== 'bonus' && activeButton !== 'transactions' && (
+                                                    <td className="whitespace-nowrap font-medium text-base">{data?.name ?? data?.designation}</td>
+                                                )}
+                                                {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.newMember}</td>}
+                                                {activeButton !== 'bonus' && activeButton !== 'levelIncome' && activeButton !== 'autoPoolCreditHistory' && activeButton !== 'transactions' && (
+                                                    <td className="font-medium text-base">{data?.franchise}</td>
+                                                )}
+
+                                                {activeButton !== 'bonus' && <td className="font-medium text-base">{data?.percentageCredited ? `${data?.percentageCredited}%` : data?.description}</td>}
+                                                {activeButton === 'levelIncome' && <td className="font-medium text-base">{data?.Amount}</td>}
+
+                                                <td className="text-center text-success font-medium text-base">
+                                                    {activeButton !== 'bonus' ? data?.amountCredited || data?.bonusAmount : data?.bonusAmount}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                ) : (
+                                    <tr>
+                                        <td colSpan={7} style={{ textAlign: 'center' }}>
+                                            <span className="align-middle m-auto mb-10">No Reports</span>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    ) : reports?.length > 0 ? (
+                        reports.map((data: any, index: number) => {
+                            return (
+                                <div className="w-full flex flex-wrap justify-between min-h-[100px] bg-[#DDE4EB] rounded-3xl p-4 mb-2">
+                                    <div className="flex  gap-4">
+                                        <svg className="w-[40px] h-[68px]" width="27" height="24" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                fill-rule="evenodd"
+                                                clip-rule="evenodd"
+                                                d="M13.0661 4.18872C13.3925 4.15259 13.7012 4.38578 13.7557 4.70961L14.8715 11.3435C14.9259 11.6673 14.7055 11.9591 14.3791 11.9952C14.0527 12.0314 13.744 11.7982 13.6896 11.4743L12.8118 6.25607L6.22517 14.9755C6.0329 15.23 5.65869 15.2715 5.3894 15.068C5.1201 14.8646 5.05765 14.4933 5.24992 14.2388L11.8366 5.51937L6.57719 6.10163C6.2508 6.13777 5.94205 5.90454 5.88758 5.5807C5.83312 5.25686 6.05354 4.96507 6.37993 4.92894L13.0661 4.18872Z"
+                                                fill="#32CD32"
+                                            />
+                                            <path
+                                                fill-rule="evenodd"
+                                                clip-rule="evenodd"
+                                                d="M13.6742 19.9398C13.346 19.9518 13.0553 19.6965 13.0248 19.3695L12.4007 12.6715C12.3702 12.3445 12.6115 12.0697 12.9397 12.0577C13.2679 12.0458 13.5586 12.301 13.589 12.628L14.08 17.8968L21.291 9.68615C21.5015 9.44647 21.8778 9.43272 22.1314 9.65543C22.3849 9.87814 22.4199 10.253 22.2094 10.4927L14.9984 18.7033L20.2864 18.51C20.6145 18.498 20.9053 18.7533 20.9357 19.0803C20.9662 19.4073 20.7249 19.682 20.3967 19.694L13.6742 19.9398Z"
+                                                fill="#32CD32"
+                                            />
+                                        </svg>
+
+                                        <div className="flex flex-col">
+                                            <h4 className="text-primary font-semibold text-lg">{data?.reportName}</h4>
+                                            <h6 className="text-primary">{data?.percentageCredited ? `${data?.percentageCredited}%` : data?.description}</h6>
+                                            <span className="text-primary">{data?.createdAt}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col ml-auto gap-2">
+                                        <h3 className="text-primary font-semibold text-base">Amount Credited</h3>
+                                        <span className="text-white font-semibold ml-auto w-fit text-base px-2 py-1 rounded-[10px] bg-green-500">₹ {data?.amountCredited || data?.bonusAmount}</span>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <tr>
+                            <td colSpan={7} style={{ textAlign: 'center' }}>
+                                <span className="align-middle m-auto mb-10">No Reports</span>
+                            </td>
+                        </tr>
+                    )}
                 </div>
                 <div className="w-full">
                     <Stack spacing={2}>

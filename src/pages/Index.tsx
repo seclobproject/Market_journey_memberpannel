@@ -249,31 +249,56 @@ const Index = () => {
             setShowSelectDocumentMessage(true);
         }
     };
+console.log(user?.directIncome,"dirsf");
 
     // share referal link
     const shareTitle = 'Check out this awesome link!';
-    const shareUrl = `https://member.marketjourney.in/auth/boxed-signup/${user?.id}`;
+    // const shareUrl = `https://member.marketjourney.in/auth/boxed-signup/${user?.id}`;
+    const shareUrl = `http://192.168.29.217:5173/auth/boxed-signup/${user?.id}`;
 
-    const handleShare = async () => {
-        console.log('share');
-        // copyLinkToClipboard();
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: shareTitle,
-                    text: 'Check out this awesome link!',
-                    url: shareUrl,
-                });
-            } catch (error) {
-                console.error('Error sharing:', error);
-            }
-        } else {
-            // Fallback for browsers that do not support the Web Share API
-            console.warn('Web Share API is not supported in this browser.');
-            // You can provide alternative sharing methods here (e.g., copy to clipboard)
-            // Example: copyToClipboard(shareUrl);
-        }
-    };
+    // const handleShare = async () => {
+    //     console.log('share');
+    //     // copyLinkToClipboard();
+    //     if (navigator.share) {
+    //         try {
+    //             await navigator.share({
+    //                 title: shareTitle,
+    //                 text: 'Check out this awesome link!',
+    //                 url: shareUrl,
+    //             });
+    //         } catch (error) {
+    //             console.error('Error sharing:', error);
+    //         }
+    //     } else {
+    //         // Fallback for browsers that do not support the Web Share API
+    //         console.warn('Web Share API is not supported in this browser.');
+    //         // You can provide alternative sharing methods here (e.g., copy to clipboard)
+    //         // Example: copyToClipboard(shareUrl);
+    //     }
+    // };
+const handleCopyText = () => {
+    if (!navigator.clipboard) {
+        // Fallback for mobile browsers that don't support navigator.clipboard
+        const textField = document.createElement('textarea');
+        textField.innerText = shareUrl;
+        document.body.appendChild(textField);
+        textField.select();
+        document.execCommand('copy');
+        textField.remove();
+        alert('Text copied to clipboard successfully!');
+        return;
+    }
+
+    navigator.clipboard
+        .writeText(shareUrl)
+        .then(() => {
+            alert('Text copied to clipboard successfully!');
+        })
+        .catch((error) => {
+            console.error('Error copying text: ', error);
+            alert('Failed to copy text to clipboard.');
+        });
+};
 
 
     useEffect(() => {
@@ -370,38 +395,40 @@ const Index = () => {
 
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                     {userView && (
-                        <div
-                            className="panel overflow-hidden before:bg-primary before:absolute before:-right-44 before:top-0 before:bottom-0 before:m-auto before:rounded-full before:w-96 before:h-96 grid grid-cols-1 content-between "
-                            style={{ background: 'linear-gradient(0deg, #00c6fb -227%, #132239)' }}
-                        >
-                            <div className="flex relative items-start justify-between text-white-light mb-16 z-[7]">
-                                <h5 className="font-semibold  text-lg">Mpay Balance</h5>
-                                <img className="absolute right-2 top-2 sm:w-[80px] w-auto" src="/assets/images/total_wallet.svg" alt="rupee" />
-                            </div>
-                            <div className="flex items-center justify-between z-10">
-                                <div className="flex items-center justify-between">
-                                    <div className="relative text-2xl font-semibold text-white whitespace-nowrap">₹ {user?.walletAmount}</div>
+                        <>
+                            <div
+                                className="panel overflow-hidden before:bg-primary before:absolute before:-right-44 before:top-0 before:bottom-0 before:m-auto before:rounded-full before:w-96 before:h-96 grid grid-cols-1 content-between "
+                                style={{ background: 'linear-gradient(0deg, #00c6fb -227%, #132239)' }}
+                            >
+                                <div className="flex relative items-start justify-between text-white-light mb-16 z-[7]">
+                                    <h5 className="font-semibold  text-lg">Mpay Balance</h5>
+                                    <img className="absolute right-2 top-2 sm:w-[80px] w-auto" src="/assets/images/total_wallet.svg" alt="rupee" />
                                 </div>
-                                {/* <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] z-10">
+                                <div className="flex items-center justify-between z-10">
+                                    <div className="flex items-center justify-between">
+                                        <div className="relative text-2xl font-semibold text-white whitespace-nowrap">₹ {user?.walletAmount}</div>
+                                    </div>
+                                    {/* <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] z-10">
                                 Upgrade
                             </button> */}
+                                </div>
                             </div>
-                        </div>
+                            <div className="panel sm:h-auto flex flex-col justify-between bg-primary text-white">
+                                <div className="flex justify-between dark:text-white-light mb-5">
+                                    <h5 className="font-semibold text-lg ">Refer Now</h5>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-7">
+                                    <img className="w-[117px] h-[72px]" src="/assets/images/referal_img.png" alt="" />
+                                    <div className="flex flex-col gap-5">
+                                        <p className="text-center sm:text-left">Sharing is rewarding! Refer your friends and earn a lifetime income</p>
+                                        <button onClick={handleCopyText} type="button" className="font-bold rounded p-2 text-primary bg-warning ml-auto sm:ml-0">
+                                            Refer Now
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>{' '}
+                        </>
                     )}
-                    <div className="panel sm:h-auto flex flex-col justify-between bg-primary text-white">
-                        <div className="flex justify-between dark:text-white-light mb-5">
-                            <h5 className="font-semibold text-lg ">Refer Now</h5>
-                        </div>
-                        <div className="flex flex-col sm:flex-row gap-7">
-                            <img className="w-[117px] h-[72px]" src="/assets/images/referal_img.png" alt="" />
-                            <div className="flex flex-col gap-5">
-                                <p className="text-center sm:text-left">Sharing is rewarding! Refer your friends and earn a lifetime income</p>
-                                <button onClick={handleShare} type="button" className="font-bold rounded p-2 text-primary bg-warning ml-auto sm:ml-0">
-                                    Refer Now
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                     <div className="panel min-h-[200px] max-w-md sm:h-auto flex  justify-between bg-primary text-white relative">
                         <div className="flex flex-col gap-5 z-10">
                             <div className=" dark:text-white-light">
@@ -409,7 +436,9 @@ const Index = () => {
                                     <span className="text-4xl font-bold">{user?.daysUntilRenewal}</span> day left
                                 </h5>
                             </div>
-                            <p className="text-left sm:text-left max-w-[230px]">Your monthly subscription plan has 10 days to renew Subscription is 0 Please upload the screenshot</p>
+                            <p className="text-left sm:text-left max-w-[230px]">
+                                Your monthly subscription plan has {user?.daysUntilRenewal} days to renew Subscription is 0 Please upload the screenshot
+                            </p>
                             <Link to="/pages/subscription">
                                 <button type="button" className="text-primary hover:text-white bg-warning z-10 font-bold rounded border-warning p-2 mr-auto border ">
                                     Subscription Package

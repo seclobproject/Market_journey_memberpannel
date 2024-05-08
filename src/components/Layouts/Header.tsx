@@ -206,7 +206,7 @@ const Header = () => {
                                                 <>
                                                     {alert.map((notification: any) => {
                                                         return (
-                                                            <li key={notification._id} className="dark:text-white-light/90" onClick={(e) => e.stopPropagation()}>
+                                                            <li key={notification._id} className="dark:text-white-light/90 no-select" onClick={(e) => e.stopPropagation()}>
                                                                 <div className="group flex items-center px-4 py-2">
                                                                     <div className="grid place-content-center rounded">
                                                                         <div className="w-12 h-12 relative">
