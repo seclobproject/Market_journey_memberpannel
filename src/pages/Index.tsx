@@ -19,6 +19,7 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { userProfileApi } from '../store/UserSlice';
 import RankList from './Components/RankList';
 
+// import rank from '../../public/assets/images/rank.jpg'
 // interface ProfileDetails {
 //     id: string;
 //     name: string;
@@ -490,6 +491,7 @@ const handleCopyText = () => {
                         )}
                     </div>
                 )}
+                {/* <img src={rank} alt="rank" /> */}
 
                 {/*-----End Awards and rewards ---------*/}
 
