@@ -11,7 +11,7 @@ const RankList = ({ pool, members, amount }: { pool: string; members: number; am
                 </div>
                 <div className="flex flex-col gap-2">
                     <span className="text-white font-medium"> Amount</span>
-                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">{amount.toFixed(2)}</span>
+                    <span className="bg-warning text-center p-2 rounded-lg min-w-[60px] font-semibold">{amount}</span>
                 </div>
             </div>
         </div>
