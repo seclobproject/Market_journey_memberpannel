@@ -150,11 +150,11 @@ const Header = () => {
 
     const openModal = () => {
         setLogoutModal(true);
-        document.body.classList.add('overflow-hidden');
+        // document.body.classList.add('overflow-hidden');
     };
     const closeModal = () => {
         setLogoutModal(false);
-        document.body.classList.remove('overflow-hidden');
+        // document.body.classList.remove('overflow-hidden');
     };
     return (
         <>
