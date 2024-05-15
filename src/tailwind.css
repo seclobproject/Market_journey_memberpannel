@@ -59,9 +59,9 @@
         @apply bg-[#fafafa] font-nunito;
     }
 
-    body.dark {
+    /* body.dark {
         @apply bg-[#060818];
-    }
+    } */
 
     /* Panel */
     .panel {

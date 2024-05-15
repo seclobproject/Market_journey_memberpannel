@@ -65,7 +65,7 @@ const Member = () => {
     const [showViewTreeColumn, setShowViewTreeColumn] = useState(true);
     const [allMembers, setAllMembers] = useState<any>([]);
     const [filterMembers, setFilterMembers] = useState<any>([]);
-    const [pageNumber, setPageNumber] = useState(1);
+    // const [pageNumber, setPageNumber] = useState(1);
     const [activeButton, setActiveButton] = useState('level1');
     const [levelUsers, setLevelUsers] = useState(false);
     const [totalPages, setTotalPages] = useState(1);
@@ -112,7 +112,7 @@ const Member = () => {
     const { user } = useAppSelector((state) => state.user);
     const [params, setParams] = useState({
         page: 1,
-        pageSize: 10,
+        pageSize: 25,
     });
     const [search, setSearch] = useState('');
     const startIndex = (params.page - 1) * params.pageSize;
@@ -175,7 +175,11 @@ const Member = () => {
     }, [addMember?.packageType]);
 
     useEffect(() => {
-        filterMemberDatas();
+        if (levelUsers) {
+            getMembers();
+        } else {
+            filterMemberDatas();
+        }
     }, [filterData, params]);
 
     //------ show password-----
@@ -193,10 +197,12 @@ const Member = () => {
     //----Get Level members-----
     const getMembers = async (id?: string) => {
         setActiveButton('level1');
-        setPackageNameFilter('');
+        // setPackageNameFilter('');
+        console.log(filterData);
+        
         try {
             setLoading(true);
-            const response = await ApiCall('get', getUsers, '', { id: id, page: params?.page, pageSize: 25, searchText: search });
+            const response = await ApiCall('post', getUsers, filterData, { id: id, page: params?.page, pageSize: params?.pageSize, searchText: search });
 
             // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
 
@@ -204,8 +210,9 @@ const Member = () => {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
                 // setPreviousMemberData(allMembers);
-                setAllMembers(response?.data?.child1);
+                // setAllMembers(response?.data?.child1);
                 setFilterMembers(response?.data?.child1);
+                setTotalPages(response?.data?.pagination?.totalPages);
                 setLoading(false);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
@@ -222,7 +229,7 @@ const Member = () => {
         setPackageNameFilter('');
         try {
             setLoading(true);
-            const response = await ApiCall('get', level2MembersUrl, '', { page: params?.page, pageSize: 25, searchText: search });
+            const response = await ApiCall('get', level2MembersUrl, '', { page: params?.page, pageSize: params?.pageSize, searchText: search });
 
             // const response = await ApiCall('get', getLevelOneUsers,'',{page:pageNumber,pageSize:10} );
 
@@ -231,9 +238,9 @@ const Member = () => {
             } else if (response.status === 200) {
                 // setPreviousMemberData(allMembers);
                 console.log(response);
-
                 setAllMembers(response?.data?.child2);
                 setFilterMembers(response?.data?.child2);
+                setTotalPages(response?.data?.pagination?.totalPages);
                 setLoading(false);
             } else {
                 console.error('Error fetching allMembers list. Unexpected status:', response.status);
@@ -265,8 +272,7 @@ const Member = () => {
     const filterMemberDatas = async () => {
         try {
             setLoading(true);
-            console.log('dsfs dfsd');
-            const response = await ApiCall('post', filterMembersUrl, filterData, { page: params?.page, pageSize: 25, searchText: search });
+            const response = await ApiCall('post', filterMembersUrl, filterData, { page: params?.page, pageSize: params?.pageSize, searchText: search });
             console.log(response, 'response');
 
             if (response instanceof Error) {
@@ -413,7 +419,9 @@ const Member = () => {
     //---------Add--member---------
     const addMemberFun = async (e: FormEvent) => {
         e.preventDefault();
+
         try {
+            setLoading(true);
             const response: any = await ApiCall('post', memberaddUrl, addMember);
 
             if (response.status === 200) {
@@ -435,12 +443,15 @@ const Member = () => {
                     panchayath: '',
                     franchiseName: '',
                 });
+                setLoading(false);
                 setAddModal(false);
                 Show_Toast({ message: 'Member added successfully', type: true });
             }
         } catch (error: any) {
             console.log(error?.response?.data?.message);
             Show_Toast({ message: error?.response?.data?.message, type: false });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -499,6 +510,7 @@ const Member = () => {
                                     onChange={(e) => {
                                         setSearch(e.target.value);
                                     }}
+                                    value={search}
                                 />
                                 <button type="submit" className="absolute w-9 h-9 inset-0 ltr:right-auto rtl:left-auto appearance-none peer-focus:text-primary">
                                     <IconSearch className="mx-auto" />
@@ -604,6 +616,12 @@ const Member = () => {
                                 setFilterData({ zonal: '', panchayath: '', packageName: '' });
                                 setPackageNameFilter('');
                                 setLevelUsers(false);
+                                filterMemberDatas();
+                                setSearch('');
+                                setParams({
+                                    page: 1,
+                                    pageSize: 25,
+                                });
                             }}
                             className="bg-primary text-white px-3 rounded-lg h-10"
                         >
@@ -628,7 +646,8 @@ const Member = () => {
                             onChange={(e) => {
                                 const selectedValue = e.target.value;
                                 if (selectedValue) {
-                                    setFilterData({ ...filterData, packageName: selectedValue, zonal: '', panchayath: '' });
+                                    setFilterData({ ...filterData, packageName: selectedValue === 'All package type' ? '' : selectedValue, zonal: '', panchayath: '' });
+                                    setPackageNameFilter(selectedValue);
                                     // filterMemberDatas();
                                     // filterWithPackagetype(selectedValue);
                                 }
@@ -638,7 +657,9 @@ const Member = () => {
                         >
                             <option value={'All package type'}>All Package Type</option>
                             {dropDownpackageList.map((pkg: any) => (
-                                <option key={pkg._id}>{pkg.packageName}</option>
+                                <option value={pkg?.packageName} key={pkg._id}>
+                                    {pkg?.packageName}
+                                </option>
                             ))}
                         </select>
                     )}
@@ -689,7 +710,7 @@ const Member = () => {
                                         {(user?.franchise !== 'Mobile Franchise' || activeButton !== 'level1') && <td className="capitalize whitespace-nowrap">{data?.sponserName}</td>}
                                         <td className="whitespace-nowrap">{data?.franchise}</td>
                                         <td className="whitespace-nowrap">{data?.franchiseName}</td>
-                                        <td>{data?.packageAmount}</td>
+                                        <td>{data?.actualPackageAmount || data?.tempPackageAmount}</td>
                                         {/* {showViewTreeColumn && ( */}
                                         {user?.franchise !== 'Mobile Franchise' || levelUsers ? (
                                             <>
@@ -1110,8 +1131,12 @@ const Member = () => {
                                                             )}
                                                         </div>
                                                     </div>
-                                                    <button type="submit" className="btn bg-primary text-white !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                                        Add
+                                                    <button
+                                                        disabled={loading}
+                                                        type="submit"
+                                                        className="btn bg-primary text-white !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"
+                                                    >
+                                                        {loading ? 'loading' : 'Add'}
                                                     </button>
                                                 </form>
                                             </div>

@@ -283,7 +283,7 @@ const Profile = () => {
                                         </li>
                                         <li className="flex items-center gap-3">
                                             <IconCashBanknotes className="shrink-0" fill />
-                                            Package Amount : {user?.packageAmount}
+                                            Package Amount : {user?.actualPackageAmount || user?.tempPackageAmount}
                                         </li>
                                     </ul>
                                     <ul className="mt-5 sm:m-auto space-y-4 ">
