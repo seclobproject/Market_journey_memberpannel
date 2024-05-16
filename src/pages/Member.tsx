@@ -707,7 +707,7 @@ const Member = () => {
                                         {(user?.franchise !== 'Mobile Franchise' || activeButton !== 'level1') && <td className="capitalize whitespace-nowrap">{data?.sponserName}</td>}
                                         <td className="whitespace-nowrap">{data?.franchise}</td>
                                         <td className="whitespace-nowrap">{data?.franchiseName}</td>
-                                        <td>{data?.actualPackageAmount || data?.tempPackageAmount}</td>
+                                        <td>{data?.actualPackageAmount ||data?.packageAmount || data?.tempPackageAmount}</td>
                                         {/* {showViewTreeColumn && ( */}
                                         {user?.franchise !== 'Mobile Franchise' || levelUsers ? (
                                             <>
