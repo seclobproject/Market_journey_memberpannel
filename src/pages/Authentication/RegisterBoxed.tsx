@@ -1,7 +1,7 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState, useAppDispatch, useAppSelector } from '../../store';
-import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
+// import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
 import { FormEvent, useEffect, useState } from 'react';
 import Dropdown from '../../components/Dropdown';
 import IconUser from '../../components/Icon/IconUser';

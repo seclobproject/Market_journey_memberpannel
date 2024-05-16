@@ -131,7 +131,6 @@ const Subscriptions = () => {
     const getRenewalPackage = async () => {
         try {
             const response = await ApiCall('get', renewalPackageUrl);
-            console.log(response, 'renewalPackageUrl');
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -160,7 +159,9 @@ const Subscriptions = () => {
                                 <span className="text-4xl font-bold">{user?.daysUntilRenewal}</span> day left
                             </h5>
                         </div>
-                        <p className="text-left sm:text-left max-w-[230px]">Your monthly subscription plan has 10 days to renew Subscription is 0 Please upload the screenshot</p>
+                        <p className="text-left sm:text-left max-w-[230px]">
+                            Attention! Your subscription plan is set to renew in just {user?.daysUntilRenewal} days. Renew to continue enjoying all the benefits of your subscription!
+                        </p>
                         <button onClick={() => setSubscriptionModal(true)} type="button" className="text-primary  bg-warning z-10 font-bold rounded-lg border-warning p-2 mr-auto border ">
                             Subscription Package
                         </button>

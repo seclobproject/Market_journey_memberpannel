@@ -11,9 +11,7 @@ interface UserState {
 
 export const userProfileApi = createAsyncThunk<any>('user/Profile', async () => {
     try {
-        const response = await ApiCall('get', getProfileUrl);
-        console.log(response);
-        
+        const response = await ApiCall('get', getProfileUrl);        
         return response;
     } catch (error) {
         console.log('error in profileApi', error);

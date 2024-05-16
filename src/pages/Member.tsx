@@ -198,7 +198,6 @@ const Member = () => {
     const getMembers = async (id?: string) => {
         setActiveButton('level1');
         // setPackageNameFilter('');
-        console.log(filterData);
         
         try {
             setLoading(true);
@@ -237,7 +236,6 @@ const Member = () => {
                 console.error('Error fetching allMembers list:', response.message);
             } else if (response.status === 200) {
                 // setPreviousMemberData(allMembers);
-                console.log(response);
                 setAllMembers(response?.data?.child2);
                 setFilterMembers(response?.data?.child2);
                 setTotalPages(response?.data?.pagination?.totalPages);
@@ -273,7 +271,6 @@ const Member = () => {
         try {
             setLoading(true);
             const response = await ApiCall('post', filterMembersUrl, filterData, { page: params?.page, pageSize: params?.pageSize, searchText: search });
-            console.log(response, 'response');
 
             if (response instanceof Error) {
                 console.error('Error fetching allMembers list:', response.message);

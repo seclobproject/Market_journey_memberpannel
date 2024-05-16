@@ -4,7 +4,6 @@ import { ApiCall } from '../Services/Api';
 export const loginApi = createAsyncThunk<any, any>('auth/loginApi', async (data) => {
     try {
         const result = await ApiCall('post', '/api/user/user-login', data);
-        console.log(result);
         
         return result;
     } catch (error: any) {

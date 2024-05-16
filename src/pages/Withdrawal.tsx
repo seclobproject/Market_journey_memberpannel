@@ -76,7 +76,6 @@ const Withdrawal = () => {
         e.preventDefault();
         try {
             const response: any = await ApiCall('post', withdrawalRequestUrl, withdrawalRequest);
-            console.log(response.error);
 
             if (response.status === 200) {
                 setWithdrawalRequest({

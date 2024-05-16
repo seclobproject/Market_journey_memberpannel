@@ -9,7 +9,7 @@ const rotateX = plugin(function ({ addUtilities }) {
 });
 module.exports = {
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-    // darkMode: 'class',
+    darkMode: 'class',
     theme: {
         container: {
             center: true,
