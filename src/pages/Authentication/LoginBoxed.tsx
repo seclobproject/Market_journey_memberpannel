@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { FormEvent, useEffect, useState } from 'react';
-import { setPageTitle } from '../../store/themeConfigSlice';
+// import { setPageTitle } from '../../store/themeConfigSlice';
 
 import IconMail from '../../components/Icon/IconMail';
 import IconLockDots from '../../components/Icon/IconLockDots';
@@ -27,7 +27,6 @@ const LoginBoxed = () => {
             setLoading(true);
             const result: any = await dispatch(loginApi(userDetails));
             const token = result.payload?.data?.access_token;
-            console.log(result);
 
             if (token) {
                 sessionStorage.setItem('User', token);

@@ -110,7 +110,6 @@ const Index = () => {
     const getImages = async () => {
         try {
             const response = await ApiCall('get', getImagesUrl);
-
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
@@ -160,8 +159,6 @@ const Index = () => {
     const getCurrentAutoPool = async () => {
         try {
             const response = await ApiCall('get', viewCurentAutoPoolUrl);
-            console.log(response, 'auto pool');
-
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
@@ -250,7 +247,6 @@ const Index = () => {
             setShowSelectDocumentMessage(true);
         }
     };
-console.log(user?.directIncome,"dirsf");
 
     // share referal link
     const shareTitle = 'Check out this awesome link!';
@@ -438,7 +434,7 @@ const handleCopyText = () => {
                                 </h5>
                             </div>
                             <p className="text-left sm:text-left max-w-[230px]">
-                                Your monthly subscription plan has {user?.daysUntilRenewal} days to renew Subscription is 0 Please upload the screenshot
+                                Attention! Your subscription plan is set to renew in just {user?.daysUntilRenewal} days. Renew to continue enjoying all the benefits of your subscription!
                             </p>
                             <Link to="/pages/subscription">
                                 <button type="button" className="text-primary hover:text-white bg-warning z-10 font-bold rounded border-warning p-2 mr-auto border ">
