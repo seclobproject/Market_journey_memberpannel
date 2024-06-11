@@ -200,7 +200,7 @@ const Member = () => {
     const getMembers = async (id?: string) => {
         setActiveButton('level1');
         // setPackageNameFilter('');
-        
+
         try {
             setLoading(true);
             const response = await ApiCall('post', getUsers, filterData, { id: id, page: params?.page, pageSize: params?.pageSize, searchText: search });
@@ -591,7 +591,13 @@ const Member = () => {
                     {user?.franchise === 'Mobile Franchise' && (
                         <>
                             <div
-                                onClick={() => getMembers()}
+                                onClick={() => {
+                                    getMembers();
+                                    setParams((prevParams) => ({
+                                        ...prevParams,
+                                        page: 1,
+                                    }));
+                                }}
                                 className={`panel cursor-pointer flex items-center whitespace-nowrap h-[40px] mb-2 text-base ${
                                     activeButton === 'level1' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
                                 } justify-center max-w-[120px] w-full`}
@@ -599,7 +605,13 @@ const Member = () => {
                                 Direct
                             </div>
                             <div
-                                onClick={getLevelTwoMembers}
+                                onClick={() => {
+                                    getLevelTwoMembers();
+                                    setParams((prevParams) => ({
+                                        ...prevParams,
+                                        page: 1,
+                                    }));
+                                }}
                                 className={`panel cursor-pointer flex items-center whitespace-nowrap h-[40px] mb-2 text-base ${
                                     activeButton === 'level2' ? 'bg-primary text-warning' : 'bg-white border-2 border-warning text-primary font-bold'
                                 } justify-center max-w-[120px] w-full`}
@@ -708,7 +720,7 @@ const Member = () => {
                                         {(user?.franchise !== 'Mobile Franchise' || activeButton !== 'level1') && <td className="capitalize whitespace-nowrap">{data?.sponserName}</td>}
                                         <td className="whitespace-nowrap">{data?.franchise}</td>
                                         <td className="whitespace-nowrap">{data?.franchiseName}</td>
-                                        <td>{data?.actualPackageAmount ||data?.packageAmount || data?.tempPackageAmount}</td>
+                                        <td>{data?.actualPackageAmount || data?.packageAmount || data?.tempPackageAmount}</td>
                                         {/* {showViewTreeColumn && ( */}
                                         {user?.franchise !== 'Mobile Franchise' || levelUsers ? (
                                             <>
