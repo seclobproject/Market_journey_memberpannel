@@ -177,7 +177,6 @@ const RegisterBoxed = () => {
     const getZonallist = async () => {
         try {
             const response = await ApiCall('get', `${zonallistindropdownUrl}/${selectedDistrictId}`);
-            console.log(response);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -194,7 +193,6 @@ const RegisterBoxed = () => {
     const getZonalNotSelectedlist = async () => {
         try {
             const response = await ApiCall('get', `${zonallistinNotdropdownUrl}/${selectedDistrictId}`);
-            console.log(response);
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -211,7 +209,6 @@ const RegisterBoxed = () => {
     const getPanchayathList = async () => {
         try {
             const response = await ApiCall('get', `${panchayathlistindropdownUrl}/${selectedZonalId}`);
-            console.log(response, 'dhsjk');
 
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
@@ -239,7 +236,6 @@ const RegisterBoxed = () => {
                         return pkg?.franchiseName === addMember?.packageType;
                     }
                 });
-                console.log(filteredPackageList);
                 setPackageList(filteredPackageList);
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);
@@ -577,8 +573,7 @@ const RegisterBoxed = () => {
                                                             onChange={(e) => {
                                                                 const selectedValue = e.target.value;
                                                                 const selectedDistrict = districtList.find((dist: any) => dist.name === selectedValue) as any;
-                                                                console.log(selectedValue);
-                                                                console.log(selectedDistrict);
+                                                             
 
                                                                 if (selectedDistrict) {
                                                                     setAddMember((prevAddMember) => ({

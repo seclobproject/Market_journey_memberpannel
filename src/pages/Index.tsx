@@ -232,7 +232,6 @@ const Index = () => {
                 formData.append('screenshot', selectedFile, selectedFile?.name);
 
                 const response = await axios.post(`${Base_url}${userVerificationUrl}`, formData, config);
-                console.log(response);
                 setSelectedFile(null);
                 sessionStorage.setItem('status', response?.data?.updatedUser?.userStatus);
                 setPendingModal(false);
@@ -250,8 +249,8 @@ const Index = () => {
 
     // share referal link
     const shareTitle = 'Check out this awesome link!';
-    // const shareUrl = `https://member.marketjourney.in/auth/boxed-signup/${user?.id}`;
-    const shareUrl = `http://192.168.29.217:5173/auth/boxed-signup/${user?.id}`;
+    const shareUrl = `https://member.marketjourney.in/auth/boxed-signup/${user?.id}`;
+    // const shareUrl = `http://192.168.29.217:5173/auth/boxed-signup/${user?.id}`;
 
     // const handleShare = async () => {
     //     console.log('share');

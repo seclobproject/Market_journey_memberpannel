@@ -20,7 +20,6 @@ const News = () => {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
                 // Format createdAt timestamps
-                console.log(response);
 
                 const formattedNews = response.data.newsData.map((item: any) => ({
                     ...item,

@@ -14,8 +14,6 @@ const Awards = () => {
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
-                console.log(response?.data?.awardData, 'awards');
-
                 setAwards(response?.data?.awardData);
             } else {
                 console.error('Error fetching state list. Unexpected status:', response.status);

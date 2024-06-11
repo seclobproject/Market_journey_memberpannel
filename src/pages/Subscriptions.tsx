@@ -135,7 +135,6 @@ const Subscriptions = () => {
             if (response instanceof Error) {
                 console.error('Error fetching state list:', response.message);
             } else if (response.status === 200) {
-                console.log(response);
                 
                 setRenewalPackage(response?.data?.renewPackages);
             } else {
