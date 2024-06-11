@@ -89,7 +89,6 @@ const Member = () => {
         panchayath: '',
         franchiseName: '',
     });
-    console.log(addMember);
 
     // const [stateList, setStateList] = useState<any>([]);
     const [districtList, setDistrictList] = useState([]);
@@ -175,8 +174,11 @@ const Member = () => {
     }, [addMember?.packageType]);
 
     useEffect(() => {
-        if (levelUsers) {
+        const franchise = sessionStorage.getItem('franchise');
+        if (levelUsers || (franchise === 'Mobile Franchise' && activeButton === 'level1')) {
             getMembers();
+        } else if (activeButton === 'level2') {
+            getLevelTwoMembers();
         } else {
             filterMemberDatas();
         }
@@ -548,7 +550,6 @@ const Member = () => {
                             onChange={(e) => {
                                 const selectedValue = e.target.value;
                                 const selectedzonal = zonalList.find((zon: any) => zon.name === selectedValue) as any;
-                                console.log(selectedzonal);
 
                                 setFilterData({ ...filterData, zonal: selectedzonal === undefined ? '' : selectedzonal.name, panchayath: '' });
                                 setSelectedZonalId(selectedzonal === undefined ? '' : selectedzonal?.id);

@@ -20,7 +20,7 @@ import IconCreditCard from '../../components/Icon/IconCreditCard';
 import IconAward from '../../components/Icon/IconAward';
 import Certificate from '../Components/certificate';
 import Invoice from '../Components/invoice';
-import { formatDate } from '../../utils/FormateDate';
+import { formatDate, formatDateforProfileEdit } from '../../utils/FormateDate';
 import IconCalendar from '../../components/Icon/IconCalendar';
 
 const Profile = () => {
@@ -28,9 +28,11 @@ const Profile = () => {
         name: '',
         address: '',
         phone: '',
+        dateOfBirth:'',
         email: '',
         password: '',
     });
+    
     const [bankDetails, setBankDetails] = useState({
         holderName: '',
         accountNum: '',
@@ -101,10 +103,9 @@ const Profile = () => {
         } else {
             setErrorMessage(true);
         }
-        if (editProfleData.name || editProfleData.address || editProfleData.phone || editProfleData.email || editProfleData.password) {
+        if (editProfleData.name || editProfleData.address || editProfleData.phone ||editProfleData.dateOfBirth || editProfleData.email || editProfleData.password) {
             try {
                 const response = await ApiCall('post', editProfileUrl, editProfleData);
-                console.log(response);
 
                 if (response instanceof Error) {
                     console.error('Error fetching state list:', response.message);
@@ -116,6 +117,7 @@ const Profile = () => {
                         name: '',
                         address: '',
                         phone: '',
+                        dateOfBirth: '',
                         email: '',
                         password: '',
                     });
@@ -138,7 +140,6 @@ const Profile = () => {
         if (bankDetails.holderName || bankDetails.accountNum || bankDetails.bankName || bankDetails.ifscCode) {
             try {
                 const response = await ApiCall('post', updateBankDetailsurl, bankDetails);
-                console.log(response);
 
                 if (response instanceof Error) {
                     console.error('Error fetching state list:', response.message);
@@ -178,7 +179,6 @@ const Profile = () => {
         ) {
             try {
                 const response = await ApiCall('post', updateNomineeDetailsurl, nomineeDetail);
-                console.log(response);
 
                 if (response instanceof Error) {
                     console.error('Error fetching state list:', response.message);
@@ -207,6 +207,9 @@ const Profile = () => {
         }
     };
     // ---------------------------------
+
+    
+    const today = new Date().toISOString().split('T')[0];
 
     return (
         <>
@@ -489,15 +492,29 @@ const Profile = () => {
                                                         />
                                                     </div>
                                                     <div className="">
-                                                        <label htmlFor="email">Email</label>
+                                                        <label htmlFor="email">Phone</label>
                                                         <input
-                                                            onChange={(e) => setEditProfileData({ ...editProfleData, email: e.target.value })}
-                                                            id="email"
-                                                            value={editProfleData?.email}
-                                                            type="email"
-                                                            placeholder="Email"
+                                                            onChange={(e) => setEditProfileData({ ...editProfleData, phone: e.target.value })}
+                                                            id="phone"
+                                                            value={editProfleData?.phone}
+                                                            type="number"
+                                                            placeholder="phone"
                                                             className="form-input"
                                                         />
+                                                    </div>
+                                                    <div>
+                                                        <label htmlFor="Email">Date Of Birth</label>
+                                                        <div className="relative text-white-dark">
+                                                            <input
+                                                                onChange={(e) => setEditProfileData({ ...editProfleData, dateOfBirth: e.target.value })}
+                                                                id="dateOfBirth"
+                                                                type="date"
+                                                                value={formatDateforProfileEdit(editProfleData?.dateOfBirth)}
+                                                                required
+                                                                max={today}
+                                                                className="form-input ps-10 placeholder:text-white-dark"
+                                                            />
+                                                        </div>
                                                     </div>
                                                     <div className="">
                                                         <label htmlFor="newPassword">New Password</label>
