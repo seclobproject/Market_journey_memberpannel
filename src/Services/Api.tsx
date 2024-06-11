@@ -2,8 +2,8 @@ import axios from 'axios';
 // import { Show_Toast } from '../pages/Components/Toast';
 
 // export const Base_url = 'http://192.168.29.77:6003';
-export const Base_url = 'http://localhost:6003';
-// export const Base_url = 'https://admin.marketjourney.in';
+// export const Base_url = 'http://localhost:6003';
+export const Base_url = 'https://admin.marketjourney.in';
 
 interface ApiCallResponse {
     status?: number;
