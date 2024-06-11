@@ -14,7 +14,7 @@ const ERROR404 = lazy(() => import('../pages/Pages/Error404'));
 const ERROR500 = lazy(() => import('../pages/Pages/Error500'));
 const LoginBoxed = lazy(() => import('../pages/Authentication/LoginBoxed'));
 const RegisterBoxed = lazy(() => import('../pages/Authentication/RegisterBoxed'));
-const UnlockBoxed = lazy(() => import('../pages/Authentication/UnlockBox'));
+// const UnlockBoxed = lazy(() => import('../pages/Authentication/UnlockBox'));
 const RecoverIdBoxed = lazy(() => import('../pages/Authentication/RecoverIdBox'));
 const Error = lazy(() => import('../components/Error'));
 
@@ -94,11 +94,11 @@ const routes = [
         element: <RegisterBoxed />,
         layout: 'blank',
     },
-    {
-        path: '/auth/boxed-lockscreen',
-        element: <UnlockBoxed />,
-        layout: 'blank',
-    },
+    // {
+    //     path: '/auth/boxed-lockscreen',
+    //     element: <UnlockBoxed />,
+    //     layout: 'blank',
+    // },
     {
         path: '/auth/boxed-password-reset',
         element: <RecoverIdBoxed />,
