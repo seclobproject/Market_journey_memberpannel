@@ -223,7 +223,7 @@ const Profile = () => {
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <h1 className="text-[25px] font-semibold text-primary">₹{user?.directIncome}</h1>
-                                    <h5 className="font-semibold text-md text-primary">DirectIncome</h5>
+                                    <h5 className="font-semibold text-md text-primary">Direct Income</h5>
                                 </div>
                             </div>
                             <div className="panel lg:h-[120px] sm:h-auto flex gap-4  items-center justify-center bg-[#DDE4EB] text-white">
@@ -232,7 +232,7 @@ const Profile = () => {
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <h1 className="text-[25px] font-semibold text-primary">₹{user?.inDirectIncome}</h1>
-                                    <h5 className="font-semibold text-md text-primary">InDirectIncome</h5>
+                                    <h5 className="font-semibold text-md text-primary">InDirect Income</h5>
                                 </div>
                             </div>
 
@@ -242,7 +242,7 @@ const Profile = () => {
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <h1 className="text-[25px] font-semibold text-primary">₹{user?.totalLevelIncome}</h1>
-                                    <h5 className="font-semibold text-md text-primary">LevelIncome</h5>
+                                    <h5 className="font-semibold text-md text-primary">Level Income</h5>
                                 </div>
                             </div>
                         </div>
@@ -293,7 +293,7 @@ const Profile = () => {
                                         {userView && (
                                             <li className="flex items-center gap-3">
                                                 <IconCashBanknotes className="shrink-0" fill />
-                                                walletAmount : {user?.walletAmount}
+                                                Wallet Amount : {user?.walletAmount}
                                             </li>
                                         )}
                                         <li className="flex items-center gap-3">
@@ -308,7 +308,7 @@ const Profile = () => {
                                             <>
                                                 <li className="flex items-center gap-3">
                                                     <IconPencil className="shrink-0" fill />
-                                                    Franchise type : {user?.franchise}
+                                                    Franchise Type : {user?.franchise}
                                                 </li>
                                                 <li className="flex items-center gap-3">
                                                     <IconPencil className="shrink-0" fill />
